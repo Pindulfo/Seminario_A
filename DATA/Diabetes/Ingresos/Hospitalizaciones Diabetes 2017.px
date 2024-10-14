@@ -1,0 +1,43 @@
+AXIS-VERSION="2006";
+CREATION-DATE="20241007";
+CHARSET="ANSI";
+SUBJECT-AREA="Resultados por comunidades autónomas y provincias";
+SUBJECT-CODE="null";
+MATRIX="02001";
+TITLE="Altas hospitalarias según el sexo, el diagnóstico principal, la provincia, Comunidad y Ciudad autónoma de hospitalización.";
+CONTENTS="Altas hospitalarias";
+CODEPAGE="iso-8859-15";
+DESCRIPTION="";
+COPYRIGHT=YES;
+NOTE="1) En cada uno de los grupos únicamente se incorporarán aquellos diagnósticos"
+" que se consideren principales";
+DECIMALS=0;
+SHOWDECIMALS=0;
+STUB="Diagnóstico principal (CIE10MC)","Sexo";
+HEADING="Provincia, Comunidad y Ciudad autónoma de hospitalización";
+VALUES("Diagnóstico principal (CIE10MC)")="0401 Diabetes mellitus E08-E13";
+VALUES("Sexo")="Ambos sexos","Hombres","Mujeres";
+VALUES("Provincia, Comunidad y Ciudad autónoma de hospitalización")="Total Nacional","01 Andalucía","04 Almería","11 Cádiz","14 Córdoba","18 Granada",
+"21 Huelva","23 Jaén","29 Málaga","41 Sevilla","02 Aragón","22 Huesca","44 Teruel",
+"50 Zaragoza","03 Asturias, Principado de","04 Balears, Illes","05 Canarias",
+"35 Palmas, Las","38 Santa Cruz de Tenerife","06 Cantabria","07 Castilla y León",
+"05 Ávila","09 Burgos","24 León","34 Palencia","37 Salamanca","40 Segovia","42 Soria",
+"47 Valladolid","49 Zamora","08 Castilla - La Mancha","02 Albacete","13 Ciudad Real",
+"16 Cuenca","19 Guadalajara","45 Toledo","09 Cataluña","08 Barcelona","17 Girona",
+"25 Lleida","43 Tarragona","10 Comunitat Valenciana","03 Alicante/Alacant",
+"12 Castellón/Castelló","46 Valencia/València","11 Extremadura","06 Badajoz",
+"10 Cáceres","12 Galicia","15 Coruña, A","27 Lugo","32 Ourense","36 Pontevedra",
+"13 Madrid, Comunidad de","14 Murcia, Región de","15 Navarra, Comunidad Foral de",
+"16 País Vasco","01 Araba/Álava","48 Bizkaia","20 Gipuzkoa","17 Rioja, La","18 Ceuta",
+"19 Melilla";
+CODES("Provincia, Comunidad y Ciudad autónoma de hospitalización")="CA00","CA01","04","11","14","18","21","23","29","41","CA02","22","44","50","CA03","CA04","CA05",
+"35","38","CA06","CA07","05","09","24","34","37","40","42","47","49","CA08","02","13","16","19","45",
+"CA09","08","17","25","43","CA10","03","12","46","CA11","06","10","CA12","15","27","32","36","CA13",
+"CA14","CA15","CA16","01","48","20","CA17","CA18","CA19";
+MAP("Provincia, Comunidad y Ciudad autónoma de hospitalización")="spain_ccaapro_img_ind";
+SOURCE="Instituto Nacional de Estadística";
+UNITS="valores absolutos";
+DATA=27174.0 3637.0 357.0 564.0 302.0 441.0 239.0 304.0 649.0 780.0 877.0 139.0 50.0 688.0 672.0 918.0 1144.0 630.0 514.0 391.0 1911.0 90.0 265.0 492.0 94.0 333.0 81.0 50.0 378.0 128.0 848.0 190.0 244.0 69.0 113.0 232.0 5251.0 4183.0 391.0 193.0 483.0 3174.0 1241.0 347.0 1586.0 583.0 404.0 179.0 1538.0 556.0
+ 210.0 176.0 596.0 2962.0 1024.0 340.0 1407.0 241.0 659.0 507.0 310.0 84.0 103.0 16150.0 2223.0 238.0 324.0 175.0 291.0 129.0 187.0 392.0 487.0 533.0 88.0 36.0 409.0 370.0 565.0 674.0 371.0 303.0 201.0 1121.0 36.0 152.0 342.0 42.0 191.0 43.0 29.0 222.0 64.0 505.0 121.0 126.0 49.0 63.0 146.0 3112.0
+ 2494.0 231.0 116.0 271.0 1861.0 743.0 212.0 905.0 366.0 262.0 104.0 832.0 299.0 118.0 91.0 324.0 1753.0 661.0 220.0 868.0 158.0 393.0 317.0 181.0 48.0 57.0 11024.0 1414.0 119.0 240.0 127.0 151.0 110.0 117.0 257.0 293.0 344.0 51.0 14.0 279.0 301.0 354.0 470.0 259.0 211.0 190.0 790.0 54.0 113.0 150.0
+ 52.0 142.0 38.0 21.0 156.0 64.0 344.0 69.0 118.0 20.0 50.0 87.0 2139.0 1689.0 161.0 77.0 212.0 1313.0 499.0 134.0 680.0 217.0 142.0 75.0 706.0 257.0 92.0 85.0 272.0 1209.0 362.0 120.0 539.0 83.0 266.0 190.0 129.0 36.0 46.0;

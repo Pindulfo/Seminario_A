@@ -1,0 +1,57 @@
+AXIS-VERSION="2006";
+CREATION-DATE="20241007";
+CHARSET="ANSI";
+SUBJECT-AREA="Resultados por comunidades autónomas y provincias";
+SUBJECT-CODE="null";
+MATRIX="02001";
+TITLE="Altas hospitalarias según el sexo, el diagnóstico principal, la provincia, Comunidad y Ciudad autónoma de hospitalización.";
+CONTENTS="Altas hospitalarias";
+CODEPAGE="iso-8859-15";
+DESCRIPTION="";
+COPYRIGHT=YES;
+NOTE="1) En cada uno de los grupos únicamente se incorporarán aquellos diagnósticos"
+" que se consideren principales.## 2) Si se compara la información sobre la mo"
+"rbilidad hospitalaria por Infección por covid-19  y por enfermedades respirat"
+"orias con el año anterior debe tenerse en cuenta que la  Organización Mundial"
+" de la Salud (OMS) estableció en febrero de 2020 un código de emergencia  en "
+"la Clasificación Internacional de Enfermedades (CIE-10) para la codificación "
+"de las infecciones  por COVID-19. Este código fue implementado en la CIE-10-C"
+"M (clasificación utilizada en la codificación  de los diagnósticos en pacient"
+"es hospitalizados), con carácter excepcional, a partir del  1 de abril de 202"
+"0 por los Centros para el control y la Prevención de Enfermedades del  Centro"
+" Nacional de Estadísticas de Salud (CDC / NCHS). En España, dada la situación"
+" de crisis  sanitaria que se estaba produciendo en esos momentos, se decidió "
+"no implementar el nuevo código  hasta que se produjese una disminución en la "
+"presión asistencial y los sistemas de información  pudiesen asumir el cambio."
+" Finalmente, el nuevo código U07.1 para la infección por COVID-19  fue implem"
+"entado por los hospitales a partir de julio de 2020.";
+DECIMALS=0;
+SHOWDECIMALS=0;
+STUB="Diagnóstico principal (CIE10MC)","Sexo";
+HEADING="Provincia, Comunidad y Ciudad autónoma de hospitalización";
+VALUES("Diagnóstico principal (CIE10MC)")="0401 Diabetes mellitus E08-E13";
+VALUES("Sexo")="Ambos sexos","Hombres","Mujeres";
+VALUES("Provincia, Comunidad y Ciudad autónoma de hospitalización")="Total Nacional","01 Andalucía","04 Almería","11 Cádiz","14 Córdoba","18 Granada",
+"21 Huelva","23 Jaén","29 Málaga","41 Sevilla","02 Aragón","22 Huesca","44 Teruel",
+"50 Zaragoza","03 Asturias, Principado de","04 Balears, Illes","05 Canarias",
+"35 Palmas, Las","38 Santa Cruz de Tenerife","06 Cantabria","07 Castilla y León",
+"05 Ávila","09 Burgos","24 León","34 Palencia","37 Salamanca","40 Segovia","42 Soria",
+"47 Valladolid","49 Zamora","08 Castilla - La Mancha","02 Albacete","13 Ciudad Real",
+"16 Cuenca","19 Guadalajara","45 Toledo","09 Cataluña","08 Barcelona","17 Girona",
+"25 Lleida","43 Tarragona","10 Comunitat Valenciana","03 Alicante/Alacant",
+"12 Castellón/Castelló","46 Valencia/València","11 Extremadura","06 Badajoz",
+"10 Cáceres","12 Galicia","15 Coruña, A","27 Lugo","32 Ourense","36 Pontevedra",
+"13 Madrid, Comunidad de","14 Murcia, Región de","15 Navarra, Comunidad Foral de",
+"16 País Vasco","01 Araba/Álava","48 Bizkaia","20 Gipuzkoa","17 Rioja, La","18 Ceuta",
+"19 Melilla";
+CODES("Provincia, Comunidad y Ciudad autónoma de hospitalización")="CA00","CA01","04","11","14","18","21","23","29","41","CA02","22","44","50","CA03","CA04","CA05",
+"35","38","CA06","CA07","05","09","24","34","37","40","42","47","49","CA08","02","13","16","19","45",
+"CA09","08","17","25","43","CA10","03","12","46","CA11","06","10","CA12","15","27","32","36","CA13",
+"CA14","CA15","CA16","01","48","20","CA17","CA18","CA19";
+MAP("Provincia, Comunidad y Ciudad autónoma de hospitalización")="spain_ccaapro_img_ind";
+SOURCE="Instituto Nacional de Estadística";
+UNITS="valores absolutos";
+DATA=31903.0 4421.0 425.0 879.0 362.0 372.0 222.0 387.0 731.0 1043.0 1018.0 164.0 74.0 780.0 734.0 982.0 1300.0 751.0 549.0 594.0 1922.0 82.0 194.0 431.0 86.0 280.0 58.0 39.0 645.0 107.0 1102.0 268.0 287.0 83.0 165.0 299.0 5854.0 4611.0 471.0 332.0 439.0 3422.0 1361.0 422.0 1639.0 651.0 432.0 219.0 1848.0 723.0
+ 271.0 180.0 674.0 3941.0 1244.0 500.0 1908.0 351.0 1090.0 467.0 298.0 99.0 63.0 20257.0 2895.0 271.0 585.0 236.0 232.0 133.0 265.0 495.0 678.0 643.0 118.0 43.0 482.0 418.0 644.0 825.0 487.0 338.0 402.0 1183.0 41.0 121.0 256.0 39.0 179.0 36.0 20.0 432.0 59.0 678.0 179.0 162.0 48.0 102.0 187.0 3657.0
+ 2820.0 305.0 245.0 288.0 2149.0 864.0 261.0 1024.0 388.0 269.0 119.0 1103.0 423.0 160.0 90.0 430.0 2502.0 842.0 346.0 1288.0 238.0 720.0 330.0 190.0 59.0 44.0 11645.0 1526.0 154.0 294.0 126.0 140.0 89.0 122.0 236.0 365.0 375.0 46.0 31.0 298.0 316.0 338.0 475.0 264.0 211.0 192.0 739.0 41.0 73.0 175.0
+ 47.0 101.0 22.0 19.0 213.0 48.0 424.0 89.0 125.0 35.0 63.0 112.0 2196.0 1791.0 167.0 87.0 151.0 1273.0 497.0 161.0 615.0 263.0 163.0 100.0 745.0 300.0 111.0 90.0 244.0 1439.0 402.0 154.0 620.0 113.0 370.0 137.0 108.0 40.0 19.0;
