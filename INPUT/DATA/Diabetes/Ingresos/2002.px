@@ -1,0 +1,33 @@
+AXIS-VERSION="2006";
+CREATION-DATE="20241007";
+CHARSET="ANSI";
+SUBJECT-AREA="Resultados por comunidades autónomas y provincias";
+SUBJECT-CODE="02";
+MATRIX="02006";
+TITLE="Estancias causadas por sexo, diagnóstico principal (CIE9MC) y provincia de hospitalización y comunidad autónoma.";
+CONTENTS="Estancias causadas";
+CODEPAGE="utf-8";
+DESCRIPTION="";
+COPYRIGHT=YES;
+DECIMALS=0;
+SHOWDECIMALS=0;
+STUB="Diagnóstico principal (CIE9MC)","Sexo";
+HEADING="Provincia de hospitalización y comunidad autónoma";
+VALUES("Diagnóstico principal (CIE9MC)")="250 Diabetes mellitus";
+VALUES("Sexo")="Ambos sexos","Varones","Mujeres";
+VALUES("Provincia de hospitalización y comunidad autónoma")="Total","Andalucía","Almería","Cádiz","Córdoba","Granada","Huelva","Jaén","Málaga",
+"Sevilla","Aragón","Huesca","Teruel","Zaragoza","Asturias (Principado de)",
+"Balears (Illes)","Canarias","Palmas (Las)","Santa Cruz de Tenerife","Cantabria",
+"Castilla y León","Avila","Burgos","León","Palencia","Salamanca","Segovia","Soria",
+"Valladolid","Zamora","Castilla - La Mancha","Albacete","Ciudad Real","Cuenca",
+"Guadalajara","Toledo","Cataluña","Barcelona","Girona","Lleida","Tarragona",
+"Comunidad Valenciana","Alicante/Alacant","Castellón/Castelló","Valencia/València",
+"Extremadura","Badajoz","Cáceres","Galicia","Coruña (A)","Lugo","Ourense","Pontevedra",
+"Madrid (Comunidad de)","Murcia (Región de)","Navarra (Comun. Foral de)",
+"País Vasco","Alava","Guipúzcoa","Vizcaya","Rioja (La)","Ceuta","Melilla";
+SOURCE="Instituto Nacional de Estadística";
+UNITS="?";
+DATA=357150.0 61282.0 3071.0 11104.0 4965.0 8628.0 3329.0 3435.0 11316.0 15434.0 14157.0 1986.0 823.0 11348.0 11909.0 9616.0 24141.0 10642.0 13499.0 4548.0 24704.0 3146.0 4121.0 4313.0 831.0 4274.0 719.0 815.0 4688.0 1797.0 10527.0 1926.0 2840.0 1913.0 927.0 2921.0 68959.0 53443.0 5527.0 4572.0 5417.0 30070.0 11665.0 2572.0 15833.0 6414.0 4654.0 1759.0 21827.0 9464.0
+ 3957.0 2939.0 5467.0 34737.0 10380.0 5386.0 14603.0 2284.0 6162.0 6157.0 2596.0 738.0 556.0 185096.0 31685.0 1694.0 4957.0 2720.0 4427.0 1697.0 1683.0 6591.0 7917.0 7970.0 1056.0 515.0 6399.0 6262.0 5075.0 12198.0 5540.0 6658.0 2786.0 12037.0 1312.0 1933.0 2020.0 526.0 2251.0 414.0 485.0 2195.0 901.0 5697.0 1014.0 1513.0 903.0 577.0 1691.0 34236.0
+ 26722.0 2236.0 2568.0 2709.0 15938.0 6459.0 1231.0 8248.0 3582.0 2685.0 897.0 10930.0 4664.0 2138.0 1595.0 2533.0 18063.0 6046.0 2691.0 8236.0 1389.0 3465.0 3383.0 1189.0 276.0 198.0 172054.0 29597.0 1377.0 6147.0 2245.0 4201.0 1632.0 1752.0 4725.0 7517.0 6187.0 930.0 308.0 4950.0 5647.0 4541.0 11942.0 5101.0 6841.0 1762.0 12666.0 1834.0 2187.0 2294.0
+ 305.0 2023.0 304.0 329.0 2494.0 896.0 4831.0 912.0 1327.0 1011.0 350.0 1231.0 34724.0 26721.0 3291.0 2004.0 2708.0 14132.0 5207.0 1340.0 7585.0 2832.0 1969.0 863.0 10896.0 4800.0 1819.0 1344.0 2934.0 16674.0 4333.0 2694.0 6367.0 895.0 2697.0 2775.0 1407.0 462.0 358.0;
