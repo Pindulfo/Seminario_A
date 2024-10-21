@@ -4,28 +4,10 @@ library(pxR)
 library(climaemet)
 
 
-<<<<<<< HEAD
-=======
-#crea un dataframe con el primer archivo que sevirá de molde para añadir los siguientes años
-df <- data.frame(as.data.frame(read.px(archivos_pc[1])))
-#añade el atributo del año de los datos
-df['Año'] = 1997
->>>>>>> parent of a424043 (datos muertes diabetes cargados)
 
 ## Use this function to register your API Key temporarly or permanently
 aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
 
-
-datos <- read.px("DATA/Diabetes/Ingresos/1997.px")
-head(datos)
-datos$VALUES$Provincia.de.hospitalización
-cosa <- as.data.frame(datos)
-cosa
-head(cosa)
-
-archivos <- list.files('DATA/Diabetes/Ingresos/', pattern = '*.px')
-archivos
-?sapply
 
 #codigo para extrar todos los datos climaticos de las estaciones de la aemet
 
@@ -46,7 +28,6 @@ for (i in 1:nrow(estaciones_unicas_provincia)) {
   # Obtener el código de cada estación (indicativo)
   codigo_estacion <- estaciones_unicas_provincia[i, "indicativo"]
   
-<<<<<<< HEAD
   # Intentar obtener los datos meteorológicos recientes de la estación
   tryCatch({
     datos_clima <- aemet_last_obs(codigo_estacion)
@@ -66,20 +47,46 @@ for (i in 1:nrow(estaciones_unicas_provincia)) {
 # Ver los datos obtenidos de las estaciones únicas por provincia
 head(datos_unica_estacion_por_provincia)
 
-=======
+
+#obtiene los nombres de archivos
+archivos <- list.files('INPUT/DATA/Diabetes/Ingresos/', pattern = '*.px')
+#añade la ruta del archivo
+archivos_pc <- sapply(archivos, function(x) paste0('INPUT/DATA/Diabetes/Ingresos/',x))
+
+#crea un dataframe con el primer archivo que sevirá de molde para añadir los siguientes años
+df_i <- data.frame(as.data.frame(read.px(archivos_pc[1])))
+#añade el atributo del año de los datos
+df_i['Año'] = 1997
+
+for (i in 2:length(archivos_pc)){
+  #genera un df con los datos del año
+  df_provisional <- data.frame(as.data.frame(read.px(archivos_pc[i])))
+  
+  #obtiene el año a partir del nombre del archivo
+  año <- unlist(strsplit(archivos[i], "\\."))[1]
+  año <- substr(año,nchar(año)-3,nchar(año))
+  
   #genera una columna con el año de los datos
   df_provisional['Año'] = año
   
   #hace que los nombres de las columnas sean iguales al dataframe finak
-  colnames(df_provisional) <- colnames(df)
+  colnames(df_provisional) <- colnames(df_i)
   
   #une el dataframe con los datos del año al df final
-  df <- rbind(df,df_provisional)
+  df_i <- rbind(df_i,df_provisional)
 }
 
 #dataframe con todos los datos de todos los años
-df
->>>>>>> parent of a424043 (datos muertes diabetes cargados)
+#df_i
+head(df_i)
+
+
+
+#Lo mismo para los datos de muertes
+datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
+datos_muertes
+df_m <- as.data.frame(datos_muertes)
+head(df_m)
 
 
 
