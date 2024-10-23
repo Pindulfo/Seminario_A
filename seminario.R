@@ -9,45 +9,66 @@ library(climaemet)
 aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
 
 
-#codigo para extrar todos los datos climaticos de las estaciones de la aemet
 
+
+#-----------------------------------------
+# DATOS AEMET
+#-----------------------------------------
+
+#codigo para extrar todos los datos climaticos de las estaciones de la aemet
 estaciones <- aemet_stations()
 
-# Verificar las primeras estaciones para confirmar la información
-head(estaciones)
+#obtener las estaciones principales (varias por provincia)
+estaciones_ppales <- dplyr::filter(.data = estaciones, nchar(indsinop) > 2)
+provincias <- attributes(table(estaciones_ppales$provincia))$dimnames[[1]]
+provincias <- provincias[provincias !='ILLES BALEARS']
 
-# Crear un dataframe vacío para almacenar los datos de todas las estaciones
-estaciones_unicas_provincia <- estaciones[!duplicated(estaciones$provincia), ]
+cosa2 <- dplyr::filter(.data = estaciones_ppales,  mapply(grepl, estaciones_ppales$provincia, estaciones_ppales$nombre))
 
-# Crear un dataframe vacío para almacenar los datos de todas las estaciones
-datos_unica_estacion_por_provincia <- data.frame()
+#códigos de estaciones que no interesan
+eliminar <- c('C659H', '0201D', '1387D', '1387E', '2867', '3168C', '8175', '8019', '5514', '5514Z', '3168', '3168Z', '3194', '3194U', '3195', '3196', '2539', '9434C', '9434P')
+for (i in eliminar){
+  cosa2 <- cosa2[!(cosa2$indicativo == i),]
+}
+resumen <- factor(cosa2$provincia, levels = provincias)
+table(resumen)
 
-# Recorrer las estaciones únicas por provincia
-for (i in 1:nrow(estaciones_unicas_provincia)) {
-  
-  # Obtener el código de cada estación (indicativo)
-  codigo_estacion <- estaciones_unicas_provincia[i, "indicativo"]
-  
-  # Intentar obtener los datos meteorológicos recientes de la estación
-  tryCatch({
-    datos_clima <- aemet_last_obs(codigo_estacion)
-    
-    # Agregar los datos al dataframe general
-    datos_unica_estacion_por_provincia <- rbind(datos_unica_estacion_por_provincia, datos_clima)
-    
-    # Imprimir la estación procesada (para seguimiento)
-    print(paste("Datos obtenidos para la estación en la provincia de:", estaciones_unicas_provincia[i, "provincia"]))
-  },
-  error = function(e) {
-    # En caso de error, mostrar un mensaje sin detener el ciclo
-    print(paste("Error al obtener datos para la estación en la provincia de:", estaciones_unicas_provincia[i, "provincia"]))
-  })
+#ver las que faltan para añadirlas a mano
+añadir <- c('6325O', '9091R', '2444', 'B275E', '1082', '3469A', '5973', '1111', '8500A', '5402', '1014A', '5270B', '9170', '6156X', '9263D',' 2374X', '0016A', '2661')
+for (i in añadir){
+  cosa2 <- rbind(cosa2,estaciones_ppales[estaciones_ppales$indicativo == i,])
+}
+resumen <- factor(cosa2$provincia, levels = provincias)
+table(resumen)
+cosa2 <- rbind(cosa2, estaciones_ppales[estaciones_ppales$indicativo == '2235U',])
+resumen <- factor(cosa2$provincia, levels = provincias)
+table(resumen)
+
+#OBTENER LOS CÓDIGOS DE LAS ESTACIONES
+codigos <- cosa2$indicativo
+datos_met <- data.frame(matrix(ncol = 5))
+colnames(datos_met) <- c('codigo', 'ta_max', 'ta_min', 'tm_mes', 'año')
+met_22 <- as.data.frame(aemet_monthly_clim('2661', year = 2022))
+met_22 <- met_22[ 1:12 , c('ta_max', 'ta_min', 'tm_mes')]
+for (i in codigos){
+  print(i)
+  met_prov <- as.data.frame(aemet_monthly_clim(i, year = 2022))
+  met_prov <- met_prov[ 1:12 , c('ta_max', 'ta_min', 'tm_mes')]
+  met_procesados <-  data.frame('codigo' = i,
+                                'ta_max' = max(met_prov$ta_max, na.rm = TRUE), 
+                                'ta_min' = min(met_prov$ta_min, na.rm = TRUE), 
+                                'tm_mes' = mean(met_prov$tm_mes, na.rm = TRUE),
+                                'año' = 2022)
+  print(met_procesados)
+  datos_met <- rbind(datos_met, met_procesados)
+  print(datos_met)
+  Sys.sleep(10)
 }
 
-# Ver los datos obtenidos de las estaciones únicas por provincia
-head(datos_unica_estacion_por_provincia)
 
-
+#----------------------------------------
+# DATOS DIABETES
+#----------------------------------------
 #obtiene los nombres de archivos
 archivos <- list.files('INPUT/DATA/Diabetes/Ingresos/', pattern = '*.px')
 #añade la ruta del archivo
