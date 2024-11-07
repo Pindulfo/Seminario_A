@@ -3,7 +3,7 @@ install.packages("climaemet")
 library(pxR)
 library(climaemet)
 library(dplyr)
-
+library(stringr)
 
 ## Use this function to register your API Key temporarly or permanently
 aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
@@ -79,6 +79,29 @@ for (i in codigos){
   
 }
 
+
+
+
+#----------------
+# Pruebas
+
+for (i in 2000:2020){
+  print(i)
+  prueba <- as.data.frame(aemet_monthly_clim('6155A', year = i)) %>%
+    slice (1:12) %>%
+    select(c('ta_max', 'ta_min', 'tm_mes'))
+  Sys.sleep(1.5)
+}
+print(codigos)
+
+
+mal <-  c('C659H','3168D','9091R','1014A','6156X')
+bien <- c('C658L','3013','9091O','1014','6155A')
+remplazo <- c('C659H' = 'C658L', '3168D' = '3013','9091R'= '9091O', '1014A' = '1014', '6156X' = '6155A')
+
+codigos <- str_replace_all(codigos, remplazo)
+
+
 #----------------------------------------
 # DATOS DIABETES
 #----------------------------------------
@@ -110,9 +133,13 @@ for (i in 2:length(archivos_pc)){
   df_i <- rbind(df_i,df_provisional)
 }
 
-#dataframe con todos los datos de todos los años
-#df_i
+# dataframe con todos los datos de ingresos de todos los años
+# df_i
 head(df_i)
+
+
+# análisis de los valores/niveles de cada atributo
+
 
 
 
