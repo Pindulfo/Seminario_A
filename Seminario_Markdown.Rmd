@@ -1,0 +1,58 @@
+# Este es el HTML que hemos de entregar
+
+
+
+
+
+## Esto es una prueba del shiny e inicio del mismo
+
+Para poder ejecutar esto correctamente hemos de insetar la carga de datos etc arriba 
+```{r}
+library(shiny)
+library(ggplot2)
+# Supongamos que el dataframe ya está cargado en tu entorno de trabajo con el nombre df_i
+
+# Interfaz de usuario
+ui <- fluidPage(
+  titlePanel("Comparación de Casos por Provincia entre Dos Años"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("year1", "Seleccione el primer año:", choices = NULL),  # Se llenará dinámicamente
+      selectInput("year2", "Seleccione el segundo año:", choices = NULL), # Se llenará dinámicamente
+      selectInput("sex", "Seleccione el sexo:", choices = NULL)           # Se llenará dinámicamente
+    ),
+    mainPanel(
+      plotOutput("histPlot")
+    )
+  )
+)
+
+# Servidor
+server <- function(input, output, session) {
+  # Actualizar las opciones de los menús desplegables dinámicamente
+  observe({
+    updateSelectInput(session, "year1", choices = unique(df_i$Año))
+    updateSelectInput(session, "year2", choices = unique(df_i$Año))
+    updateSelectInput(session, "sex", choices = unique(df_i$Sexo))
+  })
+  
+  output$histPlot <- renderPlot({
+    # Filtrar los datos en función de los años y el sexo seleccionados
+    datos_filtrados <- df_i[(df_i$Año == input$year1 | df_i$Año == input$year2) & df_i$Sexo == input$sex, ]
+    
+    # Crear el histograma comparativo
+    ggplot(datos_filtrados, aes(x = Provincia.de.hospitalización, y = value, fill = as.factor(Año))) +
+      geom_bar(stat = "identity", position = "dodge") +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs(x = "Provincia", y = "Casos", title = paste("Comparación de casos entre", input$year1, "y", input$year2),
+           fill = "Año")
+  })
+}
+
+# Correr la aplicación
+shinyApp(ui = ui, server = server)
+
+
+```
+
+

@@ -154,7 +154,37 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all('Ávila', 'Avila') %>% 
   str_replace_all('BALEARS, ILLES', 'Baleares') %>% 
   str_replace_all('Balears, Illes', 'Baleares') %>% 
-  str_replace_all('Balears \\(Illes\\)', 'Baleares')
+  str_replace_all('Balears \\(Illes\\)', 'Baleares') %>% 
+  str_replace_all("CANARIAS", 'Canarias') %>% 
+  str_replace_all("CANTABRIA", 'Cantabria') %>% 
+  str_replace_all("Castellón de la Plana", 'Castellón') %>% 
+  str_replace_all("/Castelló", '') %>% 
+  str_replace_all("CASTILLA - LA MANCHA", 'Castilla - La Mancha') %>% 
+  str_replace_all("CASTILLA Y LEÓN", 'Castilla y León') %>% 
+  str_replace_all("CATALUÑA", 'Cataluña') %>% 
+  str_replace_all("Comunitat Valenciana", 'Comunidad Valenciana') %>% 
+  str_replace_all("COMUNITAT VALENCIANA", 'Comunidad Valenciana') %>% 
+  str_replace_all("Coruña (A)", 'A Coruña') %>% #revisar el Coruña (A) no se ha modificado con esto
+  str_replace_all("Coruña, A", 'A Coruña') %>% 
+  str_replace_all("EXTREMADURA", 'Extremadura') %>% 
+  str_replace_all("GALICIA", 'Galicia') %>% 
+  str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
+  str_replace_all('MADRID, COMUNIDAD DE','Madrid') %>% #revisar al igual que asturias para que solo salga Madrid
+  str_replace_all('Madrid*', 'Madrid') %>%
+  str_replace_all('MURCIA, REGIÓN DE','Murcia') %>% #revisar para que solo salga Murcia
+  str_replace_all('Murcia*', 'Murcia') %>% 
+  str_replace_all('NAVARRA, COMUNIDAD FORAL DE','Navarra') %>% #revisar para que salga solo Navarra
+  str_replace_all('Navarra*', 'Navarra') %>% 
+  str_replace_all('PAÍS VASCO', 'País Vasco') %>% 
+  str_replace_all("Palmas (Las)", 'Las Palmas') %>% #revisar el Palmas (Las) no se ha modificado con esto
+  str_replace_all("Palmas, Las", 'Las Palmas') %>%
+  str_replace_all("Rioja (La)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
+  str_replace_all("Rioja, La", 'La Rioja') %>%
+  str_replace_all("RIOJA, LA", 'La Rioja') %>% 
+  str_replace_all("TOTAL NACIONAL", 'TotalL') %>% 
+  str_replace_all("Total Nacional", 'Total') %>% 
+  str_replace_all("/València", '') %>% 
+  str_replace_all("Bizkaia", 'Vizcaya')
 
   typeof(df_i$Provincia.de.hospitalización)
 
@@ -163,6 +193,56 @@ datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
 datos_muertes
 df_m <- as.data.frame(datos_muertes)
 head(df_m)
+
+
+#--------------------------------------------------
+# Aplicacion shiny (donde generaremos diversos datagramas y graficas)
+#--------------------------------------------------
+library(shiny)
+library(ggplot2)
+
+# Supongamos que el dataframe ya está cargado en tu entorno de trabajo con el nombre df_i
+
+# Interfaz de usuario
+ui <- fluidPage(
+  titlePanel("Comparación de Casos por Provincia entre Dos Años"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("year1", "Seleccione el primer año:", choices = NULL),  # Se llenará dinámicamente
+      selectInput("year2", "Seleccione el segundo año:", choices = NULL), # Se llenará dinámicamente
+      selectInput("sex", "Seleccione el sexo:", choices = NULL)           # Se llenará dinámicamente
+    ),
+    mainPanel(
+      plotOutput("histPlot")
+    )
+  )
+)
+
+# Servidor
+server <- function(input, output, session) {
+  # Actualizar las opciones de los menús desplegables dinámicamente
+  observe({
+    updateSelectInput(session, "year1", choices = unique(df_i$Año))
+    updateSelectInput(session, "year2", choices = unique(df_i$Año))
+    updateSelectInput(session, "sex", choices = unique(df_i$Sexo))
+  })
+  
+  output$histPlot <- renderPlot({
+    # Filtrar los datos en función de los años y el sexo seleccionados
+    datos_filtrados <- df_i[(df_i$Año == input$year1 | df_i$Año == input$year2) & df_i$Sexo == input$sex, ]
+    
+    # Crear el histograma comparativo
+    ggplot(datos_filtrados, aes(x = Provincia.de.hospitalización, y = value, fill = as.factor(Año))) +
+      geom_bar(stat = "identity", position = "dodge") +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs(x = "Provincia", y = "Casos", title = paste("Comparación de casos entre", input$year1, "y", input$year2),
+           fill = "Año")
+  })
+}
+
+# Correr la aplicación
+#para que la aplicacion funcione descomentar la siguiente linea (comentada para que no se de por error y se os ejecute)
+#shinyApp(ui = ui, server = server)
 
 
 
