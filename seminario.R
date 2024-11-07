@@ -134,14 +134,29 @@ for (i in 2:length(archivos_pc)){
 }
 
 # dataframe con todos los datos de ingresos de todos los años
-# df_i
+df_i
+df_i <- select(df_i,-Diagnóstico)
 head(df_i)
 
 
 # análisis de los valores/niveles de cada atributo
+factor(df_i$Provincia.de.hospitalización)
 
+#Quita los numeros de la provincia | 
+df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospitalización,"[0123456789]","") %>% 
+  str_replace_all("^ ","") %>% 
+  str_replace_all("Araba/Á","A") %>% 
+  str_replace_all("/Alacant", '') %>% 
+  str_replace_all("ANDALUCÍA", 'Andalucía') %>% 
+  str_replace_all('ARAGÓN', 'Aragón') %>% 
+  str_replace_all('ASTURIAS','Asturias') %>% 
+  str_replace_all('Asturias*', 'Asturias') %>% 
+  str_replace_all('Ávila', 'Avila') %>% 
+  str_replace_all('BALEARS, ILLES', 'Baleares') %>% 
+  str_replace_all('Balears, Illes', 'Baleares') %>% 
+  str_replace_all('Balears \\(Illes\\)', 'Baleares')
 
-
+  typeof(df_i$Provincia.de.hospitalización)
 
 #Lo mismo para los datos de muertes
 datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
