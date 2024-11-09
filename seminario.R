@@ -57,26 +57,28 @@ met_22 <- as.data.frame(aemet_monthly_clim('B278', year = 1990)) %>%
 met_22$ta_max <- sapply(met_22$ta_max, FUN = function(x) unlist(strsplit(x, '\\('))[1] )
 met_22$ta_min <- sapply(met_22$ta_min, FUN = function(x) unlist(strsplit(x, '\\('))[1] )
 
-for (i in codigos){
-  print(i)
-  met_prov <- as.data.frame(aemet_monthly_clim(i, year = 2000)) %>% 
-    slice (1:12) %>% 
-    select(c('ta_max', 'ta_min', 'tm_mes'))
-  
-  met_prov$ta_max <- sapply(met_prov$ta_max, FUN = function(x) as.numeric(unlist(strsplit(x, '\\('))[1]) )
-  met_prov$ta_min <- sapply(met_prov$ta_min, FUN = function(x) as.numeric(unlist(strsplit(x, '\\('))[1]) )
-  
-  
-  met_procesados <-  data.frame('codigo' = i,
-                                'ta_max' = max(met_prov$ta_max, na.rm = TRUE), 
-                                'ta_min' = min(met_prov$ta_min, na.rm = TRUE), 
-                                'tm_mes' = mean(met_prov$tm_mes, na.rm = TRUE),
-                                'año' = 2000)
-  print(met_procesados)
-  datos_met <- rbind(datos_met, met_procesados)
-  print(datos_met)
-  Sys.sleep(1.5)
-  
+for (año in 2003:2020){
+  print(año)
+  for (i in codigos){
+    print(i)
+    met_prov <- as.data.frame(aemet_monthly_clim(i, year = año)) %>% 
+      slice (1:12) %>% 
+      select(c('ta_max', 'ta_min', 'tm_mes'))
+    
+    met_prov$ta_max <- sapply(met_prov$ta_max, FUN = function(x) as.numeric(unlist(strsplit(x, '\\('))[1]) )
+    met_prov$ta_min <- sapply(met_prov$ta_min, FUN = function(x) as.numeric(unlist(strsplit(x, '\\('))[1]) )
+    
+    
+    met_procesados <-  data.frame('codigo' = i,
+                                  'ta_max' = max(met_prov$ta_max, na.rm = TRUE), 
+                                  'ta_min' = min(met_prov$ta_min, na.rm = TRUE), 
+                                  'tm_mes' = mean(met_prov$tm_mes, na.rm = TRUE),
+                                  'año' = año)
+    # print(met_procesados)
+    datos_met <- rbind(datos_met, met_procesados)
+    # print(datos_met)
+    Sys.sleep(1.75)
+  }
 }
 
 
@@ -100,7 +102,6 @@ bien <- c('C658L','3013','9091O','1014','6155A')
 remplazo <- c('C659H' = 'C658L', '3168D' = '3013','9091R'= '9091O', '1014A' = '1014', '6156X' = '6155A')
 
 codigos <- str_replace_all(codigos, remplazo)
-
 
 #----------------------------------------
 # DATOS DIABETES
