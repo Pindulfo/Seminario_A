@@ -1,5 +1,6 @@
-<img style="float:left" width="40%" src="images/escudo_COLOR_1L_DCHA.png">
+<img style="float:left" width="40%" src="./Images/escudo_COLOR_1L_DCHA.png">
 <br style="clear:both;">
+
 # Seminario_A
 ## Objetivo General
 
