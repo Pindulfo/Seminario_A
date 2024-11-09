@@ -1,12 +1,87 @@
+---
+title: "Relación del las tempertatura con la diabetes"
+author: "Mario Benito, Guillermo de la Fuente,Pablo Fernández"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
 # Este es el HTML que hemos de entregar
 
+[GitHub](https://github.com/Pindulfo/Seminario_A.git) \### 1. Carga de paquetes Estos son los paquetes necesarios para la carga de archivos Pc-axis, la obtención de datos de la aemet y su manipulación.
 
+```{r}
+# install.packages("climaemet")
+library(pxR)
+library(climaemet)
+library(dplyr)
+library(stringr)
 
+## Use this function to register your API Key temporarly or permanently
+# aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
+```
 
+### Obtención de datos de la aemet
+
+Se recogen todas las estaciones de la aemet. A continuación, se muestra la estructura de los datos.
+
+```{r}
+estaciones <- aemet_stations()
+head(estaciones)
+```
+
+Selección de los códigos de las estaciones meteorológicas de interés. El código ampliado se puede ver en Anexo
+
+```{r}
+codigos <- c("C449C", "C658L", "0076", "0367", "1212E", "1387", "1484C", "1505", "1690A", "2030", "2331", "2422", "2465", "2614", "2870", "3129", "3013", "3260B", "4121", "4452", "4642E", "5000C", "5530E", "5783", "6000A", "7178I", "8025", "8096", "8178D", "8368U", "8414A", "9434", "9771C", "9898", "6325O", "9091O", "2444", "B278", "1082", "3469A", "5973", "1111", "8500A", "5402", "1014", "5270B", "9170", "6155A", "9263D", "0016A", "2661", "2235U")
+```
+
+Generación del dataframe `Datos_met`donde se almacenarán los datos.
+
+```{r}
+datos_met <- data.frame(matrix(ncol = 5))
+colnames(datos_met) <- c('codigo', 'ta_max', 'ta_min', 'tm_mes', 'año')
+
+```
+
+Obtención de los datos de tempertatura máxima, mínima y media mesual durante los ños 2003 a 2020 de todas las estaciones selecionadas.
+
+```{r}
+for (año in 2003:2020){
+  print(año)
+  for (i in codigos){
+    print(i)
+    met_prov <- as.data.frame(aemet_monthly_clim(i, year = año)) %>% 
+      slice (1:12) %>% 
+      select(c('ta_max', 'ta_min', 'tm_mes'))
+    
+    met_prov$ta_max <- sapply(met_prov$ta_max, FUN = function(x) as.numeric(unlist(strsplit(x, '\\('))[1]) )
+    met_prov$ta_min <- sapply(met_prov$ta_min, FUN = function(x) as.numeric(unlist(strsplit(x, '\\('))[1]) )
+    
+    
+    met_procesados <-  data.frame('codigo' = i,
+                                  'ta_max' = max(met_prov$ta_max, na.rm = TRUE), 
+                                  'ta_min' = min(met_prov$ta_min, na.rm = TRUE), 
+                                  'tm_mes' = mean(met_prov$tm_mes, na.rm = TRUE),
+                                  'año' = año)
+    # print(met_procesados)
+    datos_met <- rbind(datos_met, met_procesados)
+    # print(datos_met)
+    Sys.sleep(1.5)
+  }
+}
+
+```
+
+Muestra de cómo se estructura la información de la consulta a aemet.
+
+```{r}
+#View(met_prov)
+```
 
 ## Esto es una prueba del shiny e inicio del mismo
 
-Para poder ejecutar esto correctamente hemos de insetar la carga de datos etc arriba 
+Para poder ejecutar esto correctamente hemos de insetar la carga de datos etc arriba
+
 ```{r}
 library(shiny)
 library(ggplot2)
@@ -54,5 +129,3 @@ shinyApp(ui = ui, server = server)
 
 
 ```
-
-
