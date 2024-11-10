@@ -20,6 +20,135 @@ library(stringr)
 # aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
 ```
 
+### Obtención datos diabetes
+
+Obtenemos los nombres de archivos con datos de diabetes
+
+```{r}
+archivos <- list.files('INPUT/DATA/Diabetes/Ingresos/', pattern = '*.px')
+```
+
+Añadimos la ruta completa de cada archivo
+
+```{r}
+archivos_pc <- sapply(archivos, function(x) paste0('INPUT/DATA/Diabetes/Ingresos/', x))
+```
+
+Creamos el dataframe base con el primer archivo, que servirá para concatenar los datos de años siguientes
+
+```{r}
+df_i <- data.frame(as.data.frame(read.px(archivos_pc[1])))
+df_i['Año'] <- 1997  # Añadir columna de año
+```
+
+Bucle para añadir cada año al dataframe
+
+```{r}
+for (i in 2:length(archivos_pc)) {
+  # Cargar los datos del año específico
+  df_provisional <- data.frame(as.data.frame(read.px(archivos_pc[i])))
+  
+  # Extraer el año del nombre del archivo
+  año <- unlist(strsplit(archivos[i], "\\."))[1]
+  año <- substr(año, nchar(año) - 3, nchar(año))
+  
+  # Añadir columna de año al nuevo dataframe
+  df_provisional['Año'] <- año
+  
+  # Asegurar que las columnas coincidan
+  colnames(df_provisional) <- colnames(df_i)
+  
+  # Concatenar el dataframe con el del año anterior
+  df_i <- rbind(df_i, df_provisional)
+}
+```
+
+Visualizar la estructura de los datos
+
+```{r}
+head(df_i)
+```
+
+# Código para Limpiar y estandarizar nombres de provincias en `Provincia.de.hospitalización`
+
+Analizamos los valores de cada atributo, por ejemplo, las provincias de hospitalización
+
+```{r}
+factor(df_i$Provincia.de.hospitalización)
+```
+
+Limpiamos los nombres de las provincias: eliminamos números y ajustamos algunos nombres para normalización
+
+```{r}
+df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospitalización, "[0123456789]", "") %>% 
+  str_replace_all("^ ", "") %>% 
+  str_replace_all("Araba/Á", "A") %>% 
+  str_replace_all("/Alacant", "") %>% 
+  str_replace_all("ANDALUCÍA", "Andalucía") %>% 
+  str_replace_all("ARAGÓN", "Aragón") %>% 
+  str_replace_all("ASTURIAS", "Asturias") %>% 
+  str_replace_all("Asturias*", "Asturias") %>% 
+  str_replace_all("Ávila", "Avila") %>% 
+  str_replace_all("BALEARS, ILLES", "Baleares") %>% 
+  str_replace_all("Balears, Illes", "Baleares") %>% 
+  str_replace_all("Balears \\(Illes\\)", "Baleares") %>% 
+  str_replace_all("CANARIAS", "Canarias") %>% 
+  str_replace_all("CANTABRIA", "Cantabria") %>% 
+  str_replace_all("Castellón de la Plana", "Castellón") %>% 
+  str_replace_all("/Castelló", "") %>% 
+  str_replace_all("CASTILLA - LA MANCHA", "Castilla - La Mancha") %>% 
+  str_replace_all("CASTILLA Y LEÓN", "Castilla y León") %>% 
+  str_replace_all("CATALUÑA", "Cataluña") %>% 
+  str_replace_all("Comunitat Valenciana", "Comunidad Valenciana") %>% 
+  str_replace_all("COMUNITAT VALENCIANA", "Comunidad Valenciana") %>% 
+  str_replace_all("Coruña (A)", "A Coruña") %>% # Revisar que funcione correctamente
+  str_replace_all("Coruña, A", "A Coruña") %>% 
+  str_replace_all("EXTREMADURA", "Extremadura") %>% 
+  str_replace_all("GALICIA", "Galicia") %>% 
+  str_replace_all("Guipúzcoa", "Gipuzkoa") %>% 
+  str_replace_all("MADRID, COMUNIDAD DE", "Madrid") %>% # Revisar que funcione correctamente
+  str_replace_all("Madrid*", "Madrid") %>%
+  str_replace_all("MURCIA, REGIÓN DE", "Murcia") %>% # Revisar que funcione correctamente
+  str_replace_all("Murcia*", "Murcia") %>% 
+  str_replace_all("NAVARRA, COMUNIDAD FORAL DE", "Navarra") %>% # Revisar que funcione correctamente
+  str_replace_all("Navarra*", "Navarra") %>% 
+  str_replace_all("PAÍS VASCO", "País Vasco") %>% 
+  str_replace_all("Palmas (Las)", "Las Palmas") %>% # Revisar que funcione correctamente
+  str_replace_all("Palmas, Las", "Las Palmas") %>%
+  str_replace_all("Rioja (La)", "La Rioja") %>% # Revisar que funcione correctamente
+  str_replace_all("Rioja, La", "La Rioja") %>%
+  str_replace_all("RIOJA, LA", "La Rioja") %>% 
+  str_replace_all("TOTAL NACIONAL", "Total") %>% 
+  str_replace_all("Total Nacional", "Total") %>% 
+  str_replace_all("/València", "") %>% 
+  str_replace_all("Bizkaia", "Vizcaya")
+
+```  
+
+Verificación del tipo de la columna de provincias después de la limpieza
+
+```{r}
+typeof(df_i$Provincia.de.hospitalización)
+```
+
+# Cargamos los datos de muertes
+
+```{r}
+datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
+```
+
+Conviertimos los datos de muertes a un dataframe para facilitar el análisis
+
+```{r}
+df_m <- as.data.frame(datos_muertes)
+```
+
+Mostramos las primeras filas del dataframe para verificar la carga de datos
+
+```{r}
+head(df_m)
+```
+
 ### Obtención de datos de la aemet
 
 Se recogen todas las estaciones de la aemet. A continuación, se muestra la estructura de los datos.
@@ -80,7 +209,7 @@ Muestra de cómo se estructura la información de la consulta a aemet.
 
 ## Esto es una prueba del shiny e inicio del mismo
 
-Para poder ejecutar esto correctamente hemos de insetar la carga de datos etc arriba
+Para poder ejecutar esto correctamente hemos de insertar la carga de datos etc arriba
 
 ```{r}
 library(shiny)
