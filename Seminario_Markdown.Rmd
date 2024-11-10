@@ -173,8 +173,9 @@ colnames(datos_met) <- c('codigo', 'ta_max', 'ta_min', 'tm_mes', 'año')
 ```
 
 Obtención de los datos de tempertatura máxima, mínima y media mesual durante los ños 2003 a 2020 de todas las estaciones selecionadas.
+A continuación, se muestra el código para acceder a la aemet. Para una mayor rapidez de renderizado se importan los datos.
 
-```{r}
+```{r eval=FALSE}
 for (año in 2003:2020){
   print(año)
   for (i in codigos){
@@ -201,10 +202,19 @@ for (año in 2003:2020){
 
 ```
 
+```{r}
+datos_met <- load('datos_aemet.RData')
+head(datos_met)
+```
+
 Muestra de cómo se estructura la información de la consulta a aemet.
+```{r, echo=FALSE}
+met_prov <- as.data.frame(aemet_monthly_clim('C449C', year = 2020))
+
+```
 
 ```{r}
-#View(met_prov)
+head(met_prov)
 ```
 
 ## Esto es una prueba del shiny e inicio del mismo

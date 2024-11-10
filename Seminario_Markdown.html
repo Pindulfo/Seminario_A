@@ -390,6 +390,2575 @@ library(pxR)</code></pre>
 
 ## Use this function to register your API Key temporarly or permanently
 # aemet_api_key(&quot;eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A&quot;, install= TRUE)</code></pre>
+<div id="obtención-datos-diabetes" class="section level3">
+<h3>Obtención datos diabetes</h3>
+<p>Obtenemos los nombres de archivos con datos de diabetes</p>
+<pre class="r"><code>archivos &lt;- list.files(&#39;INPUT/DATA/Diabetes/Ingresos/&#39;, pattern = &#39;*.px&#39;)</code></pre>
+<p>Añadimos la ruta completa de cada archivo</p>
+<pre class="r"><code>archivos_pc &lt;- sapply(archivos, function(x) paste0(&#39;INPUT/DATA/Diabetes/Ingresos/&#39;, x))</code></pre>
+<p>Creamos el dataframe base con el primer archivo, que servirá para
+concatenar los datos de años siguientes</p>
+<pre class="r"><code>df_i &lt;- data.frame(as.data.frame(read.px(archivos_pc[1])))</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre class="r"><code>df_i[&#39;Año&#39;] &lt;- 1997  # Añadir columna de año</code></pre>
+<p>Bucle para añadir cada año al dataframe</p>
+<pre class="r"><code>for (i in 2:length(archivos_pc)) {
+  # Cargar los datos del año específico
+  df_provisional &lt;- data.frame(as.data.frame(read.px(archivos_pc[i])))
+  
+  # Extraer el año del nombre del archivo
+  año &lt;- unlist(strsplit(archivos[i], &quot;\\.&quot;))[1]
+  año &lt;- substr(año, nchar(año) - 3, nchar(año))
+  
+  # Añadir columna de año al nuevo dataframe
+  df_provisional[&#39;Año&#39;] &lt;- año
+  
+  # Asegurar que las columnas coincidan
+  colnames(df_provisional) &lt;- colnames(df_i)
+  
+  # Concatenar el dataframe con el del año anterior
+  df_i &lt;- rbind(df_i, df_provisional)
+}</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por provincias, Comunidades y Ciudades
+## aut&lt;f3&gt;nomas&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por provincias, Comunidades y Ciudades
+## aut&lt;f3&gt;nomas&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por provincias, Comunidades y Ciudades
+## aut&lt;f3&gt;nomas&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por provincias, Comunidades y Ciudades
+## aut&lt;f3&gt;nomas&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Resultados por comunidades aut&lt;f3&gt;nomas y
+## provincias&quot;;&#39; to a wide string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<p>Visualizar la estructura de los datos</p>
+<pre class="r"><code>head(df_i)</code></pre>
+<pre><code>##   Provincia.de.hospitalización    Sexo
+## 1                        Total Varones
+## 2                    Andalucía Varones
+## 3                      Almería Varones
+## 4                        Cádiz Varones
+## 5                      Córdoba Varones
+## 6                      Granada Varones
+##                                         Diagnóstico  value  Año
+## 1 Enf. de glánd. endocr. del metabolismo:- Diabetes 177209 1997
+## 2 Enf. de glánd. endocr. del metabolismo:- Diabetes  32669 1997
+## 3 Enf. de glánd. endocr. del metabolismo:- Diabetes   3172 1997
+## 4 Enf. de glánd. endocr. del metabolismo:- Diabetes   7641 1997
+## 5 Enf. de glánd. endocr. del metabolismo:- Diabetes   2943 1997
+## 6 Enf. de glánd. endocr. del metabolismo:- Diabetes   3974 1997</code></pre>
+</div>
+</div>
+<div id="código-para-limpiar-y-estandarizar-nombres-de-provincias-en-provincia.de.hospitalización" class="section level1">
+<h1>Código para Limpiar y estandarizar nombres de provincias en
+<code>Provincia.de.hospitalización</code></h1>
+<p>Analizamos los valores de cada atributo, por ejemplo, las provincias
+de hospitalización</p>
+<pre class="r"><code>factor(df_i$Provincia.de.hospitalización)</code></pre>
+<pre><code>##    [1] Total                          Andalucía                     
+##    [3] Almería                        Cádiz                         
+##    [5] Córdoba                        Granada                       
+##    [7] Huelva                         Jaén                          
+##    [9] Málaga                         Sevilla                       
+##   [11] Aragón                         Huesca                        
+##   [13] Teruel                         Zaragoza                      
+##   [15] Asturias (Principado de)       Balears (Illes)               
+##   [17] Canarias                       Palmas (Las)                  
+##   [19] Santa Cruz de Tenerife         Cantabria                     
+##   [21] Castilla y León                Avila                         
+##   [23] Burgos                         León                          
+##   [25] Palencia                       Salamanca                     
+##   [27] Segovia                        Soria                         
+##   [29] Valladolid                     Zamora                        
+##   [31] Castilla - La Mancha           Albacete                      
+##   [33] Ciudad Real                    Cuenca                        
+##   [35] Guadalajara                    Toledo                        
+##   [37] Cataluña                       Barcelona                     
+##   [39] Girona                         Lleida                        
+##   [41] Tarragona                      Comunidad Valenciana          
+##   [43] Alicante                       Castellón de la Plana         
+##   [45] Valencia                       Extremadura                   
+##   [47] Badajoz                        Cáceres                       
+##   [49] Galicia                        Coruña (A)                    
+##   [51] Lugo                           Ourense                       
+##   [53] Pontevedra                     Madrid (Comunidad de)         
+##   [55] Murcia (Región de)             Navarra (Comun. Foral de)     
+##   [57] País Vasco                     Alava                         
+##   [59] Guipúzcoa                      Vizcaya                       
+##   [61] Rioja (La)                     Ceuta                         
+##   [63] Melilla                        Total                         
+##   [65] Andalucía                      Almería                       
+##   [67] Cádiz                          Córdoba                       
+##   [69] Granada                        Huelva                        
+##   [71] Jaén                           Málaga                        
+##   [73] Sevilla                        Aragón                        
+##   [75] Huesca                         Teruel                        
+##   [77] Zaragoza                       Asturias (Principado de)      
+##   [79] Balears (Illes)                Canarias                      
+##   [81] Palmas (Las)                   Santa Cruz de Tenerife        
+##   [83] Cantabria                      Castilla y León               
+##   [85] Avila                          Burgos                        
+##   [87] León                           Palencia                      
+##   [89] Salamanca                      Segovia                       
+##   [91] Soria                          Valladolid                    
+##   [93] Zamora                         Castilla - La Mancha          
+##   [95] Albacete                       Ciudad Real                   
+##   [97] Cuenca                         Guadalajara                   
+##   [99] Toledo                         Cataluña                      
+##  [101] Barcelona                      Girona                        
+##  [103] Lleida                         Tarragona                     
+##  [105] Comunidad Valenciana           Alicante                      
+##  [107] Castellón de la Plana          Valencia                      
+##  [109] Extremadura                    Badajoz                       
+##  [111] Cáceres                        Galicia                       
+##  [113] Coruña (A)                     Lugo                          
+##  [115] Ourense                        Pontevedra                    
+##  [117] Madrid (Comunidad de)          Murcia (Región de)            
+##  [119] Navarra (Comun. Foral de)      País Vasco                    
+##  [121] Alava                          Guipúzcoa                     
+##  [123] Vizcaya                        Rioja (La)                    
+##  [125] Ceuta                          Melilla                       
+##  [127] Total                          Andalucía                     
+##  [129] Almería                        Cádiz                         
+##  [131] Córdoba                        Granada                       
+##  [133] Huelva                         Jaén                          
+##  [135] Málaga                         Sevilla                       
+##  [137] Aragón                         Huesca                        
+##  [139] Teruel                         Zaragoza                      
+##  [141] Asturias (Principado de)       Balears (Illes)               
+##  [143] Canarias                       Palmas (Las)                  
+##  [145] Santa Cruz de Tenerife         Cantabria                     
+##  [147] Castilla y León                Avila                         
+##  [149] Burgos                         León                          
+##  [151] Palencia                       Salamanca                     
+##  [153] Segovia                        Soria                         
+##  [155] Valladolid                     Zamora                        
+##  [157] Castilla - La Mancha           Albacete                      
+##  [159] Ciudad Real                    Cuenca                        
+##  [161] Guadalajara                    Toledo                        
+##  [163] Cataluña                       Barcelona                     
+##  [165] Girona                         Lleida                        
+##  [167] Tarragona                      Comunidad Valenciana          
+##  [169] Alicante                       Castellón de la Plana         
+##  [171] Valencia                       Extremadura                   
+##  [173] Badajoz                        Cáceres                       
+##  [175] Galicia                        Coruña (A)                    
+##  [177] Lugo                           Ourense                       
+##  [179] Pontevedra                     Madrid (Comunidad de)         
+##  [181] Murcia (Región de)             Navarra (Comun. Foral de)     
+##  [183] País Vasco                     Alava                         
+##  [185] Guipúzcoa                      Vizcaya                       
+##  [187] Rioja (La)                     Ceuta                         
+##  [189] Melilla                        Total                         
+##  [191] Andalucía                      Almería                       
+##  [193] Cádiz                          Córdoba                       
+##  [195] Granada                        Huelva                        
+##  [197] Jaén                           Málaga                        
+##  [199] Sevilla                        Aragón                        
+##  [201] Huesca                         Teruel                        
+##  [203] Zaragoza                       Asturias (Principado de)      
+##  [205] Balears (Illes)                Canarias                      
+##  [207] Palmas (Las)                   Santa Cruz de Tenerife        
+##  [209] Cantabria                      Castilla y León               
+##  [211] Avila                          Burgos                        
+##  [213] León                           Palencia                      
+##  [215] Salamanca                      Segovia                       
+##  [217] Soria                          Valladolid                    
+##  [219] Zamora                         Castilla - La Mancha          
+##  [221] Albacete                       Ciudad Real                   
+##  [223] Cuenca                         Guadalajara                   
+##  [225] Toledo                         Cataluña                      
+##  [227] Barcelona                      Girona                        
+##  [229] Lleida                         Tarragona                     
+##  [231] Comunidad Valenciana           Alicante                      
+##  [233] Castellón de la Plana          Valencia                      
+##  [235] Extremadura                    Badajoz                       
+##  [237] Cáceres                        Galicia                       
+##  [239] Coruña (A)                     Lugo                          
+##  [241] Ourense                        Pontevedra                    
+##  [243] Madrid (Comunidad de)          Murcia (Región de)            
+##  [245] Navarra (Comun. Foral de)      País Vasco                    
+##  [247] Alava                          Guipúzcoa                     
+##  [249] Vizcaya                        Rioja (La)                    
+##  [251] Ceuta                          Melilla                       
+##  [253] Total                          Andalucía                     
+##  [255] Almería                        Cádiz                         
+##  [257] Córdoba                        Granada                       
+##  [259] Huelva                         Jaén                          
+##  [261] Málaga                         Sevilla                       
+##  [263] Aragón                         Huesca                        
+##  [265] Teruel                         Zaragoza                      
+##  [267] Asturias (Principado de)       Balears (Illes)               
+##  [269] Canarias                       Palmas (Las)                  
+##  [271] Santa Cruz de Tenerife         Cantabria                     
+##  [273] Castilla y León                Avila                         
+##  [275] Burgos                         León                          
+##  [277] Palencia                       Salamanca                     
+##  [279] Segovia                        Soria                         
+##  [281] Valladolid                     Zamora                        
+##  [283] Castilla - La Mancha           Albacete                      
+##  [285] Ciudad Real                    Cuenca                        
+##  [287] Guadalajara                    Toledo                        
+##  [289] Cataluña                       Barcelona                     
+##  [291] Girona                         Lleida                        
+##  [293] Tarragona                      Comunidad Valenciana          
+##  [295] Alicante                       Castellón de la Plana         
+##  [297] Valencia                       Extremadura                   
+##  [299] Badajoz                        Cáceres                       
+##  [301] Galicia                        Coruña (A)                    
+##  [303] Lugo                           Ourense                       
+##  [305] Pontevedra                     Madrid (Comunidad de)         
+##  [307] Murcia (Región de)             Navarra (Comun. Foral de)     
+##  [309] País Vasco                     Alava                         
+##  [311] Guipúzcoa                      Vizcaya                       
+##  [313] Rioja (La)                     Ceuta                         
+##  [315] Melilla                        Total                         
+##  [317] Andalucía                      Almería                       
+##  [319] Cádiz                          Córdoba                       
+##  [321] Granada                        Huelva                        
+##  [323] Jaén                           Málaga                        
+##  [325] Sevilla                        Aragón                        
+##  [327] Huesca                         Teruel                        
+##  [329] Zaragoza                       Asturias (Principado de)      
+##  [331] Balears (Illes)                Canarias                      
+##  [333] Palmas (Las)                   Santa Cruz de Tenerife        
+##  [335] Cantabria                      Castilla y León               
+##  [337] Avila                          Burgos                        
+##  [339] León                           Palencia                      
+##  [341] Salamanca                      Segovia                       
+##  [343] Soria                          Valladolid                    
+##  [345] Zamora                         Castilla - La Mancha          
+##  [347] Albacete                       Ciudad Real                   
+##  [349] Cuenca                         Guadalajara                   
+##  [351] Toledo                         Cataluña                      
+##  [353] Barcelona                      Girona                        
+##  [355] Lleida                         Tarragona                     
+##  [357] Comunidad Valenciana           Alicante                      
+##  [359] Castellón de la Plana          Valencia                      
+##  [361] Extremadura                    Badajoz                       
+##  [363] Cáceres                        Galicia                       
+##  [365] Coruña (A)                     Lugo                          
+##  [367] Ourense                        Pontevedra                    
+##  [369] Madrid (Comunidad de)          Murcia (Región de)            
+##  [371] Navarra (Comun. Foral de)      País Vasco                    
+##  [373] Alava                          Guipúzcoa                     
+##  [375] Vizcaya                        Rioja (La)                    
+##  [377] Ceuta                          Melilla                       
+##  [379] Total                          Andalucía                     
+##  [381] Almería                        Cádiz                         
+##  [383] Córdoba                        Granada                       
+##  [385] Huelva                         Jaén                          
+##  [387] Málaga                         Sevilla                       
+##  [389] Aragón                         Huesca                        
+##  [391] Teruel                         Zaragoza                      
+##  [393] Asturias (Principado de)       Balears (Illes)               
+##  [395] Canarias                       Palmas (Las)                  
+##  [397] Santa Cruz de Tenerife         Cantabria                     
+##  [399] Castilla y León                Avila                         
+##  [401] Burgos                         León                          
+##  [403] Palencia                       Salamanca                     
+##  [405] Segovia                        Soria                         
+##  [407] Valladolid                     Zamora                        
+##  [409] Castilla - La Mancha           Albacete                      
+##  [411] Ciudad Real                    Cuenca                        
+##  [413] Guadalajara                    Toledo                        
+##  [415] Cataluña                       Barcelona                     
+##  [417] Girona                         Lleida                        
+##  [419] Tarragona                      Comunidad Valenciana          
+##  [421] Alicante                       Castellón de la Plana         
+##  [423] Valencia                       Extremadura                   
+##  [425] Badajoz                        Cáceres                       
+##  [427] Galicia                        Coruña (A)                    
+##  [429] Lugo                           Ourense                       
+##  [431] Pontevedra                     Madrid (Comunidad de)         
+##  [433] Murcia (Región de)             Navarra (Comun. Foral de)     
+##  [435] País Vasco                     Alava                         
+##  [437] Guipúzcoa                      Vizcaya                       
+##  [439] Rioja (La)                     Ceuta                         
+##  [441] Melilla                        Total                         
+##  [443] Andalucía                      Almería                       
+##  [445] Cádiz                          Córdoba                       
+##  [447] Granada                        Huelva                        
+##  [449] Jaén                           Málaga                        
+##  [451] Sevilla                        Aragón                        
+##  [453] Huesca                         Teruel                        
+##  [455] Zaragoza                       Asturias (Principado de)      
+##  [457] Balears (Illes)                Canarias                      
+##  [459] Palmas (Las)                   Santa Cruz de Tenerife        
+##  [461] Cantabria                      Castilla y León               
+##  [463] Avila                          Burgos                        
+##  [465] León                           Palencia                      
+##  [467] Salamanca                      Segovia                       
+##  [469] Soria                          Valladolid                    
+##  [471] Zamora                         Castilla - La Mancha          
+##  [473] Albacete                       Ciudad Real                   
+##  [475] Cuenca                         Guadalajara                   
+##  [477] Toledo                         Cataluña                      
+##  [479] Barcelona                      Girona                        
+##  [481] Lleida                         Tarragona                     
+##  [483] Comunidad Valenciana           Alicante                      
+##  [485] Castellón de la Plana          Valencia                      
+##  [487] Extremadura                    Badajoz                       
+##  [489] Cáceres                        Galicia                       
+##  [491] Coruña (A)                     Lugo                          
+##  [493] Ourense                        Pontevedra                    
+##  [495] Madrid (Comunidad de)          Murcia (Región de)            
+##  [497] Navarra (Comun. Foral de)      País Vasco                    
+##  [499] Alava                          Guipúzcoa                     
+##  [501] Vizcaya                        Rioja (La)                    
+##  [503] Ceuta                          Melilla                       
+##  [505] Total                          Andalucía                     
+##  [507] Almería                        Cádiz                         
+##  [509] Córdoba                        Granada                       
+##  [511] Huelva                         Jaén                          
+##  [513] Málaga                         Sevilla                       
+##  [515] Aragón                         Huesca                        
+##  [517] Teruel                         Zaragoza                      
+##  [519] Asturias (Principado de)       Balears (Illes)               
+##  [521] Canarias                       Palmas (Las)                  
+##  [523] Santa Cruz de Tenerife         Cantabria                     
+##  [525] Castilla y León                Avila                         
+##  [527] Burgos                         León                          
+##  [529] Palencia                       Salamanca                     
+##  [531] Segovia                        Soria                         
+##  [533] Valladolid                     Zamora                        
+##  [535] Castilla - La Mancha           Albacete                      
+##  [537] Ciudad Real                    Cuenca                        
+##  [539] Guadalajara                    Toledo                        
+##  [541] Cataluña                       Barcelona                     
+##  [543] Girona                         Lleida                        
+##  [545] Tarragona                      Comunidad Valenciana          
+##  [547] Alicante                       Castellón de la Plana         
+##  [549] Valencia                       Extremadura                   
+##  [551] Badajoz                        Cáceres                       
+##  [553] Galicia                        Coruña (A)                    
+##  [555] Lugo                           Ourense                       
+##  [557] Pontevedra                     Madrid (Comunidad de)         
+##  [559] Murcia (Región de)             Navarra (Comun. Foral de)     
+##  [561] País Vasco                     Alava                         
+##  [563] Guipúzcoa                      Vizcaya                       
+##  [565] Rioja (La)                     Ceuta                         
+##  [567] Melilla                        Total                         
+##  [569] Andalucía                      Almería                       
+##  [571] Cádiz                          Córdoba                       
+##  [573] Granada                        Huelva                        
+##  [575] Jaén                           Málaga                        
+##  [577] Sevilla                        Aragón                        
+##  [579] Huesca                         Teruel                        
+##  [581] Zaragoza                       Asturias (Principado de)      
+##  [583] Balears (Illes)                Canarias                      
+##  [585] Palmas (Las)                   Santa Cruz de Tenerife        
+##  [587] Cantabria                      Castilla y León               
+##  [589] Avila                          Burgos                        
+##  [591] León                           Palencia                      
+##  [593] Salamanca                      Segovia                       
+##  [595] Soria                          Valladolid                    
+##  [597] Zamora                         Castilla - La Mancha          
+##  [599] Albacete                       Ciudad Real                   
+##  [601] Cuenca                         Guadalajara                   
+##  [603] Toledo                         Cataluña                      
+##  [605] Barcelona                      Girona                        
+##  [607] Lleida                         Tarragona                     
+##  [609] Comunidad Valenciana           Alicante                      
+##  [611] Castellón de la Plana          Valencia                      
+##  [613] Extremadura                    Badajoz                       
+##  [615] Cáceres                        Galicia                       
+##  [617] Coruña (A)                     Lugo                          
+##  [619] Ourense                        Pontevedra                    
+##  [621] Madrid (Comunidad de)          Murcia (Región de)            
+##  [623] Navarra (Comun. Foral de)      País Vasco                    
+##  [625] Alava                          Guipúzcoa                     
+##  [627] Vizcaya                        Rioja (La)                    
+##  [629] Ceuta                          Melilla                       
+##  [631] Total                          Andalucía                     
+##  [633] Almería                        Cádiz                         
+##  [635] Córdoba                        Granada                       
+##  [637] Huelva                         Jaén                          
+##  [639] Málaga                         Sevilla                       
+##  [641] Aragón                         Huesca                        
+##  [643] Teruel                         Zaragoza                      
+##  [645] Asturias (Principado de)       Balears (Illes)               
+##  [647] Canarias                       Palmas (Las)                  
+##  [649] Santa Cruz de Tenerife         Cantabria                     
+##  [651] Castilla y León                Avila                         
+##  [653] Burgos                         León                          
+##  [655] Palencia                       Salamanca                     
+##  [657] Segovia                        Soria                         
+##  [659] Valladolid                     Zamora                        
+##  [661] Castilla - La Mancha           Albacete                      
+##  [663] Ciudad Real                    Cuenca                        
+##  [665] Guadalajara                    Toledo                        
+##  [667] Cataluña                       Barcelona                     
+##  [669] Girona                         Lleida                        
+##  [671] Tarragona                      Comunidad Valenciana          
+##  [673] Alicante                       Castellón de la Plana         
+##  [675] Valencia                       Extremadura                   
+##  [677] Badajoz                        Cáceres                       
+##  [679] Galicia                        Coruña (A)                    
+##  [681] Lugo                           Ourense                       
+##  [683] Pontevedra                     Madrid (Comunidad de)         
+##  [685] Murcia (Región de)             Navarra (Comun. Foral de)     
+##  [687] País Vasco                     Alava                         
+##  [689] Guipúzcoa                      Vizcaya                       
+##  [691] Rioja (La)                     Ceuta                         
+##  [693] Melilla                        Total                         
+##  [695] Andalucía                      Almería                       
+##  [697] Cádiz                          Córdoba                       
+##  [699] Granada                        Huelva                        
+##  [701] Jaén                           Málaga                        
+##  [703] Sevilla                        Aragón                        
+##  [705] Huesca                         Teruel                        
+##  [707] Zaragoza                       Asturias (Principado de)      
+##  [709] Balears (Illes)                Canarias                      
+##  [711] Palmas (Las)                   Santa Cruz de Tenerife        
+##  [713] Cantabria                      Castilla y León               
+##  [715] Avila                          Burgos                        
+##  [717] León                           Palencia                      
+##  [719] Salamanca                      Segovia                       
+##  [721] Soria                          Valladolid                    
+##  [723] Zamora                         Castilla - La Mancha          
+##  [725] Albacete                       Ciudad Real                   
+##  [727] Cuenca                         Guadalajara                   
+##  [729] Toledo                         Cataluña                      
+##  [731] Barcelona                      Girona                        
+##  [733] Lleida                         Tarragona                     
+##  [735] Comunidad Valenciana           Alicante                      
+##  [737] Castellón de la Plana          Valencia                      
+##  [739] Extremadura                    Badajoz                       
+##  [741] Cáceres                        Galicia                       
+##  [743] Coruña (A)                     Lugo                          
+##  [745] Ourense                        Pontevedra                    
+##  [747] Madrid (Comunidad de)          Murcia (Región de)            
+##  [749] Navarra (Comun. Foral de)      País Vasco                    
+##  [751] Alava                          Guipúzcoa                     
+##  [753] Vizcaya                        Rioja (La)                    
+##  [755] Ceuta                          Melilla                       
+##  [757] Total                          Andalucía                     
+##  [759] Almería                        Cádiz                         
+##  [761] Córdoba                        Granada                       
+##  [763] Huelva                         Jaén                          
+##  [765] Málaga                         Sevilla                       
+##  [767] Aragón                         Huesca                        
+##  [769] Teruel                         Zaragoza                      
+##  [771] Asturias (Principado de)       Balears (Illes)               
+##  [773] Canarias                       Palmas (Las)                  
+##  [775] Santa Cruz de Tenerife         Cantabria                     
+##  [777] Castilla y León                Avila                         
+##  [779] Burgos                         León                          
+##  [781] Palencia                       Salamanca                     
+##  [783] Segovia                        Soria                         
+##  [785] Valladolid                     Zamora                        
+##  [787] Castilla - La Mancha           Albacete                      
+##  [789] Ciudad Real                    Cuenca                        
+##  [791] Guadalajara                    Toledo                        
+##  [793] Cataluña                       Barcelona                     
+##  [795] Girona                         Lleida                        
+##  [797] Tarragona                      Comunidad Valenciana          
+##  [799] Alicante                       Castellón de la Plana         
+##  [801] Valencia                       Extremadura                   
+##  [803] Badajoz                        Cáceres                       
+##  [805] Galicia                        Coruña (A)                    
+##  [807] Lugo                           Ourense                       
+##  [809] Pontevedra                     Madrid (Comunidad de)         
+##  [811] Murcia (Región de)             Navarra (Comun. Foral de)     
+##  [813] País Vasco                     Alava                         
+##  [815] Guipúzcoa                      Vizcaya                       
+##  [817] Rioja (La)                     Ceuta                         
+##  [819] Melilla                        Total                         
+##  [821] Andalucía                      Almería                       
+##  [823] Cádiz                          Córdoba                       
+##  [825] Granada                        Huelva                        
+##  [827] Jaén                           Málaga                        
+##  [829] Sevilla                        Aragón                        
+##  [831] Huesca                         Teruel                        
+##  [833] Zaragoza                       Asturias (Principado de)      
+##  [835] Balears (Illes)                Canarias                      
+##  [837] Palmas (Las)                   Santa Cruz de Tenerife        
+##  [839] Cantabria                      Castilla y León               
+##  [841] Avila                          Burgos                        
+##  [843] León                           Palencia                      
+##  [845] Salamanca                      Segovia                       
+##  [847] Soria                          Valladolid                    
+##  [849] Zamora                         Castilla - La Mancha          
+##  [851] Albacete                       Ciudad Real                   
+##  [853] Cuenca                         Guadalajara                   
+##  [855] Toledo                         Cataluña                      
+##  [857] Barcelona                      Girona                        
+##  [859] Lleida                         Tarragona                     
+##  [861] Comunidad Valenciana           Alicante                      
+##  [863] Castellón de la Plana          Valencia                      
+##  [865] Extremadura                    Badajoz                       
+##  [867] Cáceres                        Galicia                       
+##  [869] Coruña (A)                     Lugo                          
+##  [871] Ourense                        Pontevedra                    
+##  [873] Madrid (Comunidad de)          Murcia (Región de)            
+##  [875] Navarra (Comun. Foral de)      País Vasco                    
+##  [877] Alava                          Guipúzcoa                     
+##  [879] Vizcaya                        Rioja (La)                    
+##  [881] Ceuta                          Melilla                       
+##  [883] Total                          Andalucía                     
+##  [885] Almería                        Cádiz                         
+##  [887] Córdoba                        Granada                       
+##  [889] Huelva                         Jaén                          
+##  [891] Málaga                         Sevilla                       
+##  [893] Aragón                         Huesca                        
+##  [895] Teruel                         Zaragoza                      
+##  [897] Asturias (Principado de)       Balears (Illes)               
+##  [899] Canarias                       Palmas (Las)                  
+##  [901] Santa Cruz de Tenerife         Cantabria                     
+##  [903] Castilla y León                Avila                         
+##  [905] Burgos                         León                          
+##  [907] Palencia                       Salamanca                     
+##  [909] Segovia                        Soria                         
+##  [911] Valladolid                     Zamora                        
+##  [913] Castilla - La Mancha           Albacete                      
+##  [915] Ciudad Real                    Cuenca                        
+##  [917] Guadalajara                    Toledo                        
+##  [919] Cataluña                       Barcelona                     
+##  [921] Girona                         Lleida                        
+##  [923] Tarragona                      Comunidad Valenciana          
+##  [925] Alicante/Alacant               Castellón/Castelló            
+##  [927] Valencia/València              Extremadura                   
+##  [929] Badajoz                        Cáceres                       
+##  [931] Galicia                        Coruña (A)                    
+##  [933] Lugo                           Ourense                       
+##  [935] Pontevedra                     Madrid (Comunidad de)         
+##  [937] Murcia (Región de)             Navarra (Comun. Foral de)     
+##  [939] País Vasco                     Alava                         
+##  [941] Guipúzcoa                      Vizcaya                       
+##  [943] Rioja (La)                     Ceuta                         
+##  [945] Melilla                        Total                         
+##  [947] Andalucía                      Almería                       
+##  [949] Cádiz                          Córdoba                       
+##  [951] Granada                        Huelva                        
+##  [953] Jaén                           Málaga                        
+##  [955] Sevilla                        Aragón                        
+##  [957] Huesca                         Teruel                        
+##  [959] Zaragoza                       Asturias (Principado de)      
+##  [961] Balears (Illes)                Canarias                      
+##  [963] Palmas (Las)                   Santa Cruz de Tenerife        
+##  [965] Cantabria                      Castilla y León               
+##  [967] Avila                          Burgos                        
+##  [969] León                           Palencia                      
+##  [971] Salamanca                      Segovia                       
+##  [973] Soria                          Valladolid                    
+##  [975] Zamora                         Castilla - La Mancha          
+##  [977] Albacete                       Ciudad Real                   
+##  [979] Cuenca                         Guadalajara                   
+##  [981] Toledo                         Cataluña                      
+##  [983] Barcelona                      Girona                        
+##  [985] Lleida                         Tarragona                     
+##  [987] Comunidad Valenciana           Alicante/Alacant              
+##  [989] Castellón/Castelló             Valencia/València             
+##  [991] Extremadura                    Badajoz                       
+##  [993] Cáceres                        Galicia                       
+##  [995] Coruña (A)                     Lugo                          
+##  [997] Ourense                        Pontevedra                    
+##  [999] Madrid (Comunidad de)          Murcia (Región de)            
+## [1001] Navarra (Comun. Foral de)      País Vasco                    
+## [1003] Alava                          Guipúzcoa                     
+## [1005] Vizcaya                        Rioja (La)                    
+## [1007] Ceuta                          Melilla                       
+## [1009] Total                          Andalucía                     
+## [1011] Almería                        Cádiz                         
+## [1013] Córdoba                        Granada                       
+## [1015] Huelva                         Jaén                          
+## [1017] Málaga                         Sevilla                       
+## [1019] Aragón                         Huesca                        
+## [1021] Teruel                         Zaragoza                      
+## [1023] Asturias (Principado de)       Balears (Illes)               
+## [1025] Canarias                       Palmas (Las)                  
+## [1027] Santa Cruz de Tenerife         Cantabria                     
+## [1029] Castilla y León                Avila                         
+## [1031] Burgos                         León                          
+## [1033] Palencia                       Salamanca                     
+## [1035] Segovia                        Soria                         
+## [1037] Valladolid                     Zamora                        
+## [1039] Castilla - La Mancha           Albacete                      
+## [1041] Ciudad Real                    Cuenca                        
+## [1043] Guadalajara                    Toledo                        
+## [1045] Cataluña                       Barcelona                     
+## [1047] Girona                         Lleida                        
+## [1049] Tarragona                      Comunidad Valenciana          
+## [1051] Alicante/Alacant               Castellón/Castelló            
+## [1053] Valencia/València              Extremadura                   
+## [1055] Badajoz                        Cáceres                       
+## [1057] Galicia                        Coruña (A)                    
+## [1059] Lugo                           Ourense                       
+## [1061] Pontevedra                     Madrid (Comunidad de)         
+## [1063] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [1065] País Vasco                     Alava                         
+## [1067] Guipúzcoa                      Vizcaya                       
+## [1069] Rioja (La)                     Ceuta                         
+## [1071] Melilla                        Total                         
+## [1073] Andalucía                      Almería                       
+## [1075] Cádiz                          Córdoba                       
+## [1077] Granada                        Huelva                        
+## [1079] Jaén                           Málaga                        
+## [1081] Sevilla                        Aragón                        
+## [1083] Huesca                         Teruel                        
+## [1085] Zaragoza                       Asturias (Principado de)      
+## [1087] Balears (Illes)                Canarias                      
+## [1089] Palmas (Las)                   Santa Cruz de Tenerife        
+## [1091] Cantabria                      Castilla y León               
+## [1093] Avila                          Burgos                        
+## [1095] León                           Palencia                      
+## [1097] Salamanca                      Segovia                       
+## [1099] Soria                          Valladolid                    
+## [1101] Zamora                         Castilla - La Mancha          
+## [1103] Albacete                       Ciudad Real                   
+## [1105] Cuenca                         Guadalajara                   
+## [1107] Toledo                         Cataluña                      
+## [1109] Barcelona                      Girona                        
+## [1111] Lleida                         Tarragona                     
+## [1113] Comunidad Valenciana           Alicante/Alacant              
+## [1115] Castellón/Castelló             Valencia/València             
+## [1117] Extremadura                    Badajoz                       
+## [1119] Cáceres                        Galicia                       
+## [1121] Coruña (A)                     Lugo                          
+## [1123] Ourense                        Pontevedra                    
+## [1125] Madrid (Comunidad de)          Murcia (Región de)            
+## [1127] Navarra (Comun. Foral de)      País Vasco                    
+## [1129] Alava                          Guipúzcoa                     
+## [1131] Vizcaya                        Rioja (La)                    
+## [1133] Ceuta                          Melilla                       
+## [1135] Total                          Andalucía                     
+## [1137] Almería                        Cádiz                         
+## [1139] Córdoba                        Granada                       
+## [1141] Huelva                         Jaén                          
+## [1143] Málaga                         Sevilla                       
+## [1145] Aragón                         Huesca                        
+## [1147] Teruel                         Zaragoza                      
+## [1149] Asturias (Principado de)       Balears (Illes)               
+## [1151] Canarias                       Palmas (Las)                  
+## [1153] Santa Cruz de Tenerife         Cantabria                     
+## [1155] Castilla y León                Avila                         
+## [1157] Burgos                         León                          
+## [1159] Palencia                       Salamanca                     
+## [1161] Segovia                        Soria                         
+## [1163] Valladolid                     Zamora                        
+## [1165] Castilla - La Mancha           Albacete                      
+## [1167] Ciudad Real                    Cuenca                        
+## [1169] Guadalajara                    Toledo                        
+## [1171] Cataluña                       Barcelona                     
+## [1173] Girona                         Lleida                        
+## [1175] Tarragona                      Comunidad Valenciana          
+## [1177] Alicante/Alacant               Castellón/Castelló            
+## [1179] Valencia/València              Extremadura                   
+## [1181] Badajoz                        Cáceres                       
+## [1183] Galicia                        Coruña (A)                    
+## [1185] Lugo                           Ourense                       
+## [1187] Pontevedra                     Madrid (Comunidad de)         
+## [1189] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [1191] País Vasco                     Alava                         
+## [1193] Guipúzcoa                      Vizcaya                       
+## [1195] Rioja (La)                     Ceuta                         
+## [1197] Melilla                        Total                         
+## [1199] Andalucía                      Almería                       
+## [1201] Cádiz                          Córdoba                       
+## [1203] Granada                        Huelva                        
+## [1205] Jaén                           Málaga                        
+## [1207] Sevilla                        Aragón                        
+## [1209] Huesca                         Teruel                        
+## [1211] Zaragoza                       Asturias (Principado de)      
+## [1213] Balears (Illes)                Canarias                      
+## [1215] Palmas (Las)                   Santa Cruz de Tenerife        
+## [1217] Cantabria                      Castilla y León               
+## [1219] Avila                          Burgos                        
+## [1221] León                           Palencia                      
+## [1223] Salamanca                      Segovia                       
+## [1225] Soria                          Valladolid                    
+## [1227] Zamora                         Castilla - La Mancha          
+## [1229] Albacete                       Ciudad Real                   
+## [1231] Cuenca                         Guadalajara                   
+## [1233] Toledo                         Cataluña                      
+## [1235] Barcelona                      Girona                        
+## [1237] Lleida                         Tarragona                     
+## [1239] Comunidad Valenciana           Alicante/Alacant              
+## [1241] Castellón/Castelló             Valencia/València             
+## [1243] Extremadura                    Badajoz                       
+## [1245] Cáceres                        Galicia                       
+## [1247] Coruña (A)                     Lugo                          
+## [1249] Ourense                        Pontevedra                    
+## [1251] Madrid (Comunidad de)          Murcia (Región de)            
+## [1253] Navarra (Comun. Foral de)      País Vasco                    
+## [1255] Alava                          Guipúzcoa                     
+## [1257] Vizcaya                        Rioja (La)                    
+## [1259] Ceuta                          Melilla                       
+## [1261] Total                          Andalucía                     
+## [1263] Almería                        Cádiz                         
+## [1265] Córdoba                        Granada                       
+## [1267] Huelva                         Jaén                          
+## [1269] Málaga                         Sevilla                       
+## [1271] Aragón                         Huesca                        
+## [1273] Teruel                         Zaragoza                      
+## [1275] Asturias (Principado de)       Balears (Illes)               
+## [1277] Canarias                       Palmas (Las)                  
+## [1279] Santa Cruz de Tenerife         Cantabria                     
+## [1281] Castilla y León                Avila                         
+## [1283] Burgos                         León                          
+## [1285] Palencia                       Salamanca                     
+## [1287] Segovia                        Soria                         
+## [1289] Valladolid                     Zamora                        
+## [1291] Castilla - La Mancha           Albacete                      
+## [1293] Ciudad Real                    Cuenca                        
+## [1295] Guadalajara                    Toledo                        
+## [1297] Cataluña                       Barcelona                     
+## [1299] Girona                         Lleida                        
+## [1301] Tarragona                      Comunidad Valenciana          
+## [1303] Alicante/Alacant               Castellón/Castelló            
+## [1305] Valencia/València              Extremadura                   
+## [1307] Badajoz                        Cáceres                       
+## [1309] Galicia                        Coruña (A)                    
+## [1311] Lugo                           Ourense                       
+## [1313] Pontevedra                     Madrid (Comunidad de)         
+## [1315] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [1317] País Vasco                     Alava                         
+## [1319] Guipúzcoa                      Vizcaya                       
+## [1321] Rioja (La)                     Ceuta                         
+## [1323] Melilla                        Total                         
+## [1325] Andalucía                      Almería                       
+## [1327] Cádiz                          Córdoba                       
+## [1329] Granada                        Huelva                        
+## [1331] Jaén                           Málaga                        
+## [1333] Sevilla                        Aragón                        
+## [1335] Huesca                         Teruel                        
+## [1337] Zaragoza                       Asturias (Principado de)      
+## [1339] Balears (Illes)                Canarias                      
+## [1341] Palmas (Las)                   Santa Cruz de Tenerife        
+## [1343] Cantabria                      Castilla y León               
+## [1345] Avila                          Burgos                        
+## [1347] León                           Palencia                      
+## [1349] Salamanca                      Segovia                       
+## [1351] Soria                          Valladolid                    
+## [1353] Zamora                         Castilla - La Mancha          
+## [1355] Albacete                       Ciudad Real                   
+## [1357] Cuenca                         Guadalajara                   
+## [1359] Toledo                         Cataluña                      
+## [1361] Barcelona                      Girona                        
+## [1363] Lleida                         Tarragona                     
+## [1365] Comunidad Valenciana           Alicante/Alacant              
+## [1367] Castellón/Castelló             Valencia/València             
+## [1369] Extremadura                    Badajoz                       
+## [1371] Cáceres                        Galicia                       
+## [1373] Coruña (A)                     Lugo                          
+## [1375] Ourense                        Pontevedra                    
+## [1377] Madrid (Comunidad de)          Murcia (Región de)            
+## [1379] Navarra (Comun. Foral de)      País Vasco                    
+## [1381] Alava                          Guipúzcoa                     
+## [1383] Vizcaya                        Rioja (La)                    
+## [1385] Ceuta                          Melilla                       
+## [1387] Total                          Andalucía                     
+## [1389] Almería                        Cádiz                         
+## [1391] Córdoba                        Granada                       
+## [1393] Huelva                         Jaén                          
+## [1395] Málaga                         Sevilla                       
+## [1397] Aragón                         Huesca                        
+## [1399] Teruel                         Zaragoza                      
+## [1401] Asturias (Principado de)       Balears (Illes)               
+## [1403] Canarias                       Palmas (Las)                  
+## [1405] Santa Cruz de Tenerife         Cantabria                     
+## [1407] Castilla y León                Avila                         
+## [1409] Burgos                         León                          
+## [1411] Palencia                       Salamanca                     
+## [1413] Segovia                        Soria                         
+## [1415] Valladolid                     Zamora                        
+## [1417] Castilla - La Mancha           Albacete                      
+## [1419] Ciudad Real                    Cuenca                        
+## [1421] Guadalajara                    Toledo                        
+## [1423] Cataluña                       Barcelona                     
+## [1425] Girona                         Lleida                        
+## [1427] Tarragona                      Comunidad Valenciana          
+## [1429] Alicante/Alacant               Castellón/Castelló            
+## [1431] Valencia/València              Extremadura                   
+## [1433] Badajoz                        Cáceres                       
+## [1435] Galicia                        Coruña (A)                    
+## [1437] Lugo                           Ourense                       
+## [1439] Pontevedra                     Madrid (Comunidad de)         
+## [1441] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [1443] País Vasco                     Alava                         
+## [1445] Guipúzcoa                      Vizcaya                       
+## [1447] Rioja (La)                     Ceuta                         
+## [1449] Melilla                        Total                         
+## [1451] Andalucía                      Almería                       
+## [1453] Cádiz                          Córdoba                       
+## [1455] Granada                        Huelva                        
+## [1457] Jaén                           Málaga                        
+## [1459] Sevilla                        Aragón                        
+## [1461] Huesca                         Teruel                        
+## [1463] Zaragoza                       Asturias (Principado de)      
+## [1465] Balears (Illes)                Canarias                      
+## [1467] Palmas (Las)                   Santa Cruz de Tenerife        
+## [1469] Cantabria                      Castilla y León               
+## [1471] Avila                          Burgos                        
+## [1473] León                           Palencia                      
+## [1475] Salamanca                      Segovia                       
+## [1477] Soria                          Valladolid                    
+## [1479] Zamora                         Castilla - La Mancha          
+## [1481] Albacete                       Ciudad Real                   
+## [1483] Cuenca                         Guadalajara                   
+## [1485] Toledo                         Cataluña                      
+## [1487] Barcelona                      Girona                        
+## [1489] Lleida                         Tarragona                     
+## [1491] Comunidad Valenciana           Alicante/Alacant              
+## [1493] Castellón/Castelló             Valencia/València             
+## [1495] Extremadura                    Badajoz                       
+## [1497] Cáceres                        Galicia                       
+## [1499] Coruña (A)                     Lugo                          
+## [1501] Ourense                        Pontevedra                    
+## [1503] Madrid (Comunidad de)          Murcia (Región de)            
+## [1505] Navarra (Comun. Foral de)      País Vasco                    
+## [1507] Alava                          Guipúzcoa                     
+## [1509] Vizcaya                        Rioja (La)                    
+## [1511] Ceuta                          Melilla                       
+## [1513] Total                          Andalucía                     
+## [1515] Almería                        Cádiz                         
+## [1517] Córdoba                        Granada                       
+## [1519] Huelva                         Jaén                          
+## [1521] Málaga                         Sevilla                       
+## [1523] Aragón                         Huesca                        
+## [1525] Teruel                         Zaragoza                      
+## [1527] Asturias (Principado de)       Balears (Illes)               
+## [1529] Canarias                       Palmas (Las)                  
+## [1531] Santa Cruz de Tenerife         Cantabria                     
+## [1533] Castilla y León                Avila                         
+## [1535] Burgos                         León                          
+## [1537] Palencia                       Salamanca                     
+## [1539] Segovia                        Soria                         
+## [1541] Valladolid                     Zamora                        
+## [1543] Castilla - La Mancha           Albacete                      
+## [1545] Ciudad Real                    Cuenca                        
+## [1547] Guadalajara                    Toledo                        
+## [1549] Cataluña                       Barcelona                     
+## [1551] Girona                         Lleida                        
+## [1553] Tarragona                      Comunidad Valenciana          
+## [1555] Alicante/Alacant               Castellón/Castelló            
+## [1557] Valencia/València              Extremadura                   
+## [1559] Badajoz                        Cáceres                       
+## [1561] Galicia                        Coruña (A)                    
+## [1563] Lugo                           Ourense                       
+## [1565] Pontevedra                     Madrid (Comunidad de)         
+## [1567] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [1569] País Vasco                     Alava                         
+## [1571] Guipúzcoa                      Vizcaya                       
+## [1573] Rioja (La)                     Ceuta                         
+## [1575] Melilla                        Total                         
+## [1577] Andalucía                      Almería                       
+## [1579] Cádiz                          Córdoba                       
+## [1581] Granada                        Huelva                        
+## [1583] Jaén                           Málaga                        
+## [1585] Sevilla                        Aragón                        
+## [1587] Huesca                         Teruel                        
+## [1589] Zaragoza                       Asturias (Principado de)      
+## [1591] Balears (Illes)                Canarias                      
+## [1593] Palmas (Las)                   Santa Cruz de Tenerife        
+## [1595] Cantabria                      Castilla y León               
+## [1597] Avila                          Burgos                        
+## [1599] León                           Palencia                      
+## [1601] Salamanca                      Segovia                       
+## [1603] Soria                          Valladolid                    
+## [1605] Zamora                         Castilla - La Mancha          
+## [1607] Albacete                       Ciudad Real                   
+## [1609] Cuenca                         Guadalajara                   
+## [1611] Toledo                         Cataluña                      
+## [1613] Barcelona                      Girona                        
+## [1615] Lleida                         Tarragona                     
+## [1617] Comunidad Valenciana           Alicante/Alacant              
+## [1619] Castellón/Castelló             Valencia/València             
+## [1621] Extremadura                    Badajoz                       
+## [1623] Cáceres                        Galicia                       
+## [1625] Coruña (A)                     Lugo                          
+## [1627] Ourense                        Pontevedra                    
+## [1629] Madrid (Comunidad de)          Murcia (Región de)            
+## [1631] Navarra (Comun. Foral de)      País Vasco                    
+## [1633] Alava                          Guipúzcoa                     
+## [1635] Vizcaya                        Rioja (La)                    
+## [1637] Ceuta                          Melilla                       
+## [1639] Total                          Andalucía                     
+## [1641] Almería                        Cádiz                         
+## [1643] Córdoba                        Granada                       
+## [1645] Huelva                         Jaén                          
+## [1647] Málaga                         Sevilla                       
+## [1649] Aragón                         Huesca                        
+## [1651] Teruel                         Zaragoza                      
+## [1653] Asturias (Principado de)       Balears (Illes)               
+## [1655] Canarias                       Palmas (Las)                  
+## [1657] Santa Cruz de Tenerife         Cantabria                     
+## [1659] Castilla y León                Avila                         
+## [1661] Burgos                         León                          
+## [1663] Palencia                       Salamanca                     
+## [1665] Segovia                        Soria                         
+## [1667] Valladolid                     Zamora                        
+## [1669] Castilla - La Mancha           Albacete                      
+## [1671] Ciudad Real                    Cuenca                        
+## [1673] Guadalajara                    Toledo                        
+## [1675] Cataluña                       Barcelona                     
+## [1677] Girona                         Lleida                        
+## [1679] Tarragona                      Comunidad Valenciana          
+## [1681] Alicante/Alacant               Castellón/Castelló            
+## [1683] Valencia/València              Extremadura                   
+## [1685] Badajoz                        Cáceres                       
+## [1687] Galicia                        Coruña (A)                    
+## [1689] Lugo                           Ourense                       
+## [1691] Pontevedra                     Madrid (Comunidad de)         
+## [1693] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [1695] País Vasco                     Alava                         
+## [1697] Guipúzcoa                      Vizcaya                       
+## [1699] Rioja (La)                     Ceuta                         
+## [1701] Melilla                        Total                         
+## [1703] Andalucía                      Almería                       
+## [1705] Cádiz                          Córdoba                       
+## [1707] Granada                        Huelva                        
+## [1709] Jaén                           Málaga                        
+## [1711] Sevilla                        Aragón                        
+## [1713] Huesca                         Teruel                        
+## [1715] Zaragoza                       Asturias (Principado de)      
+## [1717] Balears (Illes)                Canarias                      
+## [1719] Palmas (Las)                   Santa Cruz de Tenerife        
+## [1721] Cantabria                      Castilla y León               
+## [1723] Avila                          Burgos                        
+## [1725] León                           Palencia                      
+## [1727] Salamanca                      Segovia                       
+## [1729] Soria                          Valladolid                    
+## [1731] Zamora                         Castilla - La Mancha          
+## [1733] Albacete                       Ciudad Real                   
+## [1735] Cuenca                         Guadalajara                   
+## [1737] Toledo                         Cataluña                      
+## [1739] Barcelona                      Girona                        
+## [1741] Lleida                         Tarragona                     
+## [1743] Comunidad Valenciana           Alicante/Alacant              
+## [1745] Castellón/Castelló             Valencia/València             
+## [1747] Extremadura                    Badajoz                       
+## [1749] Cáceres                        Galicia                       
+## [1751] Coruña (A)                     Lugo                          
+## [1753] Ourense                        Pontevedra                    
+## [1755] Madrid (Comunidad de)          Murcia (Región de)            
+## [1757] Navarra (Comun. Foral de)      País Vasco                    
+## [1759] Alava                          Guipúzcoa                     
+## [1761] Vizcaya                        Rioja (La)                    
+## [1763] Ceuta                          Melilla                       
+## [1765] Total                          Andalucía                     
+## [1767] Almería                        Cádiz                         
+## [1769] Córdoba                        Granada                       
+## [1771] Huelva                         Jaén                          
+## [1773] Málaga                         Sevilla                       
+## [1775] Aragón                         Huesca                        
+## [1777] Teruel                         Zaragoza                      
+## [1779] Asturias (Principado de)       Balears (Illes)               
+## [1781] Canarias                       Palmas (Las)                  
+## [1783] Santa Cruz de Tenerife         Cantabria                     
+## [1785] Castilla y León                Avila                         
+## [1787] Burgos                         León                          
+## [1789] Palencia                       Salamanca                     
+## [1791] Segovia                        Soria                         
+## [1793] Valladolid                     Zamora                        
+## [1795] Castilla - La Mancha           Albacete                      
+## [1797] Ciudad Real                    Cuenca                        
+## [1799] Guadalajara                    Toledo                        
+## [1801] Cataluña                       Barcelona                     
+## [1803] Girona                         Lleida                        
+## [1805] Tarragona                      Comunidad Valenciana          
+## [1807] Alicante/Alacant               Castellón/Castelló            
+## [1809] Valencia/València              Extremadura                   
+## [1811] Badajoz                        Cáceres                       
+## [1813] Galicia                        Coruña (A)                    
+## [1815] Lugo                           Ourense                       
+## [1817] Pontevedra                     Madrid (Comunidad de)         
+## [1819] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [1821] País Vasco                     Alava                         
+## [1823] Guipúzcoa                      Vizcaya                       
+## [1825] Rioja (La)                     Ceuta                         
+## [1827] Melilla                        Total                         
+## [1829] Andalucía                      Almería                       
+## [1831] Cádiz                          Córdoba                       
+## [1833] Granada                        Huelva                        
+## [1835] Jaén                           Málaga                        
+## [1837] Sevilla                        Aragón                        
+## [1839] Huesca                         Teruel                        
+## [1841] Zaragoza                       Asturias (Principado de)      
+## [1843] Balears (Illes)                Canarias                      
+## [1845] Palmas (Las)                   Santa Cruz de Tenerife        
+## [1847] Cantabria                      Castilla y León               
+## [1849] Avila                          Burgos                        
+## [1851] León                           Palencia                      
+## [1853] Salamanca                      Segovia                       
+## [1855] Soria                          Valladolid                    
+## [1857] Zamora                         Castilla - La Mancha          
+## [1859] Albacete                       Ciudad Real                   
+## [1861] Cuenca                         Guadalajara                   
+## [1863] Toledo                         Cataluña                      
+## [1865] Barcelona                      Girona                        
+## [1867] Lleida                         Tarragona                     
+## [1869] Comunitat Valenciana           Alicante/Alacant              
+## [1871] Castellón/Castelló             Valencia/València             
+## [1873] Extremadura                    Badajoz                       
+## [1875] Cáceres                        Galicia                       
+## [1877] Coruña (A)                     Lugo                          
+## [1879] Ourense                        Pontevedra                    
+## [1881] Madrid (Comunidad de)          Murcia (Región de)            
+## [1883] Navarra (Comun. Foral de)      País Vasco                    
+## [1885] Alava                          Guipúzcoa                     
+## [1887] Vizcaya                        Rioja (La)                    
+## [1889] Ceuta                          Melilla                       
+## [1891] Total                          Andalucía                     
+## [1893] Almería                        Cádiz                         
+## [1895] Córdoba                        Granada                       
+## [1897] Huelva                         Jaén                          
+## [1899] Málaga                         Sevilla                       
+## [1901] Aragón                         Huesca                        
+## [1903] Teruel                         Zaragoza                      
+## [1905] Asturias (Principado de)       Balears (Illes)               
+## [1907] Canarias                       Palmas (Las)                  
+## [1909] Santa Cruz de Tenerife         Cantabria                     
+## [1911] Castilla y León                Avila                         
+## [1913] Burgos                         León                          
+## [1915] Palencia                       Salamanca                     
+## [1917] Segovia                        Soria                         
+## [1919] Valladolid                     Zamora                        
+## [1921] Castilla - La Mancha           Albacete                      
+## [1923] Ciudad Real                    Cuenca                        
+## [1925] Guadalajara                    Toledo                        
+## [1927] Cataluña                       Barcelona                     
+## [1929] Girona                         Lleida                        
+## [1931] Tarragona                      Comunitat Valenciana          
+## [1933] Alicante/Alacant               Castellón/Castelló            
+## [1935] Valencia/València              Extremadura                   
+## [1937] Badajoz                        Cáceres                       
+## [1939] Galicia                        Coruña (A)                    
+## [1941] Lugo                           Ourense                       
+## [1943] Pontevedra                     Madrid (Comunidad de)         
+## [1945] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [1947] País Vasco                     Alava                         
+## [1949] Guipúzcoa                      Vizcaya                       
+## [1951] Rioja (La)                     Ceuta                         
+## [1953] Melilla                        Total                         
+## [1955] Andalucía                      Almería                       
+## [1957] Cádiz                          Córdoba                       
+## [1959] Granada                        Huelva                        
+## [1961] Jaén                           Málaga                        
+## [1963] Sevilla                        Aragón                        
+## [1965] Huesca                         Teruel                        
+## [1967] Zaragoza                       Asturias (Principado de)      
+## [1969] Balears (Illes)                Canarias                      
+## [1971] Palmas (Las)                   Santa Cruz de Tenerife        
+## [1973] Cantabria                      Castilla y León               
+## [1975] Avila                          Burgos                        
+## [1977] León                           Palencia                      
+## [1979] Salamanca                      Segovia                       
+## [1981] Soria                          Valladolid                    
+## [1983] Zamora                         Castilla - La Mancha          
+## [1985] Albacete                       Ciudad Real                   
+## [1987] Cuenca                         Guadalajara                   
+## [1989] Toledo                         Cataluña                      
+## [1991] Barcelona                      Girona                        
+## [1993] Lleida                         Tarragona                     
+## [1995] Comunitat Valenciana           Alicante/Alacant              
+## [1997] Castellón/Castelló             Valencia/València             
+## [1999] Extremadura                    Badajoz                       
+## [2001] Cáceres                        Galicia                       
+## [2003] Coruña (A)                     Lugo                          
+## [2005] Ourense                        Pontevedra                    
+## [2007] Madrid (Comunidad de)          Murcia (Región de)            
+## [2009] Navarra (Comun. Foral de)      País Vasco                    
+## [2011] Alava                          Guipúzcoa                     
+## [2013] Vizcaya                        Rioja (La)                    
+## [2015] Ceuta                          Melilla                       
+## [2017] Total                          Andalucía                     
+## [2019] Almería                        Cádiz                         
+## [2021] Córdoba                        Granada                       
+## [2023] Huelva                         Jaén                          
+## [2025] Málaga                         Sevilla                       
+## [2027] Aragón                         Huesca                        
+## [2029] Teruel                         Zaragoza                      
+## [2031] Asturias (Principado de)       Balears (Illes)               
+## [2033] Canarias                       Palmas (Las)                  
+## [2035] Santa Cruz de Tenerife         Cantabria                     
+## [2037] Castilla y León                Avila                         
+## [2039] Burgos                         León                          
+## [2041] Palencia                       Salamanca                     
+## [2043] Segovia                        Soria                         
+## [2045] Valladolid                     Zamora                        
+## [2047] Castilla - La Mancha           Albacete                      
+## [2049] Ciudad Real                    Cuenca                        
+## [2051] Guadalajara                    Toledo                        
+## [2053] Cataluña                       Barcelona                     
+## [2055] Girona                         Lleida                        
+## [2057] Tarragona                      Comunitat Valenciana          
+## [2059] Alicante/Alacant               Castellón/Castelló            
+## [2061] Valencia/València              Extremadura                   
+## [2063] Badajoz                        Cáceres                       
+## [2065] Galicia                        Coruña (A)                    
+## [2067] Lugo                           Ourense                       
+## [2069] Pontevedra                     Madrid (Comunidad de)         
+## [2071] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [2073] País Vasco                     Alava                         
+## [2075] Guipúzcoa                      Vizcaya                       
+## [2077] Rioja (La)                     Ceuta                         
+## [2079] Melilla                        Total                         
+## [2081] Andalucía                      Almería                       
+## [2083] Cádiz                          Córdoba                       
+## [2085] Granada                        Huelva                        
+## [2087] Jaén                           Málaga                        
+## [2089] Sevilla                        Aragón                        
+## [2091] Huesca                         Teruel                        
+## [2093] Zaragoza                       Asturias (Principado de)      
+## [2095] Balears (Illes)                Canarias                      
+## [2097] Palmas (Las)                   Santa Cruz de Tenerife        
+## [2099] Cantabria                      Castilla y León               
+## [2101] Avila                          Burgos                        
+## [2103] León                           Palencia                      
+## [2105] Salamanca                      Segovia                       
+## [2107] Soria                          Valladolid                    
+## [2109] Zamora                         Castilla - La Mancha          
+## [2111] Albacete                       Ciudad Real                   
+## [2113] Cuenca                         Guadalajara                   
+## [2115] Toledo                         Cataluña                      
+## [2117] Barcelona                      Girona                        
+## [2119] Lleida                         Tarragona                     
+## [2121] Comunitat Valenciana           Alicante/Alacant              
+## [2123] Castellón/Castelló             Valencia/València             
+## [2125] Extremadura                    Badajoz                       
+## [2127] Cáceres                        Galicia                       
+## [2129] Coruña (A)                     Lugo                          
+## [2131] Ourense                        Pontevedra                    
+## [2133] Madrid (Comunidad de)          Murcia (Región de)            
+## [2135] Navarra (Comun. Foral de)      País Vasco                    
+## [2137] Alava                          Guipúzcoa                     
+## [2139] Vizcaya                        Rioja (La)                    
+## [2141] Ceuta                          Melilla                       
+## [2143] Total                          Andalucía                     
+## [2145] Almería                        Cádiz                         
+## [2147] Córdoba                        Granada                       
+## [2149] Huelva                         Jaén                          
+## [2151] Málaga                         Sevilla                       
+## [2153] Aragón                         Huesca                        
+## [2155] Teruel                         Zaragoza                      
+## [2157] Asturias (Principado de)       Balears (Illes)               
+## [2159] Canarias                       Palmas (Las)                  
+## [2161] Santa Cruz de Tenerife         Cantabria                     
+## [2163] Castilla y León                Avila                         
+## [2165] Burgos                         León                          
+## [2167] Palencia                       Salamanca                     
+## [2169] Segovia                        Soria                         
+## [2171] Valladolid                     Zamora                        
+## [2173] Castilla - La Mancha           Albacete                      
+## [2175] Ciudad Real                    Cuenca                        
+## [2177] Guadalajara                    Toledo                        
+## [2179] Cataluña                       Barcelona                     
+## [2181] Girona                         Lleida                        
+## [2183] Tarragona                      Comunitat Valenciana          
+## [2185] Alicante/Alacant               Castellón/Castelló            
+## [2187] Valencia/València              Extremadura                   
+## [2189] Badajoz                        Cáceres                       
+## [2191] Galicia                        Coruña (A)                    
+## [2193] Lugo                           Ourense                       
+## [2195] Pontevedra                     Madrid (Comunidad de)         
+## [2197] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [2199] País Vasco                     Alava                         
+## [2201] Guipúzcoa                      Vizcaya                       
+## [2203] Rioja (La)                     Ceuta                         
+## [2205] Melilla                        Total                         
+## [2207] Andalucía                      Almería                       
+## [2209] Cádiz                          Córdoba                       
+## [2211] Granada                        Huelva                        
+## [2213] Jaén                           Málaga                        
+## [2215] Sevilla                        Aragón                        
+## [2217] Huesca                         Teruel                        
+## [2219] Zaragoza                       Asturias (Principado de)      
+## [2221] Balears (Illes)                Canarias                      
+## [2223] Palmas (Las)                   Santa Cruz de Tenerife        
+## [2225] Cantabria                      Castilla y León               
+## [2227] Avila                          Burgos                        
+## [2229] León                           Palencia                      
+## [2231] Salamanca                      Segovia                       
+## [2233] Soria                          Valladolid                    
+## [2235] Zamora                         Castilla - La Mancha          
+## [2237] Albacete                       Ciudad Real                   
+## [2239] Cuenca                         Guadalajara                   
+## [2241] Toledo                         Cataluña                      
+## [2243] Barcelona                      Girona                        
+## [2245] Lleida                         Tarragona                     
+## [2247] Comunitat Valenciana           Alicante/Alacant              
+## [2249] Castellón/Castelló             Valencia/València             
+## [2251] Extremadura                    Badajoz                       
+## [2253] Cáceres                        Galicia                       
+## [2255] Coruña (A)                     Lugo                          
+## [2257] Ourense                        Pontevedra                    
+## [2259] Madrid (Comunidad de)          Murcia (Región de)            
+## [2261] Navarra (Comun. Foral de)      País Vasco                    
+## [2263] Alava                          Guipúzcoa                     
+## [2265] Vizcaya                        Rioja (La)                    
+## [2267] Ceuta                          Melilla                       
+## [2269] Total                          Andalucía                     
+## [2271] Almería                        Cádiz                         
+## [2273] Córdoba                        Granada                       
+## [2275] Huelva                         Jaén                          
+## [2277] Málaga                         Sevilla                       
+## [2279] Aragón                         Huesca                        
+## [2281] Teruel                         Zaragoza                      
+## [2283] Asturias (Principado de)       Balears (Illes)               
+## [2285] Canarias                       Palmas (Las)                  
+## [2287] Santa Cruz de Tenerife         Cantabria                     
+## [2289] Castilla y León                Avila                         
+## [2291] Burgos                         León                          
+## [2293] Palencia                       Salamanca                     
+## [2295] Segovia                        Soria                         
+## [2297] Valladolid                     Zamora                        
+## [2299] Castilla - La Mancha           Albacete                      
+## [2301] Ciudad Real                    Cuenca                        
+## [2303] Guadalajara                    Toledo                        
+## [2305] Cataluña                       Barcelona                     
+## [2307] Girona                         Lleida                        
+## [2309] Tarragona                      Comunitat Valenciana          
+## [2311] Alicante/Alacant               Castellón/Castelló            
+## [2313] Valencia/València              Extremadura                   
+## [2315] Badajoz                        Cáceres                       
+## [2317] Galicia                        Coruña (A)                    
+## [2319] Lugo                           Ourense                       
+## [2321] Pontevedra                     Madrid (Comunidad de)         
+## [2323] Murcia (Región de)             Navarra (Comun. Foral de)     
+## [2325] País Vasco                     Alava                         
+## [2327] Guipúzcoa                      Vizcaya                       
+## [2329] Rioja (La)                     Ceuta                         
+## [2331] Melilla                        Total                         
+## [2333] Andalucía                      Almería                       
+## [2335] Cádiz                          Córdoba                       
+## [2337] Granada                        Huelva                        
+## [2339] Jaén                           Málaga                        
+## [2341] Sevilla                        Aragón                        
+## [2343] Huesca                         Teruel                        
+## [2345] Zaragoza                       Asturias (Principado de)      
+## [2347] Balears (Illes)                Canarias                      
+## [2349] Palmas (Las)                   Santa Cruz de Tenerife        
+## [2351] Cantabria                      Castilla y León               
+## [2353] Avila                          Burgos                        
+## [2355] León                           Palencia                      
+## [2357] Salamanca                      Segovia                       
+## [2359] Soria                          Valladolid                    
+## [2361] Zamora                         Castilla - La Mancha          
+## [2363] Albacete                       Ciudad Real                   
+## [2365] Cuenca                         Guadalajara                   
+## [2367] Toledo                         Cataluña                      
+## [2369] Barcelona                      Girona                        
+## [2371] Lleida                         Tarragona                     
+## [2373] Comunitat Valenciana           Alicante/Alacant              
+## [2375] Castellón/Castelló             Valencia/València             
+## [2377] Extremadura                    Badajoz                       
+## [2379] Cáceres                        Galicia                       
+## [2381] Coruña (A)                     Lugo                          
+## [2383] Ourense                        Pontevedra                    
+## [2385] Madrid (Comunidad de)          Murcia (Región de)            
+## [2387] Navarra (Comun. Foral de)      País Vasco                    
+## [2389] Alava                          Guipúzcoa                     
+## [2391] Vizcaya                        Rioja (La)                    
+## [2393] Ceuta                          Melilla                       
+## [2395] TOTAL NACIONAL                 ANDALUCÍA                     
+## [2397] Almería                        Cádiz                         
+## [2399] Córdoba                        Granada                       
+## [2401] Huelva                         Jaén                          
+## [2403] Málaga                         Sevilla                       
+## [2405] ARAGÓN                         Huesca                        
+## [2407] Teruel                         Zaragoza                      
+## [2409] ASTURIAS, PRINCIPADO DE        BALEARS, ILLES                
+## [2411] CANARIAS                       Palmas, Las                   
+## [2413] Santa Cruz de Tenerife         CANTABRIA                     
+## [2415] CASTILLA Y LEÓN                Ávila                         
+## [2417] Burgos                         León                          
+## [2419] Palencia                       Salamanca                     
+## [2421] Segovia                        Soria                         
+## [2423] Valladolid                     Zamora                        
+## [2425] CASTILLA - LA MANCHA           Albacete                      
+## [2427] Ciudad Real                    Cuenca                        
+## [2429] Guadalajara                    Toledo                        
+## [2431] CATALUÑA                       Barcelona                     
+## [2433] Girona                         Lleida                        
+## [2435] Tarragona                      COMUNITAT VALENCIANA          
+## [2437] Alicante/Alacant               Castellón/Castelló            
+## [2439] Valencia/València              EXTREMADURA                   
+## [2441] Badajoz                        Cáceres                       
+## [2443] GALICIA                        Coruña, A                     
+## [2445] Lugo                           Ourense                       
+## [2447] Pontevedra                     MADRID, COMUNIDAD DE          
+## [2449] MURCIA, REGIÓN DE              NAVARRA, COMUNIDAD FORAL DE   
+## [2451] PAÍS VASCO                     Araba/Álava                   
+## [2453] Bizkaia                        Gipuzkoa                      
+## [2455] RIOJA, LA                      Ceuta                         
+## [2457] Melilla                        TOTAL NACIONAL                
+## [2459] ANDALUCÍA                      Almería                       
+## [2461] Cádiz                          Córdoba                       
+## [2463] Granada                        Huelva                        
+## [2465] Jaén                           Málaga                        
+## [2467] Sevilla                        ARAGÓN                        
+## [2469] Huesca                         Teruel                        
+## [2471] Zaragoza                       ASTURIAS, PRINCIPADO DE       
+## [2473] BALEARS, ILLES                 CANARIAS                      
+## [2475] Palmas, Las                    Santa Cruz de Tenerife        
+## [2477] CANTABRIA                      CASTILLA Y LEÓN               
+## [2479] Ávila                          Burgos                        
+## [2481] León                           Palencia                      
+## [2483] Salamanca                      Segovia                       
+## [2485] Soria                          Valladolid                    
+## [2487] Zamora                         CASTILLA - LA MANCHA          
+## [2489] Albacete                       Ciudad Real                   
+## [2491] Cuenca                         Guadalajara                   
+## [2493] Toledo                         CATALUÑA                      
+## [2495] Barcelona                      Girona                        
+## [2497] Lleida                         Tarragona                     
+## [2499] COMUNITAT VALENCIANA           Alicante/Alacant              
+## [2501] Castellón/Castelló             Valencia/València             
+## [2503] EXTREMADURA                    Badajoz                       
+## [2505] Cáceres                        GALICIA                       
+## [2507] Coruña, A                      Lugo                          
+## [2509] Ourense                        Pontevedra                    
+## [2511] MADRID, COMUNIDAD DE           MURCIA, REGIÓN DE             
+## [2513] NAVARRA, COMUNIDAD FORAL DE    PAÍS VASCO                    
+## [2515] Araba/Álava                    Bizkaia                       
+## [2517] Gipuzkoa                       RIOJA, LA                     
+## [2519] Ceuta                          Melilla                       
+## [2521] TOTAL NACIONAL                 ANDALUCÍA                     
+## [2523] Almería                        Cádiz                         
+## [2525] Córdoba                        Granada                       
+## [2527] Huelva                         Jaén                          
+## [2529] Málaga                         Sevilla                       
+## [2531] ARAGÓN                         Huesca                        
+## [2533] Teruel                         Zaragoza                      
+## [2535] ASTURIAS, PRINCIPADO DE        BALEARS, ILLES                
+## [2537] CANARIAS                       Palmas, Las                   
+## [2539] Santa Cruz de Tenerife         CANTABRIA                     
+## [2541] CASTILLA Y LEÓN                Ávila                         
+## [2543] Burgos                         León                          
+## [2545] Palencia                       Salamanca                     
+## [2547] Segovia                        Soria                         
+## [2549] Valladolid                     Zamora                        
+## [2551] CASTILLA - LA MANCHA           Albacete                      
+## [2553] Ciudad Real                    Cuenca                        
+## [2555] Guadalajara                    Toledo                        
+## [2557] CATALUÑA                       Barcelona                     
+## [2559] Girona                         Lleida                        
+## [2561] Tarragona                      COMUNITAT VALENCIANA          
+## [2563] Alicante/Alacant               Castellón/Castelló            
+## [2565] Valencia/València              EXTREMADURA                   
+## [2567] Badajoz                        Cáceres                       
+## [2569] GALICIA                        Coruña, A                     
+## [2571] Lugo                           Ourense                       
+## [2573] Pontevedra                     MADRID, COMUNIDAD DE          
+## [2575] MURCIA, REGIÓN DE              NAVARRA, COMUNIDAD FORAL DE   
+## [2577] PAÍS VASCO                     Araba/Álava                   
+## [2579] Bizkaia                        Gipuzkoa                      
+## [2581] RIOJA, LA                      Ceuta                         
+## [2583] Melilla                        TOTAL NACIONAL                
+## [2585] ANDALUCÍA                      Almería                       
+## [2587] Cádiz                          Córdoba                       
+## [2589] Granada                        Huelva                        
+## [2591] Jaén                           Málaga                        
+## [2593] Sevilla                        ARAGÓN                        
+## [2595] Huesca                         Teruel                        
+## [2597] Zaragoza                       ASTURIAS, PRINCIPADO DE       
+## [2599] BALEARS, ILLES                 CANARIAS                      
+## [2601] Palmas, Las                    Santa Cruz de Tenerife        
+## [2603] CANTABRIA                      CASTILLA Y LEÓN               
+## [2605] Ávila                          Burgos                        
+## [2607] León                           Palencia                      
+## [2609] Salamanca                      Segovia                       
+## [2611] Soria                          Valladolid                    
+## [2613] Zamora                         CASTILLA - LA MANCHA          
+## [2615] Albacete                       Ciudad Real                   
+## [2617] Cuenca                         Guadalajara                   
+## [2619] Toledo                         CATALUÑA                      
+## [2621] Barcelona                      Girona                        
+## [2623] Lleida                         Tarragona                     
+## [2625] COMUNITAT VALENCIANA           Alicante/Alacant              
+## [2627] Castellón/Castelló             Valencia/València             
+## [2629] EXTREMADURA                    Badajoz                       
+## [2631] Cáceres                        GALICIA                       
+## [2633] Coruña, A                      Lugo                          
+## [2635] Ourense                        Pontevedra                    
+## [2637] MADRID, COMUNIDAD DE           MURCIA, REGIÓN DE             
+## [2639] NAVARRA, COMUNIDAD FORAL DE    PAÍS VASCO                    
+## [2641] Araba/Álava                    Bizkaia                       
+## [2643] Gipuzkoa                       RIOJA, LA                     
+## [2645] Ceuta                          Melilla                       
+## [2647] TOTAL NACIONAL                 ANDALUCÍA                     
+## [2649] Almería                        Cádiz                         
+## [2651] Córdoba                        Granada                       
+## [2653] Huelva                         Jaén                          
+## [2655] Málaga                         Sevilla                       
+## [2657] ARAGÓN                         Huesca                        
+## [2659] Teruel                         Zaragoza                      
+## [2661] ASTURIAS, PRINCIPADO DE        BALEARS, ILLES                
+## [2663] CANARIAS                       Palmas, Las                   
+## [2665] Santa Cruz de Tenerife         CANTABRIA                     
+## [2667] CASTILLA Y LEÓN                Ávila                         
+## [2669] Burgos                         León                          
+## [2671] Palencia                       Salamanca                     
+## [2673] Segovia                        Soria                         
+## [2675] Valladolid                     Zamora                        
+## [2677] CASTILLA - LA MANCHA           Albacete                      
+## [2679] Ciudad Real                    Cuenca                        
+## [2681] Guadalajara                    Toledo                        
+## [2683] CATALUÑA                       Barcelona                     
+## [2685] Girona                         Lleida                        
+## [2687] Tarragona                      COMUNITAT VALENCIANA          
+## [2689] Alicante/Alacant               Castellón/Castelló            
+## [2691] Valencia/València              EXTREMADURA                   
+## [2693] Badajoz                        Cáceres                       
+## [2695] GALICIA                        Coruña, A                     
+## [2697] Lugo                           Ourense                       
+## [2699] Pontevedra                     MADRID, COMUNIDAD DE          
+## [2701] MURCIA, REGIÓN DE              NAVARRA, COMUNIDAD FORAL DE   
+## [2703] PAÍS VASCO                     Araba/Álava                   
+## [2705] Bizkaia                        Gipuzkoa                      
+## [2707] RIOJA, LA                      Ceuta                         
+## [2709] Melilla                        TOTAL NACIONAL                
+## [2711] ANDALUCÍA                      Almería                       
+## [2713] Cádiz                          Córdoba                       
+## [2715] Granada                        Huelva                        
+## [2717] Jaén                           Málaga                        
+## [2719] Sevilla                        ARAGÓN                        
+## [2721] Huesca                         Teruel                        
+## [2723] Zaragoza                       ASTURIAS, PRINCIPADO DE       
+## [2725] BALEARS, ILLES                 CANARIAS                      
+## [2727] Palmas, Las                    Santa Cruz de Tenerife        
+## [2729] CANTABRIA                      CASTILLA Y LEÓN               
+## [2731] Ávila                          Burgos                        
+## [2733] León                           Palencia                      
+## [2735] Salamanca                      Segovia                       
+## [2737] Soria                          Valladolid                    
+## [2739] Zamora                         CASTILLA - LA MANCHA          
+## [2741] Albacete                       Ciudad Real                   
+## [2743] Cuenca                         Guadalajara                   
+## [2745] Toledo                         CATALUÑA                      
+## [2747] Barcelona                      Girona                        
+## [2749] Lleida                         Tarragona                     
+## [2751] COMUNITAT VALENCIANA           Alicante/Alacant              
+## [2753] Castellón/Castelló             Valencia/València             
+## [2755] EXTREMADURA                    Badajoz                       
+## [2757] Cáceres                        GALICIA                       
+## [2759] Coruña, A                      Lugo                          
+## [2761] Ourense                        Pontevedra                    
+## [2763] MADRID, COMUNIDAD DE           MURCIA, REGIÓN DE             
+## [2765] NAVARRA, COMUNIDAD FORAL DE    PAÍS VASCO                    
+## [2767] Araba/Álava                    Bizkaia                       
+## [2769] Gipuzkoa                       RIOJA, LA                     
+## [2771] Ceuta                          Melilla                       
+## [2773] TOTAL NACIONAL                 ANDALUCÍA                     
+## [2775] Almería                        Cádiz                         
+## [2777] Córdoba                        Granada                       
+## [2779] Huelva                         Jaén                          
+## [2781] Málaga                         Sevilla                       
+## [2783] ARAGÓN                         Huesca                        
+## [2785] Teruel                         Zaragoza                      
+## [2787] ASTURIAS, PRINCIPADO DE        BALEARS, ILLES                
+## [2789] CANARIAS                       Palmas, Las                   
+## [2791] Santa Cruz de Tenerife         CANTABRIA                     
+## [2793] CASTILLA Y LEÓN                Ávila                         
+## [2795] Burgos                         León                          
+## [2797] Palencia                       Salamanca                     
+## [2799] Segovia                        Soria                         
+## [2801] Valladolid                     Zamora                        
+## [2803] CASTILLA - LA MANCHA           Albacete                      
+## [2805] Ciudad Real                    Cuenca                        
+## [2807] Guadalajara                    Toledo                        
+## [2809] CATALUÑA                       Barcelona                     
+## [2811] Girona                         Lleida                        
+## [2813] Tarragona                      COMUNITAT VALENCIANA          
+## [2815] Alicante/Alacant               Castellón/Castelló            
+## [2817] Valencia/València              EXTREMADURA                   
+## [2819] Badajoz                        Cáceres                       
+## [2821] GALICIA                        Coruña, A                     
+## [2823] Lugo                           Ourense                       
+## [2825] Pontevedra                     MADRID, COMUNIDAD DE          
+## [2827] MURCIA, REGIÓN DE              NAVARRA, COMUNIDAD FORAL DE   
+## [2829] PAÍS VASCO                     Araba/Álava                   
+## [2831] Bizkaia                        Gipuzkoa                      
+## [2833] RIOJA, LA                      Ceuta                         
+## [2835] Melilla                        TOTAL NACIONAL                
+## [2837] ANDALUCÍA                      Almería                       
+## [2839] Cádiz                          Córdoba                       
+## [2841] Granada                        Huelva                        
+## [2843] Jaén                           Málaga                        
+## [2845] Sevilla                        ARAGÓN                        
+## [2847] Huesca                         Teruel                        
+## [2849] Zaragoza                       ASTURIAS, PRINCIPADO DE       
+## [2851] BALEARS, ILLES                 CANARIAS                      
+## [2853] Palmas, Las                    Santa Cruz de Tenerife        
+## [2855] CANTABRIA                      CASTILLA Y LEÓN               
+## [2857] Ávila                          Burgos                        
+## [2859] León                           Palencia                      
+## [2861] Salamanca                      Segovia                       
+## [2863] Soria                          Valladolid                    
+## [2865] Zamora                         CASTILLA - LA MANCHA          
+## [2867] Albacete                       Ciudad Real                   
+## [2869] Cuenca                         Guadalajara                   
+## [2871] Toledo                         CATALUÑA                      
+## [2873] Barcelona                      Girona                        
+## [2875] Lleida                         Tarragona                     
+## [2877] COMUNITAT VALENCIANA           Alicante/Alacant              
+## [2879] Castellón/Castelló             Valencia/València             
+## [2881] EXTREMADURA                    Badajoz                       
+## [2883] Cáceres                        GALICIA                       
+## [2885] Coruña, A                      Lugo                          
+## [2887] Ourense                        Pontevedra                    
+## [2889] MADRID, COMUNIDAD DE           MURCIA, REGIÓN DE             
+## [2891] NAVARRA, COMUNIDAD FORAL DE    PAÍS VASCO                    
+## [2893] Araba/Álava                    Bizkaia                       
+## [2895] Gipuzkoa                       RIOJA, LA                     
+## [2897] Ceuta                          Melilla                       
+## [2899] TOTAL NACIONAL                 ANDALUCÍA                     
+## [2901] Almería                        Cádiz                         
+## [2903] Córdoba                        Granada                       
+## [2905] Huelva                         Jaén                          
+## [2907] Málaga                         Sevilla                       
+## [2909] ARAGÓN                         Huesca                        
+## [2911] Teruel                         Zaragoza                      
+## [2913] ASTURIAS, PRINCIPADO DE        BALEARS, ILLES                
+## [2915] CANARIAS                       Palmas, Las                   
+## [2917] Santa Cruz de Tenerife         CANTABRIA                     
+## [2919] CASTILLA Y LEÓN                Ávila                         
+## [2921] Burgos                         León                          
+## [2923] Palencia                       Salamanca                     
+## [2925] Segovia                        Soria                         
+## [2927] Valladolid                     Zamora                        
+## [2929] CASTILLA - LA MANCHA           Albacete                      
+## [2931] Ciudad Real                    Cuenca                        
+## [2933] Guadalajara                    Toledo                        
+## [2935] CATALUÑA                       Barcelona                     
+## [2937] Girona                         Lleida                        
+## [2939] Tarragona                      COMUNITAT VALENCIANA          
+## [2941] Alicante/Alacant               Castellón/Castelló            
+## [2943] Valencia/València              EXTREMADURA                   
+## [2945] Badajoz                        Cáceres                       
+## [2947] GALICIA                        Coruña, A                     
+## [2949] Lugo                           Ourense                       
+## [2951] Pontevedra                     MADRID, COMUNIDAD DE          
+## [2953] MURCIA, REGIÓN DE              NAVARRA, COMUNIDAD FORAL DE   
+## [2955] PAÍS VASCO                     Araba/Álava                   
+## [2957] Bizkaia                        Gipuzkoa                      
+## [2959] RIOJA, LA                      Ceuta                         
+## [2961] Melilla                        TOTAL NACIONAL                
+## [2963] ANDALUCÍA                      Almería                       
+## [2965] Cádiz                          Córdoba                       
+## [2967] Granada                        Huelva                        
+## [2969] Jaén                           Málaga                        
+## [2971] Sevilla                        ARAGÓN                        
+## [2973] Huesca                         Teruel                        
+## [2975] Zaragoza                       ASTURIAS, PRINCIPADO DE       
+## [2977] BALEARS, ILLES                 CANARIAS                      
+## [2979] Palmas, Las                    Santa Cruz de Tenerife        
+## [2981] CANTABRIA                      CASTILLA Y LEÓN               
+## [2983] Ávila                          Burgos                        
+## [2985] León                           Palencia                      
+## [2987] Salamanca                      Segovia                       
+## [2989] Soria                          Valladolid                    
+## [2991] Zamora                         CASTILLA - LA MANCHA          
+## [2993] Albacete                       Ciudad Real                   
+## [2995] Cuenca                         Guadalajara                   
+## [2997] Toledo                         CATALUÑA                      
+## [2999] Barcelona                      Girona                        
+## [3001] Lleida                         Tarragona                     
+## [3003] COMUNITAT VALENCIANA           Alicante/Alacant              
+## [3005] Castellón/Castelló             Valencia/València             
+## [3007] EXTREMADURA                    Badajoz                       
+## [3009] Cáceres                        GALICIA                       
+## [3011] Coruña, A                      Lugo                          
+## [3013] Ourense                        Pontevedra                    
+## [3015] MADRID, COMUNIDAD DE           MURCIA, REGIÓN DE             
+## [3017] NAVARRA, COMUNIDAD FORAL DE    PAÍS VASCO                    
+## [3019] Araba/Álava                    Bizkaia                       
+## [3021] Gipuzkoa                       RIOJA, LA                     
+## [3023] Ceuta                          Melilla                       
+## [3025] TOTAL NACIONAL                 ANDALUCÍA                     
+## [3027] Almería                        Cádiz                         
+## [3029] Córdoba                        Granada                       
+## [3031] Huelva                         Jaén                          
+## [3033] Málaga                         Sevilla                       
+## [3035] ARAGÓN                         Huesca                        
+## [3037] Teruel                         Zaragoza                      
+## [3039] ASTURIAS, PRINCIPADO DE        BALEARS, ILLES                
+## [3041] CANARIAS                       Palmas, Las                   
+## [3043] Santa Cruz de Tenerife         CANTABRIA                     
+## [3045] CASTILLA Y LEÓN                Ávila                         
+## [3047] Burgos                         León                          
+## [3049] Palencia                       Salamanca                     
+## [3051] Segovia                        Soria                         
+## [3053] Valladolid                     Zamora                        
+## [3055] CASTILLA - LA MANCHA           Albacete                      
+## [3057] Ciudad Real                    Cuenca                        
+## [3059] Guadalajara                    Toledo                        
+## [3061] CATALUÑA                       Barcelona                     
+## [3063] Girona                         Lleida                        
+## [3065] Tarragona                      COMUNITAT VALENCIANA          
+## [3067] Alicante/Alacant               Castellón/Castelló            
+## [3069] Valencia/València              EXTREMADURA                   
+## [3071] Badajoz                        Cáceres                       
+## [3073] GALICIA                        Coruña, A                     
+## [3075] Lugo                           Ourense                       
+## [3077] Pontevedra                     MADRID, COMUNIDAD DE          
+## [3079] MURCIA, REGIÓN DE              NAVARRA, COMUNIDAD FORAL DE   
+## [3081] PAÍS VASCO                     Araba/Álava                   
+## [3083] Bizkaia                        Gipuzkoa                      
+## [3085] RIOJA, LA                      Ceuta                         
+## [3087] Melilla                        TOTAL NACIONAL                
+## [3089] ANDALUCÍA                      Almería                       
+## [3091] Cádiz                          Córdoba                       
+## [3093] Granada                        Huelva                        
+## [3095] Jaén                           Málaga                        
+## [3097] Sevilla                        ARAGÓN                        
+## [3099] Huesca                         Teruel                        
+## [3101] Zaragoza                       ASTURIAS, PRINCIPADO DE       
+## [3103] BALEARS, ILLES                 CANARIAS                      
+## [3105] Palmas, Las                    Santa Cruz de Tenerife        
+## [3107] CANTABRIA                      CASTILLA Y LEÓN               
+## [3109] Ávila                          Burgos                        
+## [3111] León                           Palencia                      
+## [3113] Salamanca                      Segovia                       
+## [3115] Soria                          Valladolid                    
+## [3117] Zamora                         CASTILLA - LA MANCHA          
+## [3119] Albacete                       Ciudad Real                   
+## [3121] Cuenca                         Guadalajara                   
+## [3123] Toledo                         CATALUÑA                      
+## [3125] Barcelona                      Girona                        
+## [3127] Lleida                         Tarragona                     
+## [3129] COMUNITAT VALENCIANA           Alicante/Alacant              
+## [3131] Castellón/Castelló             Valencia/València             
+## [3133] EXTREMADURA                    Badajoz                       
+## [3135] Cáceres                        GALICIA                       
+## [3137] Coruña, A                      Lugo                          
+## [3139] Ourense                        Pontevedra                    
+## [3141] MADRID, COMUNIDAD DE           MURCIA, REGIÓN DE             
+## [3143] NAVARRA, COMUNIDAD FORAL DE    PAÍS VASCO                    
+## [3145] Araba/Álava                    Bizkaia                       
+## [3147] Gipuzkoa                       RIOJA, LA                     
+## [3149] Ceuta                          Melilla                       
+## [3151] TOTAL NACIONAL                 ANDALUCÍA                     
+## [3153] Almería                        Cádiz                         
+## [3155] Córdoba                        Granada                       
+## [3157] Huelva                         Jaén                          
+## [3159] Málaga                         Sevilla                       
+## [3161] ARAGÓN                         Huesca                        
+## [3163] Teruel                         Zaragoza                      
+## [3165] ASTURIAS, PRINCIPADO DE        BALEARS, ILLES                
+## [3167] CANARIAS                       Palmas, Las                   
+## [3169] Santa Cruz de Tenerife         CANTABRIA                     
+## [3171] CASTILLA Y LEÓN                Ávila                         
+## [3173] Burgos                         León                          
+## [3175] Palencia                       Salamanca                     
+## [3177] Segovia                        Soria                         
+## [3179] Valladolid                     Zamora                        
+## [3181] CASTILLA - LA MANCHA           Albacete                      
+## [3183] Ciudad Real                    Cuenca                        
+## [3185] Guadalajara                    Toledo                        
+## [3187] CATALUÑA                       Barcelona                     
+## [3189] Girona                         Lleida                        
+## [3191] Tarragona                      COMUNITAT VALENCIANA          
+## [3193] Alicante/Alacant               Castellón/Castelló            
+## [3195] Valencia/València              EXTREMADURA                   
+## [3197] Badajoz                        Cáceres                       
+## [3199] GALICIA                        Coruña, A                     
+## [3201] Lugo                           Ourense                       
+## [3203] Pontevedra                     MADRID, COMUNIDAD DE          
+## [3205] MURCIA, REGIÓN DE              NAVARRA, COMUNIDAD FORAL DE   
+## [3207] PAÍS VASCO                     Araba/Álava                   
+## [3209] Bizkaia                        Gipuzkoa                      
+## [3211] RIOJA, LA                      Ceuta                         
+## [3213] Melilla                        TOTAL NACIONAL                
+## [3215] ANDALUCÍA                      Almería                       
+## [3217] Cádiz                          Córdoba                       
+## [3219] Granada                        Huelva                        
+## [3221] Jaén                           Málaga                        
+## [3223] Sevilla                        ARAGÓN                        
+## [3225] Huesca                         Teruel                        
+## [3227] Zaragoza                       ASTURIAS, PRINCIPADO DE       
+## [3229] BALEARS, ILLES                 CANARIAS                      
+## [3231] Palmas, Las                    Santa Cruz de Tenerife        
+## [3233] CANTABRIA                      CASTILLA Y LEÓN               
+## [3235] Ávila                          Burgos                        
+## [3237] León                           Palencia                      
+## [3239] Salamanca                      Segovia                       
+## [3241] Soria                          Valladolid                    
+## [3243] Zamora                         CASTILLA - LA MANCHA          
+## [3245] Albacete                       Ciudad Real                   
+## [3247] Cuenca                         Guadalajara                   
+## [3249] Toledo                         CATALUÑA                      
+## [3251] Barcelona                      Girona                        
+## [3253] Lleida                         Tarragona                     
+## [3255] COMUNITAT VALENCIANA           Alicante/Alacant              
+## [3257] Castellón/Castelló             Valencia/València             
+## [3259] EXTREMADURA                    Badajoz                       
+## [3261] Cáceres                        GALICIA                       
+## [3263] Coruña, A                      Lugo                          
+## [3265] Ourense                        Pontevedra                    
+## [3267] MADRID, COMUNIDAD DE           MURCIA, REGIÓN DE             
+## [3269] NAVARRA, COMUNIDAD FORAL DE    PAÍS VASCO                    
+## [3271] Araba/Álava                    Bizkaia                       
+## [3273] Gipuzkoa                       RIOJA, LA                     
+## [3275] Ceuta                          Melilla                       
+## [3277] TOTAL NACIONAL                 ANDALUCÍA                     
+## [3279] Almería                        Cádiz                         
+## [3281] Córdoba                        Granada                       
+## [3283] Huelva                         Jaén                          
+## [3285] Málaga                         Sevilla                       
+## [3287] ARAGÓN                         Huesca                        
+## [3289] Teruel                         Zaragoza                      
+## [3291] ASTURIAS, PRINCIPADO DE        BALEARS, ILLES                
+## [3293] CANARIAS                       Palmas, Las                   
+## [3295] Santa Cruz de Tenerife         CANTABRIA                     
+## [3297] CASTILLA Y LEÓN                Ávila                         
+## [3299] Burgos                         León                          
+## [3301] Palencia                       Salamanca                     
+## [3303] Segovia                        Soria                         
+## [3305] Valladolid                     Zamora                        
+## [3307] CASTILLA - LA MANCHA           Albacete                      
+## [3309] Ciudad Real                    Cuenca                        
+## [3311] Guadalajara                    Toledo                        
+## [3313] CATALUÑA                       Barcelona                     
+## [3315] Girona                         Lleida                        
+## [3317] Tarragona                      COMUNITAT VALENCIANA          
+## [3319] Alicante/Alacant               Castellón/Castelló            
+## [3321] Valencia/València              EXTREMADURA                   
+## [3323] Badajoz                        Cáceres                       
+## [3325] GALICIA                        Coruña, A                     
+## [3327] Lugo                           Ourense                       
+## [3329] Pontevedra                     MADRID, COMUNIDAD DE          
+## [3331] MURCIA, REGIÓN DE              NAVARRA, COMUNIDAD FORAL DE   
+## [3333] PAÍS VASCO                     Araba/Álava                   
+## [3335] Bizkaia                        Gipuzkoa                      
+## [3337] RIOJA, LA                      Ceuta                         
+## [3339] Melilla                        Total Nacional                
+## [3341] 01 Andalucía                   04 Almería                    
+## [3343] 11 Cádiz                       14 Córdoba                    
+## [3345] 18 Granada                     21 Huelva                     
+## [3347] 23 Jaén                        29 Málaga                     
+## [3349] 41 Sevilla                     02 Aragón                     
+## [3351] 22 Huesca                      44 Teruel                     
+## [3353] 50 Zaragoza                    03 Asturias, Principado de    
+## [3355] 04 Balears, Illes              05 Canarias                   
+## [3357] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [3359] 06 Cantabria                   07 Castilla y León            
+## [3361] 05 Ávila                       09 Burgos                     
+## [3363] 24 León                        34 Palencia                   
+## [3365] 37 Salamanca                   40 Segovia                    
+## [3367] 42 Soria                       47 Valladolid                 
+## [3369] 49 Zamora                      08 Castilla - La Mancha       
+## [3371] 02 Albacete                    13 Ciudad Real                
+## [3373] 16 Cuenca                      19 Guadalajara                
+## [3375] 45 Toledo                      09 Cataluña                   
+## [3377] 08 Barcelona                   17 Girona                     
+## [3379] 25 Lleida                      43 Tarragona                  
+## [3381] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [3383] 12 Castellón/Castelló          46 Valencia/València          
+## [3385] 11 Extremadura                 06 Badajoz                    
+## [3387] 10 Cáceres                     12 Galicia                    
+## [3389] 15 Coruña, A                   27 Lugo                       
+## [3391] 32 Ourense                     36 Pontevedra                 
+## [3393] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [3395] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [3397] 01 Araba/Álava                 48 Bizkaia                    
+## [3399] 20 Gipuzkoa                    17 Rioja, La                  
+## [3401] 18 Ceuta                       19 Melilla                    
+## [3403] Total Nacional                 01 Andalucía                  
+## [3405] 04 Almería                     11 Cádiz                      
+## [3407] 14 Córdoba                     18 Granada                    
+## [3409] 21 Huelva                      23 Jaén                       
+## [3411] 29 Málaga                      41 Sevilla                    
+## [3413] 02 Aragón                      22 Huesca                     
+## [3415] 44 Teruel                      50 Zaragoza                   
+## [3417] 03 Asturias, Principado de     04 Balears, Illes             
+## [3419] 05 Canarias                    35 Palmas, Las                
+## [3421] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [3423] 07 Castilla y León             05 Ávila                      
+## [3425] 09 Burgos                      24 León                       
+## [3427] 34 Palencia                    37 Salamanca                  
+## [3429] 40 Segovia                     42 Soria                      
+## [3431] 47 Valladolid                  49 Zamora                     
+## [3433] 08 Castilla - La Mancha        02 Albacete                   
+## [3435] 13 Ciudad Real                 16 Cuenca                     
+## [3437] 19 Guadalajara                 45 Toledo                     
+## [3439] 09 Cataluña                    08 Barcelona                  
+## [3441] 17 Girona                      25 Lleida                     
+## [3443] 43 Tarragona                   10 Comunitat Valenciana       
+## [3445] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [3447] 46 Valencia/València           11 Extremadura                
+## [3449] 06 Badajoz                     10 Cáceres                    
+## [3451] 12 Galicia                     15 Coruña, A                  
+## [3453] 27 Lugo                        32 Ourense                    
+## [3455] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [3457] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [3459] 16 País Vasco                  01 Araba/Álava                
+## [3461] 48 Bizkaia                     20 Gipuzkoa                   
+## [3463] 17 Rioja, La                   18 Ceuta                      
+## [3465] 19 Melilla                     Total Nacional                
+## [3467] 01 Andalucía                   04 Almería                    
+## [3469] 11 Cádiz                       14 Córdoba                    
+## [3471] 18 Granada                     21 Huelva                     
+## [3473] 23 Jaén                        29 Málaga                     
+## [3475] 41 Sevilla                     02 Aragón                     
+## [3477] 22 Huesca                      44 Teruel                     
+## [3479] 50 Zaragoza                    03 Asturias, Principado de    
+## [3481] 04 Balears, Illes              05 Canarias                   
+## [3483] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [3485] 06 Cantabria                   07 Castilla y León            
+## [3487] 05 Ávila                       09 Burgos                     
+## [3489] 24 León                        34 Palencia                   
+## [3491] 37 Salamanca                   40 Segovia                    
+## [3493] 42 Soria                       47 Valladolid                 
+## [3495] 49 Zamora                      08 Castilla - La Mancha       
+## [3497] 02 Albacete                    13 Ciudad Real                
+## [3499] 16 Cuenca                      19 Guadalajara                
+## [3501] 45 Toledo                      09 Cataluña                   
+## [3503] 08 Barcelona                   17 Girona                     
+## [3505] 25 Lleida                      43 Tarragona                  
+## [3507] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [3509] 12 Castellón/Castelló          46 Valencia/València          
+## [3511] 11 Extremadura                 06 Badajoz                    
+## [3513] 10 Cáceres                     12 Galicia                    
+## [3515] 15 Coruña, A                   27 Lugo                       
+## [3517] 32 Ourense                     36 Pontevedra                 
+## [3519] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [3521] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [3523] 01 Araba/Álava                 48 Bizkaia                    
+## [3525] 20 Gipuzkoa                    17 Rioja, La                  
+## [3527] 18 Ceuta                       19 Melilla                    
+## [3529] Total Nacional                 01 Andalucía                  
+## [3531] 04 Almería                     11 Cádiz                      
+## [3533] 14 Córdoba                     18 Granada                    
+## [3535] 21 Huelva                      23 Jaén                       
+## [3537] 29 Málaga                      41 Sevilla                    
+## [3539] 02 Aragón                      22 Huesca                     
+## [3541] 44 Teruel                      50 Zaragoza                   
+## [3543] 03 Asturias, Principado de     04 Balears, Illes             
+## [3545] 05 Canarias                    35 Palmas, Las                
+## [3547] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [3549] 07 Castilla y León             05 Ávila                      
+## [3551] 09 Burgos                      24 León                       
+## [3553] 34 Palencia                    37 Salamanca                  
+## [3555] 40 Segovia                     42 Soria                      
+## [3557] 47 Valladolid                  49 Zamora                     
+## [3559] 08 Castilla - La Mancha        02 Albacete                   
+## [3561] 13 Ciudad Real                 16 Cuenca                     
+## [3563] 19 Guadalajara                 45 Toledo                     
+## [3565] 09 Cataluña                    08 Barcelona                  
+## [3567] 17 Girona                      25 Lleida                     
+## [3569] 43 Tarragona                   10 Comunitat Valenciana       
+## [3571] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [3573] 46 Valencia/València           11 Extremadura                
+## [3575] 06 Badajoz                     10 Cáceres                    
+## [3577] 12 Galicia                     15 Coruña, A                  
+## [3579] 27 Lugo                        32 Ourense                    
+## [3581] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [3583] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [3585] 16 País Vasco                  01 Araba/Álava                
+## [3587] 48 Bizkaia                     20 Gipuzkoa                   
+## [3589] 17 Rioja, La                   18 Ceuta                      
+## [3591] 19 Melilla                     Total Nacional                
+## [3593] 01 Andalucía                   04 Almería                    
+## [3595] 11 Cádiz                       14 Córdoba                    
+## [3597] 18 Granada                     21 Huelva                     
+## [3599] 23 Jaén                        29 Málaga                     
+## [3601] 41 Sevilla                     02 Aragón                     
+## [3603] 22 Huesca                      44 Teruel                     
+## [3605] 50 Zaragoza                    03 Asturias, Principado de    
+## [3607] 04 Balears, Illes              05 Canarias                   
+## [3609] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [3611] 06 Cantabria                   07 Castilla y León            
+## [3613] 05 Ávila                       09 Burgos                     
+## [3615] 24 León                        34 Palencia                   
+## [3617] 37 Salamanca                   40 Segovia                    
+## [3619] 42 Soria                       47 Valladolid                 
+## [3621] 49 Zamora                      08 Castilla - La Mancha       
+## [3623] 02 Albacete                    13 Ciudad Real                
+## [3625] 16 Cuenca                      19 Guadalajara                
+## [3627] 45 Toledo                      09 Cataluña                   
+## [3629] 08 Barcelona                   17 Girona                     
+## [3631] 25 Lleida                      43 Tarragona                  
+## [3633] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [3635] 12 Castellón/Castelló          46 Valencia/València          
+## [3637] 11 Extremadura                 06 Badajoz                    
+## [3639] 10 Cáceres                     12 Galicia                    
+## [3641] 15 Coruña, A                   27 Lugo                       
+## [3643] 32 Ourense                     36 Pontevedra                 
+## [3645] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [3647] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [3649] 01 Araba/Álava                 48 Bizkaia                    
+## [3651] 20 Gipuzkoa                    17 Rioja, La                  
+## [3653] 18 Ceuta                       19 Melilla                    
+## [3655] Total Nacional                 01 Andalucía                  
+## [3657] 04 Almería                     11 Cádiz                      
+## [3659] 14 Córdoba                     18 Granada                    
+## [3661] 21 Huelva                      23 Jaén                       
+## [3663] 29 Málaga                      41 Sevilla                    
+## [3665] 02 Aragón                      22 Huesca                     
+## [3667] 44 Teruel                      50 Zaragoza                   
+## [3669] 03 Asturias, Principado de     04 Balears, Illes             
+## [3671] 05 Canarias                    35 Palmas, Las                
+## [3673] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [3675] 07 Castilla y León             05 Ávila                      
+## [3677] 09 Burgos                      24 León                       
+## [3679] 34 Palencia                    37 Salamanca                  
+## [3681] 40 Segovia                     42 Soria                      
+## [3683] 47 Valladolid                  49 Zamora                     
+## [3685] 08 Castilla - La Mancha        02 Albacete                   
+## [3687] 13 Ciudad Real                 16 Cuenca                     
+## [3689] 19 Guadalajara                 45 Toledo                     
+## [3691] 09 Cataluña                    08 Barcelona                  
+## [3693] 17 Girona                      25 Lleida                     
+## [3695] 43 Tarragona                   10 Comunitat Valenciana       
+## [3697] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [3699] 46 Valencia/València           11 Extremadura                
+## [3701] 06 Badajoz                     10 Cáceres                    
+## [3703] 12 Galicia                     15 Coruña, A                  
+## [3705] 27 Lugo                        32 Ourense                    
+## [3707] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [3709] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [3711] 16 País Vasco                  01 Araba/Álava                
+## [3713] 48 Bizkaia                     20 Gipuzkoa                   
+## [3715] 17 Rioja, La                   18 Ceuta                      
+## [3717] 19 Melilla                     Total Nacional                
+## [3719] 01 Andalucía                   04 Almería                    
+## [3721] 11 Cádiz                       14 Córdoba                    
+## [3723] 18 Granada                     21 Huelva                     
+## [3725] 23 Jaén                        29 Málaga                     
+## [3727] 41 Sevilla                     02 Aragón                     
+## [3729] 22 Huesca                      44 Teruel                     
+## [3731] 50 Zaragoza                    03 Asturias, Principado de    
+## [3733] 04 Balears, Illes              05 Canarias                   
+## [3735] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [3737] 06 Cantabria                   07 Castilla y León            
+## [3739] 05 Ávila                       09 Burgos                     
+## [3741] 24 León                        34 Palencia                   
+## [3743] 37 Salamanca                   40 Segovia                    
+## [3745] 42 Soria                       47 Valladolid                 
+## [3747] 49 Zamora                      08 Castilla - La Mancha       
+## [3749] 02 Albacete                    13 Ciudad Real                
+## [3751] 16 Cuenca                      19 Guadalajara                
+## [3753] 45 Toledo                      09 Cataluña                   
+## [3755] 08 Barcelona                   17 Girona                     
+## [3757] 25 Lleida                      43 Tarragona                  
+## [3759] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [3761] 12 Castellón/Castelló          46 Valencia/València          
+## [3763] 11 Extremadura                 06 Badajoz                    
+## [3765] 10 Cáceres                     12 Galicia                    
+## [3767] 15 Coruña, A                   27 Lugo                       
+## [3769] 32 Ourense                     36 Pontevedra                 
+## [3771] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [3773] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [3775] 01 Araba/Álava                 48 Bizkaia                    
+## [3777] 20 Gipuzkoa                    17 Rioja, La                  
+## [3779] 18 Ceuta                       19 Melilla                    
+## [3781] Total Nacional                 01 Andalucía                  
+## [3783] 04 Almería                     11 Cádiz                      
+## [3785] 14 Córdoba                     18 Granada                    
+## [3787] 21 Huelva                      23 Jaén                       
+## [3789] 29 Málaga                      41 Sevilla                    
+## [3791] 02 Aragón                      22 Huesca                     
+## [3793] 44 Teruel                      50 Zaragoza                   
+## [3795] 03 Asturias, Principado de     04 Balears, Illes             
+## [3797] 05 Canarias                    35 Palmas, Las                
+## [3799] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [3801] 07 Castilla y León             05 Ávila                      
+## [3803] 09 Burgos                      24 León                       
+## [3805] 34 Palencia                    37 Salamanca                  
+## [3807] 40 Segovia                     42 Soria                      
+## [3809] 47 Valladolid                  49 Zamora                     
+## [3811] 08 Castilla - La Mancha        02 Albacete                   
+## [3813] 13 Ciudad Real                 16 Cuenca                     
+## [3815] 19 Guadalajara                 45 Toledo                     
+## [3817] 09 Cataluña                    08 Barcelona                  
+## [3819] 17 Girona                      25 Lleida                     
+## [3821] 43 Tarragona                   10 Comunitat Valenciana       
+## [3823] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [3825] 46 Valencia/València           11 Extremadura                
+## [3827] 06 Badajoz                     10 Cáceres                    
+## [3829] 12 Galicia                     15 Coruña, A                  
+## [3831] 27 Lugo                        32 Ourense                    
+## [3833] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [3835] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [3837] 16 País Vasco                  01 Araba/Álava                
+## [3839] 48 Bizkaia                     20 Gipuzkoa                   
+## [3841] 17 Rioja, La                   18 Ceuta                      
+## [3843] 19 Melilla                     Total Nacional                
+## [3845] 01 Andalucía                   04 Almería                    
+## [3847] 11 Cádiz                       14 Córdoba                    
+## [3849] 18 Granada                     21 Huelva                     
+## [3851] 23 Jaén                        29 Málaga                     
+## [3853] 41 Sevilla                     02 Aragón                     
+## [3855] 22 Huesca                      44 Teruel                     
+## [3857] 50 Zaragoza                    03 Asturias, Principado de    
+## [3859] 04 Balears, Illes              05 Canarias                   
+## [3861] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [3863] 06 Cantabria                   07 Castilla y León            
+## [3865] 05 Ávila                       09 Burgos                     
+## [3867] 24 León                        34 Palencia                   
+## [3869] 37 Salamanca                   40 Segovia                    
+## [3871] 42 Soria                       47 Valladolid                 
+## [3873] 49 Zamora                      08 Castilla - La Mancha       
+## [3875] 02 Albacete                    13 Ciudad Real                
+## [3877] 16 Cuenca                      19 Guadalajara                
+## [3879] 45 Toledo                      09 Cataluña                   
+## [3881] 08 Barcelona                   17 Girona                     
+## [3883] 25 Lleida                      43 Tarragona                  
+## [3885] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [3887] 12 Castellón/Castelló          46 Valencia/València          
+## [3889] 11 Extremadura                 06 Badajoz                    
+## [3891] 10 Cáceres                     12 Galicia                    
+## [3893] 15 Coruña, A                   27 Lugo                       
+## [3895] 32 Ourense                     36 Pontevedra                 
+## [3897] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [3899] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [3901] 01 Araba/Álava                 48 Bizkaia                    
+## [3903] 20 Gipuzkoa                    17 Rioja, La                  
+## [3905] 18 Ceuta                       19 Melilla                    
+## [3907] Total Nacional                 01 Andalucía                  
+## [3909] 04 Almería                     11 Cádiz                      
+## [3911] 14 Córdoba                     18 Granada                    
+## [3913] 21 Huelva                      23 Jaén                       
+## [3915] 29 Málaga                      41 Sevilla                    
+## [3917] 02 Aragón                      22 Huesca                     
+## [3919] 44 Teruel                      50 Zaragoza                   
+## [3921] 03 Asturias, Principado de     04 Balears, Illes             
+## [3923] 05 Canarias                    35 Palmas, Las                
+## [3925] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [3927] 07 Castilla y León             05 Ávila                      
+## [3929] 09 Burgos                      24 León                       
+## [3931] 34 Palencia                    37 Salamanca                  
+## [3933] 40 Segovia                     42 Soria                      
+## [3935] 47 Valladolid                  49 Zamora                     
+## [3937] 08 Castilla - La Mancha        02 Albacete                   
+## [3939] 13 Ciudad Real                 16 Cuenca                     
+## [3941] 19 Guadalajara                 45 Toledo                     
+## [3943] 09 Cataluña                    08 Barcelona                  
+## [3945] 17 Girona                      25 Lleida                     
+## [3947] 43 Tarragona                   10 Comunitat Valenciana       
+## [3949] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [3951] 46 Valencia/València           11 Extremadura                
+## [3953] 06 Badajoz                     10 Cáceres                    
+## [3955] 12 Galicia                     15 Coruña, A                  
+## [3957] 27 Lugo                        32 Ourense                    
+## [3959] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [3961] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [3963] 16 País Vasco                  01 Araba/Álava                
+## [3965] 48 Bizkaia                     20 Gipuzkoa                   
+## [3967] 17 Rioja, La                   18 Ceuta                      
+## [3969] 19 Melilla                     Total Nacional                
+## [3971] 01 Andalucía                   04 Almería                    
+## [3973] 11 Cádiz                       14 Córdoba                    
+## [3975] 18 Granada                     21 Huelva                     
+## [3977] 23 Jaén                        29 Málaga                     
+## [3979] 41 Sevilla                     02 Aragón                     
+## [3981] 22 Huesca                      44 Teruel                     
+## [3983] 50 Zaragoza                    03 Asturias, Principado de    
+## [3985] 04 Balears, Illes              05 Canarias                   
+## [3987] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [3989] 06 Cantabria                   07 Castilla y León            
+## [3991] 05 Ávila                       09 Burgos                     
+## [3993] 24 León                        34 Palencia                   
+## [3995] 37 Salamanca                   40 Segovia                    
+## [3997] 42 Soria                       47 Valladolid                 
+## [3999] 49 Zamora                      08 Castilla - La Mancha       
+## [4001] 02 Albacete                    13 Ciudad Real                
+## [4003] 16 Cuenca                      19 Guadalajara                
+## [4005] 45 Toledo                      09 Cataluña                   
+## [4007] 08 Barcelona                   17 Girona                     
+## [4009] 25 Lleida                      43 Tarragona                  
+## [4011] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [4013] 12 Castellón/Castelló          46 Valencia/València          
+## [4015] 11 Extremadura                 06 Badajoz                    
+## [4017] 10 Cáceres                     12 Galicia                    
+## [4019] 15 Coruña, A                   27 Lugo                       
+## [4021] 32 Ourense                     36 Pontevedra                 
+## [4023] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [4025] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [4027] 01 Araba/Álava                 48 Bizkaia                    
+## [4029] 20 Gipuzkoa                    17 Rioja, La                  
+## [4031] 18 Ceuta                       19 Melilla                    
+## [4033] Total Nacional                 01 Andalucía                  
+## [4035] 04 Almería                     11 Cádiz                      
+## [4037] 14 Córdoba                     18 Granada                    
+## [4039] 21 Huelva                      23 Jaén                       
+## [4041] 29 Málaga                      41 Sevilla                    
+## [4043] 02 Aragón                      22 Huesca                     
+## [4045] 44 Teruel                      50 Zaragoza                   
+## [4047] 03 Asturias, Principado de     04 Balears, Illes             
+## [4049] 05 Canarias                    35 Palmas, Las                
+## [4051] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [4053] 07 Castilla y León             05 Ávila                      
+## [4055] 09 Burgos                      24 León                       
+## [4057] 34 Palencia                    37 Salamanca                  
+## [4059] 40 Segovia                     42 Soria                      
+## [4061] 47 Valladolid                  49 Zamora                     
+## [4063] 08 Castilla - La Mancha        02 Albacete                   
+## [4065] 13 Ciudad Real                 16 Cuenca                     
+## [4067] 19 Guadalajara                 45 Toledo                     
+## [4069] 09 Cataluña                    08 Barcelona                  
+## [4071] 17 Girona                      25 Lleida                     
+## [4073] 43 Tarragona                   10 Comunitat Valenciana       
+## [4075] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [4077] 46 Valencia/València           11 Extremadura                
+## [4079] 06 Badajoz                     10 Cáceres                    
+## [4081] 12 Galicia                     15 Coruña, A                  
+## [4083] 27 Lugo                        32 Ourense                    
+## [4085] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [4087] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [4089] 16 País Vasco                  01 Araba/Álava                
+## [4091] 48 Bizkaia                     20 Gipuzkoa                   
+## [4093] 17 Rioja, La                   18 Ceuta                      
+## [4095] 19 Melilla                     Total Nacional                
+## [4097] 01 Andalucía                   04 Almería                    
+## [4099] 11 Cádiz                       14 Córdoba                    
+## [4101] 18 Granada                     21 Huelva                     
+## [4103] 23 Jaén                        29 Málaga                     
+## [4105] 41 Sevilla                     02 Aragón                     
+## [4107] 22 Huesca                      44 Teruel                     
+## [4109] 50 Zaragoza                    03 Asturias, Principado de    
+## [4111] 04 Balears, Illes              05 Canarias                   
+## [4113] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [4115] 06 Cantabria                   07 Castilla y León            
+## [4117] 05 Ávila                       09 Burgos                     
+## [4119] 24 León                        34 Palencia                   
+## [4121] 37 Salamanca                   40 Segovia                    
+## [4123] 42 Soria                       47 Valladolid                 
+## [4125] 49 Zamora                      08 Castilla - La Mancha       
+## [4127] 02 Albacete                    13 Ciudad Real                
+## [4129] 16 Cuenca                      19 Guadalajara                
+## [4131] 45 Toledo                      09 Cataluña                   
+## [4133] 08 Barcelona                   17 Girona                     
+## [4135] 25 Lleida                      43 Tarragona                  
+## [4137] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [4139] 12 Castellón/Castelló          46 Valencia/València          
+## [4141] 11 Extremadura                 06 Badajoz                    
+## [4143] 10 Cáceres                     12 Galicia                    
+## [4145] 15 Coruña, A                   27 Lugo                       
+## [4147] 32 Ourense                     36 Pontevedra                 
+## [4149] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [4151] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [4153] 01 Araba/Álava                 48 Bizkaia                    
+## [4155] 20 Gipuzkoa                    17 Rioja, La                  
+## [4157] 18 Ceuta                       19 Melilla                    
+## [4159] Total Nacional                 01 Andalucía                  
+## [4161] 04 Almería                     11 Cádiz                      
+## [4163] 14 Córdoba                     18 Granada                    
+## [4165] 21 Huelva                      23 Jaén                       
+## [4167] 29 Málaga                      41 Sevilla                    
+## [4169] 02 Aragón                      22 Huesca                     
+## [4171] 44 Teruel                      50 Zaragoza                   
+## [4173] 03 Asturias, Principado de     04 Balears, Illes             
+## [4175] 05 Canarias                    35 Palmas, Las                
+## [4177] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [4179] 07 Castilla y León             05 Ávila                      
+## [4181] 09 Burgos                      24 León                       
+## [4183] 34 Palencia                    37 Salamanca                  
+## [4185] 40 Segovia                     42 Soria                      
+## [4187] 47 Valladolid                  49 Zamora                     
+## [4189] 08 Castilla - La Mancha        02 Albacete                   
+## [4191] 13 Ciudad Real                 16 Cuenca                     
+## [4193] 19 Guadalajara                 45 Toledo                     
+## [4195] 09 Cataluña                    08 Barcelona                  
+## [4197] 17 Girona                      25 Lleida                     
+## [4199] 43 Tarragona                   10 Comunitat Valenciana       
+## [4201] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [4203] 46 Valencia/València           11 Extremadura                
+## [4205] 06 Badajoz                     10 Cáceres                    
+## [4207] 12 Galicia                     15 Coruña, A                  
+## [4209] 27 Lugo                        32 Ourense                    
+## [4211] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [4213] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [4215] 16 País Vasco                  01 Araba/Álava                
+## [4217] 48 Bizkaia                     20 Gipuzkoa                   
+## [4219] 17 Rioja, La                   18 Ceuta                      
+## [4221] 19 Melilla                     Total Nacional                
+## [4223] 01 Andalucía                   04 Almería                    
+## [4225] 11 Cádiz                       14 Córdoba                    
+## [4227] 18 Granada                     21 Huelva                     
+## [4229] 23 Jaén                        29 Málaga                     
+## [4231] 41 Sevilla                     02 Aragón                     
+## [4233] 22 Huesca                      44 Teruel                     
+## [4235] 50 Zaragoza                    03 Asturias, Principado de    
+## [4237] 04 Balears, Illes              05 Canarias                   
+## [4239] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [4241] 06 Cantabria                   07 Castilla y León            
+## [4243] 05 Ávila                       09 Burgos                     
+## [4245] 24 León                        34 Palencia                   
+## [4247] 37 Salamanca                   40 Segovia                    
+## [4249] 42 Soria                       47 Valladolid                 
+## [4251] 49 Zamora                      08 Castilla - La Mancha       
+## [4253] 02 Albacete                    13 Ciudad Real                
+## [4255] 16 Cuenca                      19 Guadalajara                
+## [4257] 45 Toledo                      09 Cataluña                   
+## [4259] 08 Barcelona                   17 Girona                     
+## [4261] 25 Lleida                      43 Tarragona                  
+## [4263] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [4265] 12 Castellón/Castelló          46 Valencia/València          
+## [4267] 11 Extremadura                 06 Badajoz                    
+## [4269] 10 Cáceres                     12 Galicia                    
+## [4271] 15 Coruña, A                   27 Lugo                       
+## [4273] 32 Ourense                     36 Pontevedra                 
+## [4275] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [4277] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [4279] 01 Araba/Álava                 48 Bizkaia                    
+## [4281] 20 Gipuzkoa                    17 Rioja, La                  
+## [4283] 18 Ceuta                       19 Melilla                    
+## [4285] Total Nacional                 01 Andalucía                  
+## [4287] 04 Almería                     11 Cádiz                      
+## [4289] 14 Córdoba                     18 Granada                    
+## [4291] 21 Huelva                      23 Jaén                       
+## [4293] 29 Málaga                      41 Sevilla                    
+## [4295] 02 Aragón                      22 Huesca                     
+## [4297] 44 Teruel                      50 Zaragoza                   
+## [4299] 03 Asturias, Principado de     04 Balears, Illes             
+## [4301] 05 Canarias                    35 Palmas, Las                
+## [4303] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [4305] 07 Castilla y León             05 Ávila                      
+## [4307] 09 Burgos                      24 León                       
+## [4309] 34 Palencia                    37 Salamanca                  
+## [4311] 40 Segovia                     42 Soria                      
+## [4313] 47 Valladolid                  49 Zamora                     
+## [4315] 08 Castilla - La Mancha        02 Albacete                   
+## [4317] 13 Ciudad Real                 16 Cuenca                     
+## [4319] 19 Guadalajara                 45 Toledo                     
+## [4321] 09 Cataluña                    08 Barcelona                  
+## [4323] 17 Girona                      25 Lleida                     
+## [4325] 43 Tarragona                   10 Comunitat Valenciana       
+## [4327] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [4329] 46 Valencia/València           11 Extremadura                
+## [4331] 06 Badajoz                     10 Cáceres                    
+## [4333] 12 Galicia                     15 Coruña, A                  
+## [4335] 27 Lugo                        32 Ourense                    
+## [4337] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [4339] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [4341] 16 País Vasco                  01 Araba/Álava                
+## [4343] 48 Bizkaia                     20 Gipuzkoa                   
+## [4345] 17 Rioja, La                   18 Ceuta                      
+## [4347] 19 Melilla                     Total Nacional                
+## [4349] 01 Andalucía                   04 Almería                    
+## [4351] 11 Cádiz                       14 Córdoba                    
+## [4353] 18 Granada                     21 Huelva                     
+## [4355] 23 Jaén                        29 Málaga                     
+## [4357] 41 Sevilla                     02 Aragón                     
+## [4359] 22 Huesca                      44 Teruel                     
+## [4361] 50 Zaragoza                    03 Asturias, Principado de    
+## [4363] 04 Balears, Illes              05 Canarias                   
+## [4365] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [4367] 06 Cantabria                   07 Castilla y León            
+## [4369] 05 Ávila                       09 Burgos                     
+## [4371] 24 León                        34 Palencia                   
+## [4373] 37 Salamanca                   40 Segovia                    
+## [4375] 42 Soria                       47 Valladolid                 
+## [4377] 49 Zamora                      08 Castilla - La Mancha       
+## [4379] 02 Albacete                    13 Ciudad Real                
+## [4381] 16 Cuenca                      19 Guadalajara                
+## [4383] 45 Toledo                      09 Cataluña                   
+## [4385] 08 Barcelona                   17 Girona                     
+## [4387] 25 Lleida                      43 Tarragona                  
+## [4389] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [4391] 12 Castellón/Castelló          46 Valencia/València          
+## [4393] 11 Extremadura                 06 Badajoz                    
+## [4395] 10 Cáceres                     12 Galicia                    
+## [4397] 15 Coruña, A                   27 Lugo                       
+## [4399] 32 Ourense                     36 Pontevedra                 
+## [4401] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [4403] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [4405] 01 Araba/Álava                 48 Bizkaia                    
+## [4407] 20 Gipuzkoa                    17 Rioja, La                  
+## [4409] 18 Ceuta                       19 Melilla                    
+## [4411] Total Nacional                 01 Andalucía                  
+## [4413] 04 Almería                     11 Cádiz                      
+## [4415] 14 Córdoba                     18 Granada                    
+## [4417] 21 Huelva                      23 Jaén                       
+## [4419] 29 Málaga                      41 Sevilla                    
+## [4421] 02 Aragón                      22 Huesca                     
+## [4423] 44 Teruel                      50 Zaragoza                   
+## [4425] 03 Asturias, Principado de     04 Balears, Illes             
+## [4427] 05 Canarias                    35 Palmas, Las                
+## [4429] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [4431] 07 Castilla y León             05 Ávila                      
+## [4433] 09 Burgos                      24 León                       
+## [4435] 34 Palencia                    37 Salamanca                  
+## [4437] 40 Segovia                     42 Soria                      
+## [4439] 47 Valladolid                  49 Zamora                     
+## [4441] 08 Castilla - La Mancha        02 Albacete                   
+## [4443] 13 Ciudad Real                 16 Cuenca                     
+## [4445] 19 Guadalajara                 45 Toledo                     
+## [4447] 09 Cataluña                    08 Barcelona                  
+## [4449] 17 Girona                      25 Lleida                     
+## [4451] 43 Tarragona                   10 Comunitat Valenciana       
+## [4453] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [4455] 46 Valencia/València           11 Extremadura                
+## [4457] 06 Badajoz                     10 Cáceres                    
+## [4459] 12 Galicia                     15 Coruña, A                  
+## [4461] 27 Lugo                        32 Ourense                    
+## [4463] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [4465] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [4467] 16 País Vasco                  01 Araba/Álava                
+## [4469] 48 Bizkaia                     20 Gipuzkoa                   
+## [4471] 17 Rioja, La                   18 Ceuta                      
+## [4473] 19 Melilla                     Total Nacional                
+## [4475] 01 Andalucía                   04 Almería                    
+## [4477] 11 Cádiz                       14 Córdoba                    
+## [4479] 18 Granada                     21 Huelva                     
+## [4481] 23 Jaén                        29 Málaga                     
+## [4483] 41 Sevilla                     02 Aragón                     
+## [4485] 22 Huesca                      44 Teruel                     
+## [4487] 50 Zaragoza                    03 Asturias, Principado de    
+## [4489] 04 Balears, Illes              05 Canarias                   
+## [4491] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [4493] 06 Cantabria                   07 Castilla y León            
+## [4495] 05 Ávila                       09 Burgos                     
+## [4497] 24 León                        34 Palencia                   
+## [4499] 37 Salamanca                   40 Segovia                    
+## [4501] 42 Soria                       47 Valladolid                 
+## [4503] 49 Zamora                      08 Castilla - La Mancha       
+## [4505] 02 Albacete                    13 Ciudad Real                
+## [4507] 16 Cuenca                      19 Guadalajara                
+## [4509] 45 Toledo                      09 Cataluña                   
+## [4511] 08 Barcelona                   17 Girona                     
+## [4513] 25 Lleida                      43 Tarragona                  
+## [4515] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [4517] 12 Castellón/Castelló          46 Valencia/València          
+## [4519] 11 Extremadura                 06 Badajoz                    
+## [4521] 10 Cáceres                     12 Galicia                    
+## [4523] 15 Coruña, A                   27 Lugo                       
+## [4525] 32 Ourense                     36 Pontevedra                 
+## [4527] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [4529] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [4531] 01 Araba/Álava                 48 Bizkaia                    
+## [4533] 20 Gipuzkoa                    17 Rioja, La                  
+## [4535] 18 Ceuta                       19 Melilla                    
+## [4537] Total Nacional                 01 Andalucía                  
+## [4539] 04 Almería                     11 Cádiz                      
+## [4541] 14 Córdoba                     18 Granada                    
+## [4543] 21 Huelva                      23 Jaén                       
+## [4545] 29 Málaga                      41 Sevilla                    
+## [4547] 02 Aragón                      22 Huesca                     
+## [4549] 44 Teruel                      50 Zaragoza                   
+## [4551] 03 Asturias, Principado de     04 Balears, Illes             
+## [4553] 05 Canarias                    35 Palmas, Las                
+## [4555] 38 Santa Cruz de Tenerife      06 Cantabria                  
+## [4557] 07 Castilla y León             05 Ávila                      
+## [4559] 09 Burgos                      24 León                       
+## [4561] 34 Palencia                    37 Salamanca                  
+## [4563] 40 Segovia                     42 Soria                      
+## [4565] 47 Valladolid                  49 Zamora                     
+## [4567] 08 Castilla - La Mancha        02 Albacete                   
+## [4569] 13 Ciudad Real                 16 Cuenca                     
+## [4571] 19 Guadalajara                 45 Toledo                     
+## [4573] 09 Cataluña                    08 Barcelona                  
+## [4575] 17 Girona                      25 Lleida                     
+## [4577] 43 Tarragona                   10 Comunitat Valenciana       
+## [4579] 03 Alicante/Alacant            12 Castellón/Castelló         
+## [4581] 46 Valencia/València           11 Extremadura                
+## [4583] 06 Badajoz                     10 Cáceres                    
+## [4585] 12 Galicia                     15 Coruña, A                  
+## [4587] 27 Lugo                        32 Ourense                    
+## [4589] 36 Pontevedra                  13 Madrid, Comunidad de       
+## [4591] 14 Murcia, Región de           15 Navarra, Comunidad Foral de
+## [4593] 16 País Vasco                  01 Araba/Álava                
+## [4595] 48 Bizkaia                     20 Gipuzkoa                   
+## [4597] 17 Rioja, La                   18 Ceuta                      
+## [4599] 19 Melilla                     Total Nacional                
+## [4601] 01 Andalucía                   04 Almería                    
+## [4603] 11 Cádiz                       14 Córdoba                    
+## [4605] 18 Granada                     21 Huelva                     
+## [4607] 23 Jaén                        29 Málaga                     
+## [4609] 41 Sevilla                     02 Aragón                     
+## [4611] 22 Huesca                      44 Teruel                     
+## [4613] 50 Zaragoza                    03 Asturias, Principado de    
+## [4615] 04 Balears, Illes              05 Canarias                   
+## [4617] 35 Palmas, Las                 38 Santa Cruz de Tenerife     
+## [4619] 06 Cantabria                   07 Castilla y León            
+## [4621] 05 Ávila                       09 Burgos                     
+## [4623] 24 León                        34 Palencia                   
+## [4625] 37 Salamanca                   40 Segovia                    
+## [4627] 42 Soria                       47 Valladolid                 
+## [4629] 49 Zamora                      08 Castilla - La Mancha       
+## [4631] 02 Albacete                    13 Ciudad Real                
+## [4633] 16 Cuenca                      19 Guadalajara                
+## [4635] 45 Toledo                      09 Cataluña                   
+## [4637] 08 Barcelona                   17 Girona                     
+## [4639] 25 Lleida                      43 Tarragona                  
+## [4641] 10 Comunitat Valenciana        03 Alicante/Alacant           
+## [4643] 12 Castellón/Castelló          46 Valencia/València          
+## [4645] 11 Extremadura                 06 Badajoz                    
+## [4647] 10 Cáceres                     12 Galicia                    
+## [4649] 15 Coruña, A                   27 Lugo                       
+## [4651] 32 Ourense                     36 Pontevedra                 
+## [4653] 13 Madrid, Comunidad de        14 Murcia, Región de          
+## [4655] 15 Navarra, Comunidad Foral de 16 País Vasco                 
+## [4657] 01 Araba/Álava                 48 Bizkaia                    
+## [4659] 20 Gipuzkoa                    17 Rioja, La                  
+## [4661] 18 Ceuta                       19 Melilla                    
+## 154 Levels: Total Andalucía Almería Cádiz Córdoba Granada Huelva Jaén ... 19 Melilla</code></pre>
+<p>Limpiamos los nombres de las provincias: eliminamos números y
+ajustamos algunos nombres para normalización</p>
+<pre class="r"><code>df_i$Provincia.de.hospitalización &lt;- str_replace_all(df_i$Provincia.de.hospitalización, &quot;[0123456789]&quot;, &quot;&quot;) %&gt;% 
+  str_replace_all(&quot;^ &quot;, &quot;&quot;) %&gt;% 
+  str_replace_all(&quot;Araba/Á&quot;, &quot;A&quot;) %&gt;% 
+  str_replace_all(&quot;/Alacant&quot;, &quot;&quot;) %&gt;% 
+  str_replace_all(&quot;ANDALUCÍA&quot;, &quot;Andalucía&quot;) %&gt;% 
+  str_replace_all(&quot;ARAGÓN&quot;, &quot;Aragón&quot;) %&gt;% 
+  str_replace_all(&quot;ASTURIAS&quot;, &quot;Asturias&quot;) %&gt;% 
+  str_replace_all(&quot;Asturias*&quot;, &quot;Asturias&quot;) %&gt;% 
+  str_replace_all(&quot;Ávila&quot;, &quot;Avila&quot;) %&gt;% 
+  str_replace_all(&quot;BALEARS, ILLES&quot;, &quot;Baleares&quot;) %&gt;% 
+  str_replace_all(&quot;Balears, Illes&quot;, &quot;Baleares&quot;) %&gt;% 
+  str_replace_all(&quot;Balears \\(Illes\\)&quot;, &quot;Baleares&quot;) %&gt;% 
+  str_replace_all(&quot;CANARIAS&quot;, &quot;Canarias&quot;) %&gt;% 
+  str_replace_all(&quot;CANTABRIA&quot;, &quot;Cantabria&quot;) %&gt;% 
+  str_replace_all(&quot;Castellón de la Plana&quot;, &quot;Castellón&quot;) %&gt;% 
+  str_replace_all(&quot;/Castelló&quot;, &quot;&quot;) %&gt;% 
+  str_replace_all(&quot;CASTILLA - LA MANCHA&quot;, &quot;Castilla - La Mancha&quot;) %&gt;% 
+  str_replace_all(&quot;CASTILLA Y LEÓN&quot;, &quot;Castilla y León&quot;) %&gt;% 
+  str_replace_all(&quot;CATALUÑA&quot;, &quot;Cataluña&quot;) %&gt;% 
+  str_replace_all(&quot;Comunitat Valenciana&quot;, &quot;Comunidad Valenciana&quot;) %&gt;% 
+  str_replace_all(&quot;COMUNITAT VALENCIANA&quot;, &quot;Comunidad Valenciana&quot;) %&gt;% 
+  str_replace_all(&quot;Coruña (A)&quot;, &quot;A Coruña&quot;) %&gt;% # Revisar que funcione correctamente
+  str_replace_all(&quot;Coruña, A&quot;, &quot;A Coruña&quot;) %&gt;% 
+  str_replace_all(&quot;EXTREMADURA&quot;, &quot;Extremadura&quot;) %&gt;% 
+  str_replace_all(&quot;GALICIA&quot;, &quot;Galicia&quot;) %&gt;% 
+  str_replace_all(&quot;Guipúzcoa&quot;, &quot;Gipuzkoa&quot;) %&gt;% 
+  str_replace_all(&quot;MADRID, COMUNIDAD DE&quot;, &quot;Madrid&quot;) %&gt;% # Revisar que funcione correctamente
+  str_replace_all(&quot;Madrid*&quot;, &quot;Madrid&quot;) %&gt;%
+  str_replace_all(&quot;MURCIA, REGIÓN DE&quot;, &quot;Murcia&quot;) %&gt;% # Revisar que funcione correctamente
+  str_replace_all(&quot;Murcia*&quot;, &quot;Murcia&quot;) %&gt;% 
+  str_replace_all(&quot;NAVARRA, COMUNIDAD FORAL DE&quot;, &quot;Navarra&quot;) %&gt;% # Revisar que funcione correctamente
+  str_replace_all(&quot;Navarra*&quot;, &quot;Navarra&quot;) %&gt;% 
+  str_replace_all(&quot;PAÍS VASCO&quot;, &quot;País Vasco&quot;) %&gt;% 
+  str_replace_all(&quot;Palmas (Las)&quot;, &quot;Las Palmas&quot;) %&gt;% # Revisar que funcione correctamente
+  str_replace_all(&quot;Palmas, Las&quot;, &quot;Las Palmas&quot;) %&gt;%
+  str_replace_all(&quot;Rioja (La)&quot;, &quot;La Rioja&quot;) %&gt;% # Revisar que funcione correctamente
+  str_replace_all(&quot;Rioja, La&quot;, &quot;La Rioja&quot;) %&gt;%
+  str_replace_all(&quot;RIOJA, LA&quot;, &quot;La Rioja&quot;) %&gt;% 
+  str_replace_all(&quot;TOTAL NACIONAL&quot;, &quot;Total&quot;) %&gt;% 
+  str_replace_all(&quot;Total Nacional&quot;, &quot;Total&quot;) %&gt;% 
+  str_replace_all(&quot;/València&quot;, &quot;&quot;) %&gt;% 
+  str_replace_all(&quot;Bizkaia&quot;, &quot;Vizcaya&quot;)</code></pre>
+<p>Verificación del tipo de la columna de provincias después de la
+limpieza</p>
+<pre class="r"><code>typeof(df_i$Provincia.de.hospitalización)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+</div>
+<div id="cargamos-los-datos-de-muertes" class="section level1">
+<h1>Cargamos los datos de muertes</h1>
+<pre class="r"><code>datos_muertes &lt;- read.px(&#39;INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px&#39;)</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): unable to
+## translate &#39;SUBJECT-AREA=&quot;Defunciones seg&lt;fa&gt;n la Causa de Muerte&quot;;&#39; to a wide
+## string</code></pre>
+<pre><code>## Warning in grepl(&quot;CHARSET.*ANSI&quot;, charset, ignore.case = T): input string 4 is
+## invalid</code></pre>
+<p>Conviertimos los datos de muertes a un dataframe para facilitar el
+análisis</p>
+<pre class="r"><code>df_m &lt;- as.data.frame(datos_muertes)</code></pre>
+<p>Mostramos las primeras filas del dataframe para verificar la carga de
+datos</p>
+<pre class="r"><code>head(df_m)</code></pre>
+<pre><code>##   Periodo Provincias  Sexo        Causa.de.muerte value
+## 1    2022   Nacional Total 044  Diabetes mellitus 11063
+## 2    2021   Nacional Total 044  Diabetes mellitus 10748
+## 3    2020   Nacional Total 044  Diabetes mellitus 11297
+## 4    2019   Nacional Total 044  Diabetes mellitus  9644
+## 5    2018   Nacional Total 044  Diabetes mellitus  9921
+## 6    2017   Nacional Total 044  Diabetes mellitus  9773</code></pre>
 <div id="obtención-de-datos-de-la-aemet" class="section level3">
 <h3>Obtención de datos de la aemet</h3>
 <p>Se recogen todas las estaciones de la aemet. A continuación, se
@@ -413,8 +2982,10 @@ los datos.</p>
 <pre class="r"><code>datos_met &lt;- data.frame(matrix(ncol = 5))
 colnames(datos_met) &lt;- c(&#39;codigo&#39;, &#39;ta_max&#39;, &#39;ta_min&#39;, &#39;tm_mes&#39;, &#39;año&#39;)</code></pre>
 <p>Obtención de los datos de tempertatura máxima, mínima y media mesual
-durante los ños 2003 a 2020 de todas las estaciones selecionadas.</p>
-<pre class="r"><code>for (año in 2020:2020){
+durante los ños 2003 a 2020 de todas las estaciones selecionadas. A
+continuación, se muestra el código para acceder a la aemet. Para una
+mayor rapidez de renderizado se importan los datos.</p>
+<pre class="r"><code>for (año in 2003:2020){
   print(año)
   for (i in codigos){
     print(i)
@@ -437,82 +3008,16 @@ durante los ños 2003 a 2020 de todas las estaciones selecionadas.</p>
     Sys.sleep(1.5)
   }
 }</code></pre>
-<pre><code>## [1] 2020
-## [1] &quot;C449C&quot;
-## [1] &quot;C658L&quot;
-## [1] &quot;0076&quot;
-## [1] &quot;0367&quot;
-## [1] &quot;1212E&quot;
-## [1] &quot;1387&quot;
-## [1] &quot;1484C&quot;
-## [1] &quot;1505&quot;
-## [1] &quot;1690A&quot;
-## [1] &quot;2030&quot;
-## [1] &quot;2331&quot;
-## [1] &quot;2422&quot;
-## [1] &quot;2465&quot;
-## [1] &quot;2614&quot;
-## [1] &quot;2870&quot;
-## [1] &quot;3129&quot;
-## [1] &quot;3013&quot;
-## [1] &quot;3260B&quot;
-## [1] &quot;4121&quot;
-## [1] &quot;4452&quot;
-## [1] &quot;4642E&quot;</code></pre>
-<pre><code>## HTTP 429: Límite de peticiones o caudal por minuto excedido para este usuario. Espere al siguiente minuto. Retrying...</code></pre>
-<pre><code>## Waiting 4s for retry backoff ■■■■■■■■■■■■■■■□□□□□□□□□□□□□□□□ Waiting 4s for
-## retry backoff ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■□□□□□□□□□□□□□□□□□□□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■□□□□□□□□□□□□□□□□□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■■□□□□□□□□□□□□□□□□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■■■■□□□□□□□□□□□□□□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■■■■■■■■■□□□□□□□□□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■■■■■■■■■■■□□□□□□□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■■■■■■■■■■■■■□□□□□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■■■■■■■■■■■■■■□□□□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■■■■■■■■■■■■■■■□□□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■□□ Waiting 5s for retry backoff
-## ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■□</code></pre>
-<pre><code>## [1] &quot;5000C&quot;
-## [1] &quot;5530E&quot;
-## [1] &quot;5783&quot;
-## [1] &quot;6000A&quot;
-## [1] &quot;7178I&quot;
-## [1] &quot;8025&quot;
-## [1] &quot;8096&quot;
-## [1] &quot;8178D&quot;
-## [1] &quot;8368U&quot;
-## [1] &quot;8414A&quot;
-## [1] &quot;9434&quot;
-## [1] &quot;9771C&quot;
-## [1] &quot;9898&quot;
-## [1] &quot;6325O&quot;
-## [1] &quot;9091O&quot;
-## [1] &quot;2444&quot;
-## [1] &quot;B278&quot;
-## [1] &quot;1082&quot;
-## [1] &quot;3469A&quot;
-## [1] &quot;5973&quot;</code></pre>
-<pre><code>## HTTP 429: Límite de peticiones o caudal por minuto excedido para este usuario. Espere al siguiente minuto. Retrying...
-## Waiting 4s for retry backoff ■■■■■■■■■■■■■□□□□□□□□□□□□□□□□□□ Waiting 4s for retry backoff ■■■■■■■■■■■■■■■□□□□□□□□□□□□□□□□ Waiting 4s for retry backoff ■■■■■■■■■■■■■■■■■■■■■■■■■■■□□□□ Waiting 4s for retry backoff ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■□                                                               </code></pre>
-<pre><code>## [1] &quot;1111&quot;
-## [1] &quot;8500A&quot;
-## [1] &quot;5402&quot;
-## [1] &quot;1014&quot;
-## [1] &quot;5270B&quot;
-## [1] &quot;9170&quot;
-## [1] &quot;6155A&quot;
-## [1] &quot;9263D&quot;
-## [1] &quot;0016A&quot;
-## [1] &quot;2661&quot;
-## [1] &quot;2235U&quot;</code></pre>
+<pre class="r"><code>datos_met &lt;- load(&#39;datos_aemet.RData&#39;)
+head(datos_met)</code></pre>
+<pre><code>## [1] &quot;datos_met&quot;</code></pre>
 <p>Muestra de cómo se estructura la información de la consulta a
 aemet.</p>
-<pre class="r"><code>#View(met_prov)</code></pre>
+<pre class="r"><code>View(met_prov)</code></pre>
 </div>
 <div id="esto-es-una-prueba-del-shiny-e-inicio-del-mismo" class="section level2">
 <h2>Esto es una prueba del shiny e inicio del mismo</h2>
-<p>Para poder ejecutar esto correctamente hemos de insetar la carga de
+<p>Para poder ejecutar esto correctamente hemos de insertar la carga de
 datos etc arriba</p>
 <pre class="r"><code>library(shiny)
 library(ggplot2)

@@ -57,7 +57,7 @@ met_22 <- as.data.frame(aemet_monthly_clim('B278', year = 1990)) %>%
 met_22$ta_max <- sapply(met_22$ta_max, FUN = function(x) unlist(strsplit(x, '\\('))[1] )
 met_22$ta_min <- sapply(met_22$ta_min, FUN = function(x) unlist(strsplit(x, '\\('))[1] )
 
-for (año in 2003:2020){
+for (año in 2017:2020){
   print(año)
   for (i in codigos){
     print(i)
@@ -77,12 +77,11 @@ for (año in 2003:2020){
     # print(met_procesados)
     datos_met <- rbind(datos_met, met_procesados)
     # print(datos_met)
-    Sys.sleep(1.75)
+    Sys.sleep(2)
   }
 }
 
-
-
+save(datos_met,file = './datos_aemet.RData')
 
 #----------------
 # Pruebas
