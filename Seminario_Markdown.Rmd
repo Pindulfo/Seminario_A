@@ -7,7 +7,9 @@ output: html_document
 
 # Este es el HTML que hemos de entregar
 
-[GitHub](https://github.com/Pindulfo/Seminario_A.git) \### 1. Carga de paquetes Estos son los paquetes necesarios para la carga de archivos Pc-axis, la obtención de datos de la aemet y su manipulación.
+[GitHub](https://github.com/Pindulfo/Seminario_A.git) 
+
+### 1. Carga de paquetes Estos son los paquetes necesarios para la carga de archivos Pc-axis, la obtención de datos de la aemet y su manipulación.
 
 ```{r echo=FALSE}
 # install.packages("climaemet")
@@ -20,7 +22,7 @@ library(stringr)
 # aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
 ```
 
-### Obtención datos diabetes
+### 2. Obtención datos diabetes
 
 Obtenemos los nombres de archivos con datos de diabetes
 
@@ -74,7 +76,7 @@ head(df_i)
 Analizamos los valores de cada atributo, por ejemplo, las provincias de hospitalización
 
 ```{r}
-factor(df_i$Provincia.de.hospitalización)
+length(levels(factor(df_i$Provincia.de.hospitalización)))
 ```
 
 Limpiamos los nombres de las provincias: eliminamos números y ajustamos algunos nombres para normalización
@@ -132,7 +134,7 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
 
 Comprobamos de neuvo los distintos valores
 ```{r}
-len(factor(df_i$Provincia.de.hospitalización))
+length(levels(factor(df_i$Provincia.de.hospitalización)))
 ```
 
 # Cargamos los datos de muertes
