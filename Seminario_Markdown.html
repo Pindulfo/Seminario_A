@@ -11,7 +11,7 @@
 
 <meta name="author" content="Mario Benito, Guillermo de la Fuente,Pablo Fernández" />
 
-<meta name="date" content="2024-11-10" />
+<meta name="date" content="2024-11-11" />
 
 <title>Relación del las tempertatura con la diabetes</title>
 
@@ -354,7 +354,7 @@ display: none;
 diabetes</h1>
 <h4 class="author">Mario Benito, Guillermo de la Fuente,Pablo
 Fernández</h4>
-<h4 class="date">2024-11-10</h4>
+<h4 class="date">2024-11-11</h4>
 
 </div>
 
@@ -365,15 +365,11 @@ Fernández</h4>
 1. Carga de paquetes Estos son los paquetes necesarios para la carga de
 archivos Pc-axis, la obtención de datos de la aemet y su
 manipulación.</p>
-<pre class="r"><code># install.packages(&quot;climaemet&quot;)
-library(pxR)</code></pre>
 <pre><code>## Cargando paquete requerido: stringr</code></pre>
 <pre><code>## Cargando paquete requerido: reshape2</code></pre>
 <pre><code>## Cargando paquete requerido: RJSONIO</code></pre>
 <pre><code>## Cargando paquete requerido: plyr</code></pre>
-<pre class="r"><code>library(climaemet)</code></pre>
 <pre><code>## Warning: package &#39;climaemet&#39; was built under R version 4.4.2</code></pre>
-<pre class="r"><code>library(dplyr)</code></pre>
 <pre><code>## 
 ## Adjuntando el paquete: &#39;dplyr&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:plyr&#39;:
@@ -386,10 +382,6 @@ library(pxR)</code></pre>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(stringr)
-
-## Use this function to register your API Key temporarly or permanently
-# aemet_api_key(&quot;eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A&quot;, install= TRUE)</code></pre>
 <div id="obtención-datos-diabetes" class="section level3">
 <h3>Obtención datos diabetes</h3>
 <p>Obtenemos los nombres de archivos con datos de diabetes</p>
@@ -2891,52 +2883,1611 @@ de hospitalización</p>
 ## 154 Levels: Total Andalucía Almería Cádiz Córdoba Granada Huelva Jaén ... 19 Melilla</code></pre>
 <p>Limpiamos los nombres de las provincias: eliminamos números y
 ajustamos algunos nombres para normalización</p>
-<pre class="r"><code>df_i$Provincia.de.hospitalización &lt;- str_replace_all(df_i$Provincia.de.hospitalización, &quot;[0123456789]&quot;, &quot;&quot;) %&gt;% 
-  str_replace_all(&quot;^ &quot;, &quot;&quot;) %&gt;% 
-  str_replace_all(&quot;Araba/Á&quot;, &quot;A&quot;) %&gt;% 
-  str_replace_all(&quot;/Alacant&quot;, &quot;&quot;) %&gt;% 
-  str_replace_all(&quot;ANDALUCÍA&quot;, &quot;Andalucía&quot;) %&gt;% 
-  str_replace_all(&quot;ARAGÓN&quot;, &quot;Aragón&quot;) %&gt;% 
-  str_replace_all(&quot;ASTURIAS&quot;, &quot;Asturias&quot;) %&gt;% 
-  str_replace_all(&quot;Asturias*&quot;, &quot;Asturias&quot;) %&gt;% 
-  str_replace_all(&quot;Ávila&quot;, &quot;Avila&quot;) %&gt;% 
-  str_replace_all(&quot;BALEARS, ILLES&quot;, &quot;Baleares&quot;) %&gt;% 
-  str_replace_all(&quot;Balears, Illes&quot;, &quot;Baleares&quot;) %&gt;% 
-  str_replace_all(&quot;Balears \\(Illes\\)&quot;, &quot;Baleares&quot;) %&gt;% 
-  str_replace_all(&quot;CANARIAS&quot;, &quot;Canarias&quot;) %&gt;% 
-  str_replace_all(&quot;CANTABRIA&quot;, &quot;Cantabria&quot;) %&gt;% 
-  str_replace_all(&quot;Castellón de la Plana&quot;, &quot;Castellón&quot;) %&gt;% 
-  str_replace_all(&quot;/Castelló&quot;, &quot;&quot;) %&gt;% 
-  str_replace_all(&quot;CASTILLA - LA MANCHA&quot;, &quot;Castilla - La Mancha&quot;) %&gt;% 
-  str_replace_all(&quot;CASTILLA Y LEÓN&quot;, &quot;Castilla y León&quot;) %&gt;% 
-  str_replace_all(&quot;CATALUÑA&quot;, &quot;Cataluña&quot;) %&gt;% 
-  str_replace_all(&quot;Comunitat Valenciana&quot;, &quot;Comunidad Valenciana&quot;) %&gt;% 
-  str_replace_all(&quot;COMUNITAT VALENCIANA&quot;, &quot;Comunidad Valenciana&quot;) %&gt;% 
-  str_replace_all(&quot;Coruña (A)&quot;, &quot;A Coruña&quot;) %&gt;% # Revisar que funcione correctamente
-  str_replace_all(&quot;Coruña, A&quot;, &quot;A Coruña&quot;) %&gt;% 
-  str_replace_all(&quot;EXTREMADURA&quot;, &quot;Extremadura&quot;) %&gt;% 
-  str_replace_all(&quot;GALICIA&quot;, &quot;Galicia&quot;) %&gt;% 
-  str_replace_all(&quot;Guipúzcoa&quot;, &quot;Gipuzkoa&quot;) %&gt;% 
-  str_replace_all(&quot;MADRID, COMUNIDAD DE&quot;, &quot;Madrid&quot;) %&gt;% # Revisar que funcione correctamente
-  str_replace_all(&quot;Madrid*&quot;, &quot;Madrid&quot;) %&gt;%
-  str_replace_all(&quot;MURCIA, REGIÓN DE&quot;, &quot;Murcia&quot;) %&gt;% # Revisar que funcione correctamente
-  str_replace_all(&quot;Murcia*&quot;, &quot;Murcia&quot;) %&gt;% 
-  str_replace_all(&quot;NAVARRA, COMUNIDAD FORAL DE&quot;, &quot;Navarra&quot;) %&gt;% # Revisar que funcione correctamente
-  str_replace_all(&quot;Navarra*&quot;, &quot;Navarra&quot;) %&gt;% 
-  str_replace_all(&quot;PAÍS VASCO&quot;, &quot;País Vasco&quot;) %&gt;% 
-  str_replace_all(&quot;Palmas (Las)&quot;, &quot;Las Palmas&quot;) %&gt;% # Revisar que funcione correctamente
-  str_replace_all(&quot;Palmas, Las&quot;, &quot;Las Palmas&quot;) %&gt;%
-  str_replace_all(&quot;Rioja (La)&quot;, &quot;La Rioja&quot;) %&gt;% # Revisar que funcione correctamente
-  str_replace_all(&quot;Rioja, La&quot;, &quot;La Rioja&quot;) %&gt;%
-  str_replace_all(&quot;RIOJA, LA&quot;, &quot;La Rioja&quot;) %&gt;% 
-  str_replace_all(&quot;TOTAL NACIONAL&quot;, &quot;Total&quot;) %&gt;% 
-  str_replace_all(&quot;Total Nacional&quot;, &quot;Total&quot;) %&gt;% 
-  str_replace_all(&quot;/València&quot;, &quot;&quot;) %&gt;% 
-  str_replace_all(&quot;Bizkaia&quot;, &quot;Vizcaya&quot;)</code></pre>
-<p>Verificación del tipo de la columna de provincias después de la
-limpieza</p>
-<pre class="r"><code>typeof(df_i$Provincia.de.hospitalización)</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
+<pre class="r"><code>df_i$Provincia.de.hospitalización &lt;- str_replace_all(df_i$Provincia.de.hospitalización,&quot;[0123456789]&quot;,&quot;&quot;) %&gt;% 
+  str_replace_all(&quot;^ &quot;,&quot;&quot;) %&gt;% 
+  str_replace_all(&quot;Araba/Á&quot;,&quot;A&quot;) %&gt;% 
+  str_replace_all(&quot;/Alacant&quot;, &#39;&#39;) %&gt;% 
+  str_replace_all(&quot;ANDALUCÍA&quot;, &#39;Andalucía&#39;) %&gt;% 
+  str_replace_all(&#39;ARAGÓN&#39;, &#39;Aragón&#39;) %&gt;% 
+  str_replace_all(&#39;ASTURIAS&#39;,&#39;Asturias&#39;) %&gt;% 
+  str_replace_all(&#39;Asturias \\(Principado de\\)&#39;, &#39;Asturias&#39;) %&gt;%
+  str_replace_all(&#39;Asturias, Principado de&#39;, &#39;Asturias&#39;) %&gt;%  
+  str_replace_all(&#39;Asturias, PRINCIPADO DE&#39;, &#39;Asturias&#39;) %&gt;%
+  str_replace_all(&#39;Ávila&#39;, &#39;Avila&#39;) %&gt;% 
+  str_replace_all(&#39;BALEARS, ILLES&#39;, &#39;Baleares&#39;) %&gt;% 
+  str_replace_all(&#39;Balears, Illes&#39;, &#39;Baleares&#39;) %&gt;% 
+  str_replace_all(&#39;Balears \\(Illes\\)&#39;, &#39;Baleares&#39;) %&gt;% 
+  str_replace_all(&quot;CANARIAS&quot;, &#39;Canarias&#39;) %&gt;% 
+  str_replace_all(&quot;CANTABRIA&quot;, &#39;Cantabria&#39;) %&gt;% 
+  str_replace_all(&quot;Castellón de la Plana&quot;, &#39;Castellón&#39;) %&gt;% 
+  str_replace_all(&quot;/Castelló&quot;, &#39;&#39;) %&gt;% 
+  str_replace_all(&quot;CASTILLA - LA MANCHA&quot;, &#39;Castilla - La Mancha&#39;) %&gt;% 
+  str_replace_all(&quot;CASTILLA Y LEÓN&quot;, &#39;Castilla y León&#39;) %&gt;% 
+  str_replace_all(&quot;CATALUÑA&quot;, &#39;Cataluña&#39;) %&gt;% 
+  str_replace_all(&quot;Comunitat Valenciana&quot;, &#39;Comunidad Valenciana&#39;) %&gt;% 
+  str_replace_all(&quot;COMUNITAT VALENCIANA&quot;, &#39;Comunidad Valenciana&#39;) %&gt;% 
+  str_replace_all(&quot;Coruña \\(A\\)&quot;, &#39;A Coruña&#39;) %&gt;% #revisar el Coruña (A) no se ha modificado con esto
+  str_replace_all(&quot;Coruña, A&quot;, &#39;A Coruña&#39;) %&gt;% 
+  str_replace_all(&quot;EXTREMADURA&quot;, &#39;Extremadura&#39;) %&gt;% 
+  str_replace_all(&quot;GALICIA&quot;, &#39;Galicia&#39;) %&gt;% 
+  str_replace_all(&quot;Guipúzcoa&quot;, &#39;Gipuzkoa&#39;) %&gt;% 
+  str_replace_all(&#39;MADRID, COMUNIDAD DE&#39;,&#39;Madrid&#39;) %&gt;% #revisar al igual que asturias para que solo salga Madrid
+  str_replace_all(&#39;Madrid, Comunidad de&#39;, &#39;Madrid&#39;) %&gt;%
+  str_replace_all(&#39;Madrid \\(Comunidad de\\)&#39;, &#39;Madrid&#39;) %&gt;% 
+  str_replace_all(&#39;MURCIA, REGIÓN DE&#39;,&#39;Murcia&#39;) %&gt;% #revisar para que solo salga Murcia
+  str_replace_all(&#39;Murcia \\(Región de\\)&#39;,&#39;Murcia&#39;) %&gt;%
+  str_replace_all(&#39;Murcia, Región de&#39;,&#39;Murcia&#39;) %&gt;%
+  str_replace_all(&#39;Murcia*&#39;, &#39;Murcia&#39;) %&gt;% 
+  str_replace_all(&#39;NAVARRA, COMUNIDAD FORAL DE&#39;,&#39;Navarra&#39;) %&gt;% #revisar para que salga solo Navarra
+  str_replace_all(&#39;Navarra \\(Comun. Foral de\\)&#39;, &#39;Navarra&#39;) %&gt;%
+  str_replace_all(&#39;Navarra, Comunidad Foral de&#39;, &#39;Navarra&#39;) %&gt;% 
+  str_replace_all(&#39;PAÍS VASCO&#39;, &#39;País Vasco&#39;) %&gt;% 
+  str_replace_all(&quot;Palmas \\(Las\\)&quot;, &#39;Las Palmas&#39;) %&gt;% #revisar el Palmas (Las) no se ha modificado con esto
+  str_replace_all(&quot;Palmas, Las&quot;, &#39;Las Palmas&#39;) %&gt;%
+  str_replace_all(&quot;Rioja \\(La\\)&quot;, &#39;La Rioja&#39;) %&gt;% #revisar Rioja (La) no se ha modificado con esto
+  str_replace_all(&quot;Rioja, La&quot;, &#39;La Rioja&#39;) %&gt;%
+  str_replace_all(&quot;RIOJA, LA&quot;, &#39;La Rioja&#39;) %&gt;% 
+  str_replace_all(&quot;TOTAL NACIONAL&quot;, &#39;Total&#39;) %&gt;% 
+  str_replace_all(&quot;Total Nacional&quot;, &#39;Total&#39;) %&gt;% 
+  str_replace_all(&quot;/València&quot;, &#39;&#39;) %&gt;% 
+  str_replace_all(&quot;Bizkaia&quot;, &#39;Vizcaya&#39;)</code></pre>
+<p>Comprobamos de neuvo los distintos valores</p>
+<pre class="r"><code>factor(df_i$Provincia.de.hospitalización)</code></pre>
+<pre><code>##    [1] Total                  Andalucía              Almería               
+##    [4] Cádiz                  Córdoba                Granada               
+##    [7] Huelva                 Jaén                   Málaga                
+##   [10] Sevilla                Aragón                 Huesca                
+##   [13] Teruel                 Zaragoza               Asturias              
+##   [16] Baleares               Canarias               Las Palmas            
+##   [19] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##   [22] Avila                  Burgos                 León                  
+##   [25] Palencia               Salamanca              Segovia               
+##   [28] Soria                  Valladolid             Zamora                
+##   [31] Castilla - La Mancha   Albacete               Ciudad Real           
+##   [34] Cuenca                 Guadalajara            Toledo                
+##   [37] Cataluña               Barcelona              Girona                
+##   [40] Lleida                 Tarragona              Comunidad Valenciana  
+##   [43] Alicante               Castellón              Valencia              
+##   [46] Extremadura            Badajoz                Cáceres               
+##   [49] Galicia                A Coruña               Lugo                  
+##   [52] Ourense                Pontevedra             Madrid                
+##   [55] Murcia                 Navarra                País Vasco            
+##   [58] Alava                  Gipuzkoa               Vizcaya               
+##   [61] La Rioja               Ceuta                  Melilla               
+##   [64] Total                  Andalucía              Almería               
+##   [67] Cádiz                  Córdoba                Granada               
+##   [70] Huelva                 Jaén                   Málaga                
+##   [73] Sevilla                Aragón                 Huesca                
+##   [76] Teruel                 Zaragoza               Asturias              
+##   [79] Baleares               Canarias               Las Palmas            
+##   [82] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##   [85] Avila                  Burgos                 León                  
+##   [88] Palencia               Salamanca              Segovia               
+##   [91] Soria                  Valladolid             Zamora                
+##   [94] Castilla - La Mancha   Albacete               Ciudad Real           
+##   [97] Cuenca                 Guadalajara            Toledo                
+##  [100] Cataluña               Barcelona              Girona                
+##  [103] Lleida                 Tarragona              Comunidad Valenciana  
+##  [106] Alicante               Castellón              Valencia              
+##  [109] Extremadura            Badajoz                Cáceres               
+##  [112] Galicia                A Coruña               Lugo                  
+##  [115] Ourense                Pontevedra             Madrid                
+##  [118] Murcia                 Navarra                País Vasco            
+##  [121] Alava                  Gipuzkoa               Vizcaya               
+##  [124] La Rioja               Ceuta                  Melilla               
+##  [127] Total                  Andalucía              Almería               
+##  [130] Cádiz                  Córdoba                Granada               
+##  [133] Huelva                 Jaén                   Málaga                
+##  [136] Sevilla                Aragón                 Huesca                
+##  [139] Teruel                 Zaragoza               Asturias              
+##  [142] Baleares               Canarias               Las Palmas            
+##  [145] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [148] Avila                  Burgos                 León                  
+##  [151] Palencia               Salamanca              Segovia               
+##  [154] Soria                  Valladolid             Zamora                
+##  [157] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [160] Cuenca                 Guadalajara            Toledo                
+##  [163] Cataluña               Barcelona              Girona                
+##  [166] Lleida                 Tarragona              Comunidad Valenciana  
+##  [169] Alicante               Castellón              Valencia              
+##  [172] Extremadura            Badajoz                Cáceres               
+##  [175] Galicia                A Coruña               Lugo                  
+##  [178] Ourense                Pontevedra             Madrid                
+##  [181] Murcia                 Navarra                País Vasco            
+##  [184] Alava                  Gipuzkoa               Vizcaya               
+##  [187] La Rioja               Ceuta                  Melilla               
+##  [190] Total                  Andalucía              Almería               
+##  [193] Cádiz                  Córdoba                Granada               
+##  [196] Huelva                 Jaén                   Málaga                
+##  [199] Sevilla                Aragón                 Huesca                
+##  [202] Teruel                 Zaragoza               Asturias              
+##  [205] Baleares               Canarias               Las Palmas            
+##  [208] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [211] Avila                  Burgos                 León                  
+##  [214] Palencia               Salamanca              Segovia               
+##  [217] Soria                  Valladolid             Zamora                
+##  [220] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [223] Cuenca                 Guadalajara            Toledo                
+##  [226] Cataluña               Barcelona              Girona                
+##  [229] Lleida                 Tarragona              Comunidad Valenciana  
+##  [232] Alicante               Castellón              Valencia              
+##  [235] Extremadura            Badajoz                Cáceres               
+##  [238] Galicia                A Coruña               Lugo                  
+##  [241] Ourense                Pontevedra             Madrid                
+##  [244] Murcia                 Navarra                País Vasco            
+##  [247] Alava                  Gipuzkoa               Vizcaya               
+##  [250] La Rioja               Ceuta                  Melilla               
+##  [253] Total                  Andalucía              Almería               
+##  [256] Cádiz                  Córdoba                Granada               
+##  [259] Huelva                 Jaén                   Málaga                
+##  [262] Sevilla                Aragón                 Huesca                
+##  [265] Teruel                 Zaragoza               Asturias              
+##  [268] Baleares               Canarias               Las Palmas            
+##  [271] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [274] Avila                  Burgos                 León                  
+##  [277] Palencia               Salamanca              Segovia               
+##  [280] Soria                  Valladolid             Zamora                
+##  [283] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [286] Cuenca                 Guadalajara            Toledo                
+##  [289] Cataluña               Barcelona              Girona                
+##  [292] Lleida                 Tarragona              Comunidad Valenciana  
+##  [295] Alicante               Castellón              Valencia              
+##  [298] Extremadura            Badajoz                Cáceres               
+##  [301] Galicia                A Coruña               Lugo                  
+##  [304] Ourense                Pontevedra             Madrid                
+##  [307] Murcia                 Navarra                País Vasco            
+##  [310] Alava                  Gipuzkoa               Vizcaya               
+##  [313] La Rioja               Ceuta                  Melilla               
+##  [316] Total                  Andalucía              Almería               
+##  [319] Cádiz                  Córdoba                Granada               
+##  [322] Huelva                 Jaén                   Málaga                
+##  [325] Sevilla                Aragón                 Huesca                
+##  [328] Teruel                 Zaragoza               Asturias              
+##  [331] Baleares               Canarias               Las Palmas            
+##  [334] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [337] Avila                  Burgos                 León                  
+##  [340] Palencia               Salamanca              Segovia               
+##  [343] Soria                  Valladolid             Zamora                
+##  [346] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [349] Cuenca                 Guadalajara            Toledo                
+##  [352] Cataluña               Barcelona              Girona                
+##  [355] Lleida                 Tarragona              Comunidad Valenciana  
+##  [358] Alicante               Castellón              Valencia              
+##  [361] Extremadura            Badajoz                Cáceres               
+##  [364] Galicia                A Coruña               Lugo                  
+##  [367] Ourense                Pontevedra             Madrid                
+##  [370] Murcia                 Navarra                País Vasco            
+##  [373] Alava                  Gipuzkoa               Vizcaya               
+##  [376] La Rioja               Ceuta                  Melilla               
+##  [379] Total                  Andalucía              Almería               
+##  [382] Cádiz                  Córdoba                Granada               
+##  [385] Huelva                 Jaén                   Málaga                
+##  [388] Sevilla                Aragón                 Huesca                
+##  [391] Teruel                 Zaragoza               Asturias              
+##  [394] Baleares               Canarias               Las Palmas            
+##  [397] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [400] Avila                  Burgos                 León                  
+##  [403] Palencia               Salamanca              Segovia               
+##  [406] Soria                  Valladolid             Zamora                
+##  [409] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [412] Cuenca                 Guadalajara            Toledo                
+##  [415] Cataluña               Barcelona              Girona                
+##  [418] Lleida                 Tarragona              Comunidad Valenciana  
+##  [421] Alicante               Castellón              Valencia              
+##  [424] Extremadura            Badajoz                Cáceres               
+##  [427] Galicia                A Coruña               Lugo                  
+##  [430] Ourense                Pontevedra             Madrid                
+##  [433] Murcia                 Navarra                País Vasco            
+##  [436] Alava                  Gipuzkoa               Vizcaya               
+##  [439] La Rioja               Ceuta                  Melilla               
+##  [442] Total                  Andalucía              Almería               
+##  [445] Cádiz                  Córdoba                Granada               
+##  [448] Huelva                 Jaén                   Málaga                
+##  [451] Sevilla                Aragón                 Huesca                
+##  [454] Teruel                 Zaragoza               Asturias              
+##  [457] Baleares               Canarias               Las Palmas            
+##  [460] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [463] Avila                  Burgos                 León                  
+##  [466] Palencia               Salamanca              Segovia               
+##  [469] Soria                  Valladolid             Zamora                
+##  [472] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [475] Cuenca                 Guadalajara            Toledo                
+##  [478] Cataluña               Barcelona              Girona                
+##  [481] Lleida                 Tarragona              Comunidad Valenciana  
+##  [484] Alicante               Castellón              Valencia              
+##  [487] Extremadura            Badajoz                Cáceres               
+##  [490] Galicia                A Coruña               Lugo                  
+##  [493] Ourense                Pontevedra             Madrid                
+##  [496] Murcia                 Navarra                País Vasco            
+##  [499] Alava                  Gipuzkoa               Vizcaya               
+##  [502] La Rioja               Ceuta                  Melilla               
+##  [505] Total                  Andalucía              Almería               
+##  [508] Cádiz                  Córdoba                Granada               
+##  [511] Huelva                 Jaén                   Málaga                
+##  [514] Sevilla                Aragón                 Huesca                
+##  [517] Teruel                 Zaragoza               Asturias              
+##  [520] Baleares               Canarias               Las Palmas            
+##  [523] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [526] Avila                  Burgos                 León                  
+##  [529] Palencia               Salamanca              Segovia               
+##  [532] Soria                  Valladolid             Zamora                
+##  [535] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [538] Cuenca                 Guadalajara            Toledo                
+##  [541] Cataluña               Barcelona              Girona                
+##  [544] Lleida                 Tarragona              Comunidad Valenciana  
+##  [547] Alicante               Castellón              Valencia              
+##  [550] Extremadura            Badajoz                Cáceres               
+##  [553] Galicia                A Coruña               Lugo                  
+##  [556] Ourense                Pontevedra             Madrid                
+##  [559] Murcia                 Navarra                País Vasco            
+##  [562] Alava                  Gipuzkoa               Vizcaya               
+##  [565] La Rioja               Ceuta                  Melilla               
+##  [568] Total                  Andalucía              Almería               
+##  [571] Cádiz                  Córdoba                Granada               
+##  [574] Huelva                 Jaén                   Málaga                
+##  [577] Sevilla                Aragón                 Huesca                
+##  [580] Teruel                 Zaragoza               Asturias              
+##  [583] Baleares               Canarias               Las Palmas            
+##  [586] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [589] Avila                  Burgos                 León                  
+##  [592] Palencia               Salamanca              Segovia               
+##  [595] Soria                  Valladolid             Zamora                
+##  [598] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [601] Cuenca                 Guadalajara            Toledo                
+##  [604] Cataluña               Barcelona              Girona                
+##  [607] Lleida                 Tarragona              Comunidad Valenciana  
+##  [610] Alicante               Castellón              Valencia              
+##  [613] Extremadura            Badajoz                Cáceres               
+##  [616] Galicia                A Coruña               Lugo                  
+##  [619] Ourense                Pontevedra             Madrid                
+##  [622] Murcia                 Navarra                País Vasco            
+##  [625] Alava                  Gipuzkoa               Vizcaya               
+##  [628] La Rioja               Ceuta                  Melilla               
+##  [631] Total                  Andalucía              Almería               
+##  [634] Cádiz                  Córdoba                Granada               
+##  [637] Huelva                 Jaén                   Málaga                
+##  [640] Sevilla                Aragón                 Huesca                
+##  [643] Teruel                 Zaragoza               Asturias              
+##  [646] Baleares               Canarias               Las Palmas            
+##  [649] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [652] Avila                  Burgos                 León                  
+##  [655] Palencia               Salamanca              Segovia               
+##  [658] Soria                  Valladolid             Zamora                
+##  [661] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [664] Cuenca                 Guadalajara            Toledo                
+##  [667] Cataluña               Barcelona              Girona                
+##  [670] Lleida                 Tarragona              Comunidad Valenciana  
+##  [673] Alicante               Castellón              Valencia              
+##  [676] Extremadura            Badajoz                Cáceres               
+##  [679] Galicia                A Coruña               Lugo                  
+##  [682] Ourense                Pontevedra             Madrid                
+##  [685] Murcia                 Navarra                País Vasco            
+##  [688] Alava                  Gipuzkoa               Vizcaya               
+##  [691] La Rioja               Ceuta                  Melilla               
+##  [694] Total                  Andalucía              Almería               
+##  [697] Cádiz                  Córdoba                Granada               
+##  [700] Huelva                 Jaén                   Málaga                
+##  [703] Sevilla                Aragón                 Huesca                
+##  [706] Teruel                 Zaragoza               Asturias              
+##  [709] Baleares               Canarias               Las Palmas            
+##  [712] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [715] Avila                  Burgos                 León                  
+##  [718] Palencia               Salamanca              Segovia               
+##  [721] Soria                  Valladolid             Zamora                
+##  [724] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [727] Cuenca                 Guadalajara            Toledo                
+##  [730] Cataluña               Barcelona              Girona                
+##  [733] Lleida                 Tarragona              Comunidad Valenciana  
+##  [736] Alicante               Castellón              Valencia              
+##  [739] Extremadura            Badajoz                Cáceres               
+##  [742] Galicia                A Coruña               Lugo                  
+##  [745] Ourense                Pontevedra             Madrid                
+##  [748] Murcia                 Navarra                País Vasco            
+##  [751] Alava                  Gipuzkoa               Vizcaya               
+##  [754] La Rioja               Ceuta                  Melilla               
+##  [757] Total                  Andalucía              Almería               
+##  [760] Cádiz                  Córdoba                Granada               
+##  [763] Huelva                 Jaén                   Málaga                
+##  [766] Sevilla                Aragón                 Huesca                
+##  [769] Teruel                 Zaragoza               Asturias              
+##  [772] Baleares               Canarias               Las Palmas            
+##  [775] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [778] Avila                  Burgos                 León                  
+##  [781] Palencia               Salamanca              Segovia               
+##  [784] Soria                  Valladolid             Zamora                
+##  [787] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [790] Cuenca                 Guadalajara            Toledo                
+##  [793] Cataluña               Barcelona              Girona                
+##  [796] Lleida                 Tarragona              Comunidad Valenciana  
+##  [799] Alicante               Castellón              Valencia              
+##  [802] Extremadura            Badajoz                Cáceres               
+##  [805] Galicia                A Coruña               Lugo                  
+##  [808] Ourense                Pontevedra             Madrid                
+##  [811] Murcia                 Navarra                País Vasco            
+##  [814] Alava                  Gipuzkoa               Vizcaya               
+##  [817] La Rioja               Ceuta                  Melilla               
+##  [820] Total                  Andalucía              Almería               
+##  [823] Cádiz                  Córdoba                Granada               
+##  [826] Huelva                 Jaén                   Málaga                
+##  [829] Sevilla                Aragón                 Huesca                
+##  [832] Teruel                 Zaragoza               Asturias              
+##  [835] Baleares               Canarias               Las Palmas            
+##  [838] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [841] Avila                  Burgos                 León                  
+##  [844] Palencia               Salamanca              Segovia               
+##  [847] Soria                  Valladolid             Zamora                
+##  [850] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [853] Cuenca                 Guadalajara            Toledo                
+##  [856] Cataluña               Barcelona              Girona                
+##  [859] Lleida                 Tarragona              Comunidad Valenciana  
+##  [862] Alicante               Castellón              Valencia              
+##  [865] Extremadura            Badajoz                Cáceres               
+##  [868] Galicia                A Coruña               Lugo                  
+##  [871] Ourense                Pontevedra             Madrid                
+##  [874] Murcia                 Navarra                País Vasco            
+##  [877] Alava                  Gipuzkoa               Vizcaya               
+##  [880] La Rioja               Ceuta                  Melilla               
+##  [883] Total                  Andalucía              Almería               
+##  [886] Cádiz                  Córdoba                Granada               
+##  [889] Huelva                 Jaén                   Málaga                
+##  [892] Sevilla                Aragón                 Huesca                
+##  [895] Teruel                 Zaragoza               Asturias              
+##  [898] Baleares               Canarias               Las Palmas            
+##  [901] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [904] Avila                  Burgos                 León                  
+##  [907] Palencia               Salamanca              Segovia               
+##  [910] Soria                  Valladolid             Zamora                
+##  [913] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [916] Cuenca                 Guadalajara            Toledo                
+##  [919] Cataluña               Barcelona              Girona                
+##  [922] Lleida                 Tarragona              Comunidad Valenciana  
+##  [925] Alicante               Castellón              Valencia              
+##  [928] Extremadura            Badajoz                Cáceres               
+##  [931] Galicia                A Coruña               Lugo                  
+##  [934] Ourense                Pontevedra             Madrid                
+##  [937] Murcia                 Navarra                País Vasco            
+##  [940] Alava                  Gipuzkoa               Vizcaya               
+##  [943] La Rioja               Ceuta                  Melilla               
+##  [946] Total                  Andalucía              Almería               
+##  [949] Cádiz                  Córdoba                Granada               
+##  [952] Huelva                 Jaén                   Málaga                
+##  [955] Sevilla                Aragón                 Huesca                
+##  [958] Teruel                 Zaragoza               Asturias              
+##  [961] Baleares               Canarias               Las Palmas            
+##  [964] Santa Cruz de Tenerife Cantabria              Castilla y León       
+##  [967] Avila                  Burgos                 León                  
+##  [970] Palencia               Salamanca              Segovia               
+##  [973] Soria                  Valladolid             Zamora                
+##  [976] Castilla - La Mancha   Albacete               Ciudad Real           
+##  [979] Cuenca                 Guadalajara            Toledo                
+##  [982] Cataluña               Barcelona              Girona                
+##  [985] Lleida                 Tarragona              Comunidad Valenciana  
+##  [988] Alicante               Castellón              Valencia              
+##  [991] Extremadura            Badajoz                Cáceres               
+##  [994] Galicia                A Coruña               Lugo                  
+##  [997] Ourense                Pontevedra             Madrid                
+## [1000] Murcia                 Navarra                País Vasco            
+## [1003] Alava                  Gipuzkoa               Vizcaya               
+## [1006] La Rioja               Ceuta                  Melilla               
+## [1009] Total                  Andalucía              Almería               
+## [1012] Cádiz                  Córdoba                Granada               
+## [1015] Huelva                 Jaén                   Málaga                
+## [1018] Sevilla                Aragón                 Huesca                
+## [1021] Teruel                 Zaragoza               Asturias              
+## [1024] Baleares               Canarias               Las Palmas            
+## [1027] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1030] Avila                  Burgos                 León                  
+## [1033] Palencia               Salamanca              Segovia               
+## [1036] Soria                  Valladolid             Zamora                
+## [1039] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1042] Cuenca                 Guadalajara            Toledo                
+## [1045] Cataluña               Barcelona              Girona                
+## [1048] Lleida                 Tarragona              Comunidad Valenciana  
+## [1051] Alicante               Castellón              Valencia              
+## [1054] Extremadura            Badajoz                Cáceres               
+## [1057] Galicia                A Coruña               Lugo                  
+## [1060] Ourense                Pontevedra             Madrid                
+## [1063] Murcia                 Navarra                País Vasco            
+## [1066] Alava                  Gipuzkoa               Vizcaya               
+## [1069] La Rioja               Ceuta                  Melilla               
+## [1072] Total                  Andalucía              Almería               
+## [1075] Cádiz                  Córdoba                Granada               
+## [1078] Huelva                 Jaén                   Málaga                
+## [1081] Sevilla                Aragón                 Huesca                
+## [1084] Teruel                 Zaragoza               Asturias              
+## [1087] Baleares               Canarias               Las Palmas            
+## [1090] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1093] Avila                  Burgos                 León                  
+## [1096] Palencia               Salamanca              Segovia               
+## [1099] Soria                  Valladolid             Zamora                
+## [1102] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1105] Cuenca                 Guadalajara            Toledo                
+## [1108] Cataluña               Barcelona              Girona                
+## [1111] Lleida                 Tarragona              Comunidad Valenciana  
+## [1114] Alicante               Castellón              Valencia              
+## [1117] Extremadura            Badajoz                Cáceres               
+## [1120] Galicia                A Coruña               Lugo                  
+## [1123] Ourense                Pontevedra             Madrid                
+## [1126] Murcia                 Navarra                País Vasco            
+## [1129] Alava                  Gipuzkoa               Vizcaya               
+## [1132] La Rioja               Ceuta                  Melilla               
+## [1135] Total                  Andalucía              Almería               
+## [1138] Cádiz                  Córdoba                Granada               
+## [1141] Huelva                 Jaén                   Málaga                
+## [1144] Sevilla                Aragón                 Huesca                
+## [1147] Teruel                 Zaragoza               Asturias              
+## [1150] Baleares               Canarias               Las Palmas            
+## [1153] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1156] Avila                  Burgos                 León                  
+## [1159] Palencia               Salamanca              Segovia               
+## [1162] Soria                  Valladolid             Zamora                
+## [1165] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1168] Cuenca                 Guadalajara            Toledo                
+## [1171] Cataluña               Barcelona              Girona                
+## [1174] Lleida                 Tarragona              Comunidad Valenciana  
+## [1177] Alicante               Castellón              Valencia              
+## [1180] Extremadura            Badajoz                Cáceres               
+## [1183] Galicia                A Coruña               Lugo                  
+## [1186] Ourense                Pontevedra             Madrid                
+## [1189] Murcia                 Navarra                País Vasco            
+## [1192] Alava                  Gipuzkoa               Vizcaya               
+## [1195] La Rioja               Ceuta                  Melilla               
+## [1198] Total                  Andalucía              Almería               
+## [1201] Cádiz                  Córdoba                Granada               
+## [1204] Huelva                 Jaén                   Málaga                
+## [1207] Sevilla                Aragón                 Huesca                
+## [1210] Teruel                 Zaragoza               Asturias              
+## [1213] Baleares               Canarias               Las Palmas            
+## [1216] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1219] Avila                  Burgos                 León                  
+## [1222] Palencia               Salamanca              Segovia               
+## [1225] Soria                  Valladolid             Zamora                
+## [1228] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1231] Cuenca                 Guadalajara            Toledo                
+## [1234] Cataluña               Barcelona              Girona                
+## [1237] Lleida                 Tarragona              Comunidad Valenciana  
+## [1240] Alicante               Castellón              Valencia              
+## [1243] Extremadura            Badajoz                Cáceres               
+## [1246] Galicia                A Coruña               Lugo                  
+## [1249] Ourense                Pontevedra             Madrid                
+## [1252] Murcia                 Navarra                País Vasco            
+## [1255] Alava                  Gipuzkoa               Vizcaya               
+## [1258] La Rioja               Ceuta                  Melilla               
+## [1261] Total                  Andalucía              Almería               
+## [1264] Cádiz                  Córdoba                Granada               
+## [1267] Huelva                 Jaén                   Málaga                
+## [1270] Sevilla                Aragón                 Huesca                
+## [1273] Teruel                 Zaragoza               Asturias              
+## [1276] Baleares               Canarias               Las Palmas            
+## [1279] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1282] Avila                  Burgos                 León                  
+## [1285] Palencia               Salamanca              Segovia               
+## [1288] Soria                  Valladolid             Zamora                
+## [1291] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1294] Cuenca                 Guadalajara            Toledo                
+## [1297] Cataluña               Barcelona              Girona                
+## [1300] Lleida                 Tarragona              Comunidad Valenciana  
+## [1303] Alicante               Castellón              Valencia              
+## [1306] Extremadura            Badajoz                Cáceres               
+## [1309] Galicia                A Coruña               Lugo                  
+## [1312] Ourense                Pontevedra             Madrid                
+## [1315] Murcia                 Navarra                País Vasco            
+## [1318] Alava                  Gipuzkoa               Vizcaya               
+## [1321] La Rioja               Ceuta                  Melilla               
+## [1324] Total                  Andalucía              Almería               
+## [1327] Cádiz                  Córdoba                Granada               
+## [1330] Huelva                 Jaén                   Málaga                
+## [1333] Sevilla                Aragón                 Huesca                
+## [1336] Teruel                 Zaragoza               Asturias              
+## [1339] Baleares               Canarias               Las Palmas            
+## [1342] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1345] Avila                  Burgos                 León                  
+## [1348] Palencia               Salamanca              Segovia               
+## [1351] Soria                  Valladolid             Zamora                
+## [1354] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1357] Cuenca                 Guadalajara            Toledo                
+## [1360] Cataluña               Barcelona              Girona                
+## [1363] Lleida                 Tarragona              Comunidad Valenciana  
+## [1366] Alicante               Castellón              Valencia              
+## [1369] Extremadura            Badajoz                Cáceres               
+## [1372] Galicia                A Coruña               Lugo                  
+## [1375] Ourense                Pontevedra             Madrid                
+## [1378] Murcia                 Navarra                País Vasco            
+## [1381] Alava                  Gipuzkoa               Vizcaya               
+## [1384] La Rioja               Ceuta                  Melilla               
+## [1387] Total                  Andalucía              Almería               
+## [1390] Cádiz                  Córdoba                Granada               
+## [1393] Huelva                 Jaén                   Málaga                
+## [1396] Sevilla                Aragón                 Huesca                
+## [1399] Teruel                 Zaragoza               Asturias              
+## [1402] Baleares               Canarias               Las Palmas            
+## [1405] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1408] Avila                  Burgos                 León                  
+## [1411] Palencia               Salamanca              Segovia               
+## [1414] Soria                  Valladolid             Zamora                
+## [1417] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1420] Cuenca                 Guadalajara            Toledo                
+## [1423] Cataluña               Barcelona              Girona                
+## [1426] Lleida                 Tarragona              Comunidad Valenciana  
+## [1429] Alicante               Castellón              Valencia              
+## [1432] Extremadura            Badajoz                Cáceres               
+## [1435] Galicia                A Coruña               Lugo                  
+## [1438] Ourense                Pontevedra             Madrid                
+## [1441] Murcia                 Navarra                País Vasco            
+## [1444] Alava                  Gipuzkoa               Vizcaya               
+## [1447] La Rioja               Ceuta                  Melilla               
+## [1450] Total                  Andalucía              Almería               
+## [1453] Cádiz                  Córdoba                Granada               
+## [1456] Huelva                 Jaén                   Málaga                
+## [1459] Sevilla                Aragón                 Huesca                
+## [1462] Teruel                 Zaragoza               Asturias              
+## [1465] Baleares               Canarias               Las Palmas            
+## [1468] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1471] Avila                  Burgos                 León                  
+## [1474] Palencia               Salamanca              Segovia               
+## [1477] Soria                  Valladolid             Zamora                
+## [1480] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1483] Cuenca                 Guadalajara            Toledo                
+## [1486] Cataluña               Barcelona              Girona                
+## [1489] Lleida                 Tarragona              Comunidad Valenciana  
+## [1492] Alicante               Castellón              Valencia              
+## [1495] Extremadura            Badajoz                Cáceres               
+## [1498] Galicia                A Coruña               Lugo                  
+## [1501] Ourense                Pontevedra             Madrid                
+## [1504] Murcia                 Navarra                País Vasco            
+## [1507] Alava                  Gipuzkoa               Vizcaya               
+## [1510] La Rioja               Ceuta                  Melilla               
+## [1513] Total                  Andalucía              Almería               
+## [1516] Cádiz                  Córdoba                Granada               
+## [1519] Huelva                 Jaén                   Málaga                
+## [1522] Sevilla                Aragón                 Huesca                
+## [1525] Teruel                 Zaragoza               Asturias              
+## [1528] Baleares               Canarias               Las Palmas            
+## [1531] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1534] Avila                  Burgos                 León                  
+## [1537] Palencia               Salamanca              Segovia               
+## [1540] Soria                  Valladolid             Zamora                
+## [1543] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1546] Cuenca                 Guadalajara            Toledo                
+## [1549] Cataluña               Barcelona              Girona                
+## [1552] Lleida                 Tarragona              Comunidad Valenciana  
+## [1555] Alicante               Castellón              Valencia              
+## [1558] Extremadura            Badajoz                Cáceres               
+## [1561] Galicia                A Coruña               Lugo                  
+## [1564] Ourense                Pontevedra             Madrid                
+## [1567] Murcia                 Navarra                País Vasco            
+## [1570] Alava                  Gipuzkoa               Vizcaya               
+## [1573] La Rioja               Ceuta                  Melilla               
+## [1576] Total                  Andalucía              Almería               
+## [1579] Cádiz                  Córdoba                Granada               
+## [1582] Huelva                 Jaén                   Málaga                
+## [1585] Sevilla                Aragón                 Huesca                
+## [1588] Teruel                 Zaragoza               Asturias              
+## [1591] Baleares               Canarias               Las Palmas            
+## [1594] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1597] Avila                  Burgos                 León                  
+## [1600] Palencia               Salamanca              Segovia               
+## [1603] Soria                  Valladolid             Zamora                
+## [1606] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1609] Cuenca                 Guadalajara            Toledo                
+## [1612] Cataluña               Barcelona              Girona                
+## [1615] Lleida                 Tarragona              Comunidad Valenciana  
+## [1618] Alicante               Castellón              Valencia              
+## [1621] Extremadura            Badajoz                Cáceres               
+## [1624] Galicia                A Coruña               Lugo                  
+## [1627] Ourense                Pontevedra             Madrid                
+## [1630] Murcia                 Navarra                País Vasco            
+## [1633] Alava                  Gipuzkoa               Vizcaya               
+## [1636] La Rioja               Ceuta                  Melilla               
+## [1639] Total                  Andalucía              Almería               
+## [1642] Cádiz                  Córdoba                Granada               
+## [1645] Huelva                 Jaén                   Málaga                
+## [1648] Sevilla                Aragón                 Huesca                
+## [1651] Teruel                 Zaragoza               Asturias              
+## [1654] Baleares               Canarias               Las Palmas            
+## [1657] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1660] Avila                  Burgos                 León                  
+## [1663] Palencia               Salamanca              Segovia               
+## [1666] Soria                  Valladolid             Zamora                
+## [1669] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1672] Cuenca                 Guadalajara            Toledo                
+## [1675] Cataluña               Barcelona              Girona                
+## [1678] Lleida                 Tarragona              Comunidad Valenciana  
+## [1681] Alicante               Castellón              Valencia              
+## [1684] Extremadura            Badajoz                Cáceres               
+## [1687] Galicia                A Coruña               Lugo                  
+## [1690] Ourense                Pontevedra             Madrid                
+## [1693] Murcia                 Navarra                País Vasco            
+## [1696] Alava                  Gipuzkoa               Vizcaya               
+## [1699] La Rioja               Ceuta                  Melilla               
+## [1702] Total                  Andalucía              Almería               
+## [1705] Cádiz                  Córdoba                Granada               
+## [1708] Huelva                 Jaén                   Málaga                
+## [1711] Sevilla                Aragón                 Huesca                
+## [1714] Teruel                 Zaragoza               Asturias              
+## [1717] Baleares               Canarias               Las Palmas            
+## [1720] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1723] Avila                  Burgos                 León                  
+## [1726] Palencia               Salamanca              Segovia               
+## [1729] Soria                  Valladolid             Zamora                
+## [1732] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1735] Cuenca                 Guadalajara            Toledo                
+## [1738] Cataluña               Barcelona              Girona                
+## [1741] Lleida                 Tarragona              Comunidad Valenciana  
+## [1744] Alicante               Castellón              Valencia              
+## [1747] Extremadura            Badajoz                Cáceres               
+## [1750] Galicia                A Coruña               Lugo                  
+## [1753] Ourense                Pontevedra             Madrid                
+## [1756] Murcia                 Navarra                País Vasco            
+## [1759] Alava                  Gipuzkoa               Vizcaya               
+## [1762] La Rioja               Ceuta                  Melilla               
+## [1765] Total                  Andalucía              Almería               
+## [1768] Cádiz                  Córdoba                Granada               
+## [1771] Huelva                 Jaén                   Málaga                
+## [1774] Sevilla                Aragón                 Huesca                
+## [1777] Teruel                 Zaragoza               Asturias              
+## [1780] Baleares               Canarias               Las Palmas            
+## [1783] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1786] Avila                  Burgos                 León                  
+## [1789] Palencia               Salamanca              Segovia               
+## [1792] Soria                  Valladolid             Zamora                
+## [1795] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1798] Cuenca                 Guadalajara            Toledo                
+## [1801] Cataluña               Barcelona              Girona                
+## [1804] Lleida                 Tarragona              Comunidad Valenciana  
+## [1807] Alicante               Castellón              Valencia              
+## [1810] Extremadura            Badajoz                Cáceres               
+## [1813] Galicia                A Coruña               Lugo                  
+## [1816] Ourense                Pontevedra             Madrid                
+## [1819] Murcia                 Navarra                País Vasco            
+## [1822] Alava                  Gipuzkoa               Vizcaya               
+## [1825] La Rioja               Ceuta                  Melilla               
+## [1828] Total                  Andalucía              Almería               
+## [1831] Cádiz                  Córdoba                Granada               
+## [1834] Huelva                 Jaén                   Málaga                
+## [1837] Sevilla                Aragón                 Huesca                
+## [1840] Teruel                 Zaragoza               Asturias              
+## [1843] Baleares               Canarias               Las Palmas            
+## [1846] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1849] Avila                  Burgos                 León                  
+## [1852] Palencia               Salamanca              Segovia               
+## [1855] Soria                  Valladolid             Zamora                
+## [1858] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1861] Cuenca                 Guadalajara            Toledo                
+## [1864] Cataluña               Barcelona              Girona                
+## [1867] Lleida                 Tarragona              Comunidad Valenciana  
+## [1870] Alicante               Castellón              Valencia              
+## [1873] Extremadura            Badajoz                Cáceres               
+## [1876] Galicia                A Coruña               Lugo                  
+## [1879] Ourense                Pontevedra             Madrid                
+## [1882] Murcia                 Navarra                País Vasco            
+## [1885] Alava                  Gipuzkoa               Vizcaya               
+## [1888] La Rioja               Ceuta                  Melilla               
+## [1891] Total                  Andalucía              Almería               
+## [1894] Cádiz                  Córdoba                Granada               
+## [1897] Huelva                 Jaén                   Málaga                
+## [1900] Sevilla                Aragón                 Huesca                
+## [1903] Teruel                 Zaragoza               Asturias              
+## [1906] Baleares               Canarias               Las Palmas            
+## [1909] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1912] Avila                  Burgos                 León                  
+## [1915] Palencia               Salamanca              Segovia               
+## [1918] Soria                  Valladolid             Zamora                
+## [1921] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1924] Cuenca                 Guadalajara            Toledo                
+## [1927] Cataluña               Barcelona              Girona                
+## [1930] Lleida                 Tarragona              Comunidad Valenciana  
+## [1933] Alicante               Castellón              Valencia              
+## [1936] Extremadura            Badajoz                Cáceres               
+## [1939] Galicia                A Coruña               Lugo                  
+## [1942] Ourense                Pontevedra             Madrid                
+## [1945] Murcia                 Navarra                País Vasco            
+## [1948] Alava                  Gipuzkoa               Vizcaya               
+## [1951] La Rioja               Ceuta                  Melilla               
+## [1954] Total                  Andalucía              Almería               
+## [1957] Cádiz                  Córdoba                Granada               
+## [1960] Huelva                 Jaén                   Málaga                
+## [1963] Sevilla                Aragón                 Huesca                
+## [1966] Teruel                 Zaragoza               Asturias              
+## [1969] Baleares               Canarias               Las Palmas            
+## [1972] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [1975] Avila                  Burgos                 León                  
+## [1978] Palencia               Salamanca              Segovia               
+## [1981] Soria                  Valladolid             Zamora                
+## [1984] Castilla - La Mancha   Albacete               Ciudad Real           
+## [1987] Cuenca                 Guadalajara            Toledo                
+## [1990] Cataluña               Barcelona              Girona                
+## [1993] Lleida                 Tarragona              Comunidad Valenciana  
+## [1996] Alicante               Castellón              Valencia              
+## [1999] Extremadura            Badajoz                Cáceres               
+## [2002] Galicia                A Coruña               Lugo                  
+## [2005] Ourense                Pontevedra             Madrid                
+## [2008] Murcia                 Navarra                País Vasco            
+## [2011] Alava                  Gipuzkoa               Vizcaya               
+## [2014] La Rioja               Ceuta                  Melilla               
+## [2017] Total                  Andalucía              Almería               
+## [2020] Cádiz                  Córdoba                Granada               
+## [2023] Huelva                 Jaén                   Málaga                
+## [2026] Sevilla                Aragón                 Huesca                
+## [2029] Teruel                 Zaragoza               Asturias              
+## [2032] Baleares               Canarias               Las Palmas            
+## [2035] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2038] Avila                  Burgos                 León                  
+## [2041] Palencia               Salamanca              Segovia               
+## [2044] Soria                  Valladolid             Zamora                
+## [2047] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2050] Cuenca                 Guadalajara            Toledo                
+## [2053] Cataluña               Barcelona              Girona                
+## [2056] Lleida                 Tarragona              Comunidad Valenciana  
+## [2059] Alicante               Castellón              Valencia              
+## [2062] Extremadura            Badajoz                Cáceres               
+## [2065] Galicia                A Coruña               Lugo                  
+## [2068] Ourense                Pontevedra             Madrid                
+## [2071] Murcia                 Navarra                País Vasco            
+## [2074] Alava                  Gipuzkoa               Vizcaya               
+## [2077] La Rioja               Ceuta                  Melilla               
+## [2080] Total                  Andalucía              Almería               
+## [2083] Cádiz                  Córdoba                Granada               
+## [2086] Huelva                 Jaén                   Málaga                
+## [2089] Sevilla                Aragón                 Huesca                
+## [2092] Teruel                 Zaragoza               Asturias              
+## [2095] Baleares               Canarias               Las Palmas            
+## [2098] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2101] Avila                  Burgos                 León                  
+## [2104] Palencia               Salamanca              Segovia               
+## [2107] Soria                  Valladolid             Zamora                
+## [2110] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2113] Cuenca                 Guadalajara            Toledo                
+## [2116] Cataluña               Barcelona              Girona                
+## [2119] Lleida                 Tarragona              Comunidad Valenciana  
+## [2122] Alicante               Castellón              Valencia              
+## [2125] Extremadura            Badajoz                Cáceres               
+## [2128] Galicia                A Coruña               Lugo                  
+## [2131] Ourense                Pontevedra             Madrid                
+## [2134] Murcia                 Navarra                País Vasco            
+## [2137] Alava                  Gipuzkoa               Vizcaya               
+## [2140] La Rioja               Ceuta                  Melilla               
+## [2143] Total                  Andalucía              Almería               
+## [2146] Cádiz                  Córdoba                Granada               
+## [2149] Huelva                 Jaén                   Málaga                
+## [2152] Sevilla                Aragón                 Huesca                
+## [2155] Teruel                 Zaragoza               Asturias              
+## [2158] Baleares               Canarias               Las Palmas            
+## [2161] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2164] Avila                  Burgos                 León                  
+## [2167] Palencia               Salamanca              Segovia               
+## [2170] Soria                  Valladolid             Zamora                
+## [2173] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2176] Cuenca                 Guadalajara            Toledo                
+## [2179] Cataluña               Barcelona              Girona                
+## [2182] Lleida                 Tarragona              Comunidad Valenciana  
+## [2185] Alicante               Castellón              Valencia              
+## [2188] Extremadura            Badajoz                Cáceres               
+## [2191] Galicia                A Coruña               Lugo                  
+## [2194] Ourense                Pontevedra             Madrid                
+## [2197] Murcia                 Navarra                País Vasco            
+## [2200] Alava                  Gipuzkoa               Vizcaya               
+## [2203] La Rioja               Ceuta                  Melilla               
+## [2206] Total                  Andalucía              Almería               
+## [2209] Cádiz                  Córdoba                Granada               
+## [2212] Huelva                 Jaén                   Málaga                
+## [2215] Sevilla                Aragón                 Huesca                
+## [2218] Teruel                 Zaragoza               Asturias              
+## [2221] Baleares               Canarias               Las Palmas            
+## [2224] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2227] Avila                  Burgos                 León                  
+## [2230] Palencia               Salamanca              Segovia               
+## [2233] Soria                  Valladolid             Zamora                
+## [2236] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2239] Cuenca                 Guadalajara            Toledo                
+## [2242] Cataluña               Barcelona              Girona                
+## [2245] Lleida                 Tarragona              Comunidad Valenciana  
+## [2248] Alicante               Castellón              Valencia              
+## [2251] Extremadura            Badajoz                Cáceres               
+## [2254] Galicia                A Coruña               Lugo                  
+## [2257] Ourense                Pontevedra             Madrid                
+## [2260] Murcia                 Navarra                País Vasco            
+## [2263] Alava                  Gipuzkoa               Vizcaya               
+## [2266] La Rioja               Ceuta                  Melilla               
+## [2269] Total                  Andalucía              Almería               
+## [2272] Cádiz                  Córdoba                Granada               
+## [2275] Huelva                 Jaén                   Málaga                
+## [2278] Sevilla                Aragón                 Huesca                
+## [2281] Teruel                 Zaragoza               Asturias              
+## [2284] Baleares               Canarias               Las Palmas            
+## [2287] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2290] Avila                  Burgos                 León                  
+## [2293] Palencia               Salamanca              Segovia               
+## [2296] Soria                  Valladolid             Zamora                
+## [2299] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2302] Cuenca                 Guadalajara            Toledo                
+## [2305] Cataluña               Barcelona              Girona                
+## [2308] Lleida                 Tarragona              Comunidad Valenciana  
+## [2311] Alicante               Castellón              Valencia              
+## [2314] Extremadura            Badajoz                Cáceres               
+## [2317] Galicia                A Coruña               Lugo                  
+## [2320] Ourense                Pontevedra             Madrid                
+## [2323] Murcia                 Navarra                País Vasco            
+## [2326] Alava                  Gipuzkoa               Vizcaya               
+## [2329] La Rioja               Ceuta                  Melilla               
+## [2332] Total                  Andalucía              Almería               
+## [2335] Cádiz                  Córdoba                Granada               
+## [2338] Huelva                 Jaén                   Málaga                
+## [2341] Sevilla                Aragón                 Huesca                
+## [2344] Teruel                 Zaragoza               Asturias              
+## [2347] Baleares               Canarias               Las Palmas            
+## [2350] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2353] Avila                  Burgos                 León                  
+## [2356] Palencia               Salamanca              Segovia               
+## [2359] Soria                  Valladolid             Zamora                
+## [2362] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2365] Cuenca                 Guadalajara            Toledo                
+## [2368] Cataluña               Barcelona              Girona                
+## [2371] Lleida                 Tarragona              Comunidad Valenciana  
+## [2374] Alicante               Castellón              Valencia              
+## [2377] Extremadura            Badajoz                Cáceres               
+## [2380] Galicia                A Coruña               Lugo                  
+## [2383] Ourense                Pontevedra             Madrid                
+## [2386] Murcia                 Navarra                País Vasco            
+## [2389] Alava                  Gipuzkoa               Vizcaya               
+## [2392] La Rioja               Ceuta                  Melilla               
+## [2395] Total                  Andalucía              Almería               
+## [2398] Cádiz                  Córdoba                Granada               
+## [2401] Huelva                 Jaén                   Málaga                
+## [2404] Sevilla                Aragón                 Huesca                
+## [2407] Teruel                 Zaragoza               Asturias              
+## [2410] Baleares               Canarias               Las Palmas            
+## [2413] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2416] Avila                  Burgos                 León                  
+## [2419] Palencia               Salamanca              Segovia               
+## [2422] Soria                  Valladolid             Zamora                
+## [2425] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2428] Cuenca                 Guadalajara            Toledo                
+## [2431] Cataluña               Barcelona              Girona                
+## [2434] Lleida                 Tarragona              Comunidad Valenciana  
+## [2437] Alicante               Castellón              Valencia              
+## [2440] Extremadura            Badajoz                Cáceres               
+## [2443] Galicia                A Coruña               Lugo                  
+## [2446] Ourense                Pontevedra             Madrid                
+## [2449] Murcia                 Navarra                País Vasco            
+## [2452] Alava                  Vizcaya                Gipuzkoa              
+## [2455] La Rioja               Ceuta                  Melilla               
+## [2458] Total                  Andalucía              Almería               
+## [2461] Cádiz                  Córdoba                Granada               
+## [2464] Huelva                 Jaén                   Málaga                
+## [2467] Sevilla                Aragón                 Huesca                
+## [2470] Teruel                 Zaragoza               Asturias              
+## [2473] Baleares               Canarias               Las Palmas            
+## [2476] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2479] Avila                  Burgos                 León                  
+## [2482] Palencia               Salamanca              Segovia               
+## [2485] Soria                  Valladolid             Zamora                
+## [2488] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2491] Cuenca                 Guadalajara            Toledo                
+## [2494] Cataluña               Barcelona              Girona                
+## [2497] Lleida                 Tarragona              Comunidad Valenciana  
+## [2500] Alicante               Castellón              Valencia              
+## [2503] Extremadura            Badajoz                Cáceres               
+## [2506] Galicia                A Coruña               Lugo                  
+## [2509] Ourense                Pontevedra             Madrid                
+## [2512] Murcia                 Navarra                País Vasco            
+## [2515] Alava                  Vizcaya                Gipuzkoa              
+## [2518] La Rioja               Ceuta                  Melilla               
+## [2521] Total                  Andalucía              Almería               
+## [2524] Cádiz                  Córdoba                Granada               
+## [2527] Huelva                 Jaén                   Málaga                
+## [2530] Sevilla                Aragón                 Huesca                
+## [2533] Teruel                 Zaragoza               Asturias              
+## [2536] Baleares               Canarias               Las Palmas            
+## [2539] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2542] Avila                  Burgos                 León                  
+## [2545] Palencia               Salamanca              Segovia               
+## [2548] Soria                  Valladolid             Zamora                
+## [2551] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2554] Cuenca                 Guadalajara            Toledo                
+## [2557] Cataluña               Barcelona              Girona                
+## [2560] Lleida                 Tarragona              Comunidad Valenciana  
+## [2563] Alicante               Castellón              Valencia              
+## [2566] Extremadura            Badajoz                Cáceres               
+## [2569] Galicia                A Coruña               Lugo                  
+## [2572] Ourense                Pontevedra             Madrid                
+## [2575] Murcia                 Navarra                País Vasco            
+## [2578] Alava                  Vizcaya                Gipuzkoa              
+## [2581] La Rioja               Ceuta                  Melilla               
+## [2584] Total                  Andalucía              Almería               
+## [2587] Cádiz                  Córdoba                Granada               
+## [2590] Huelva                 Jaén                   Málaga                
+## [2593] Sevilla                Aragón                 Huesca                
+## [2596] Teruel                 Zaragoza               Asturias              
+## [2599] Baleares               Canarias               Las Palmas            
+## [2602] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2605] Avila                  Burgos                 León                  
+## [2608] Palencia               Salamanca              Segovia               
+## [2611] Soria                  Valladolid             Zamora                
+## [2614] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2617] Cuenca                 Guadalajara            Toledo                
+## [2620] Cataluña               Barcelona              Girona                
+## [2623] Lleida                 Tarragona              Comunidad Valenciana  
+## [2626] Alicante               Castellón              Valencia              
+## [2629] Extremadura            Badajoz                Cáceres               
+## [2632] Galicia                A Coruña               Lugo                  
+## [2635] Ourense                Pontevedra             Madrid                
+## [2638] Murcia                 Navarra                País Vasco            
+## [2641] Alava                  Vizcaya                Gipuzkoa              
+## [2644] La Rioja               Ceuta                  Melilla               
+## [2647] Total                  Andalucía              Almería               
+## [2650] Cádiz                  Córdoba                Granada               
+## [2653] Huelva                 Jaén                   Málaga                
+## [2656] Sevilla                Aragón                 Huesca                
+## [2659] Teruel                 Zaragoza               Asturias              
+## [2662] Baleares               Canarias               Las Palmas            
+## [2665] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2668] Avila                  Burgos                 León                  
+## [2671] Palencia               Salamanca              Segovia               
+## [2674] Soria                  Valladolid             Zamora                
+## [2677] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2680] Cuenca                 Guadalajara            Toledo                
+## [2683] Cataluña               Barcelona              Girona                
+## [2686] Lleida                 Tarragona              Comunidad Valenciana  
+## [2689] Alicante               Castellón              Valencia              
+## [2692] Extremadura            Badajoz                Cáceres               
+## [2695] Galicia                A Coruña               Lugo                  
+## [2698] Ourense                Pontevedra             Madrid                
+## [2701] Murcia                 Navarra                País Vasco            
+## [2704] Alava                  Vizcaya                Gipuzkoa              
+## [2707] La Rioja               Ceuta                  Melilla               
+## [2710] Total                  Andalucía              Almería               
+## [2713] Cádiz                  Córdoba                Granada               
+## [2716] Huelva                 Jaén                   Málaga                
+## [2719] Sevilla                Aragón                 Huesca                
+## [2722] Teruel                 Zaragoza               Asturias              
+## [2725] Baleares               Canarias               Las Palmas            
+## [2728] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2731] Avila                  Burgos                 León                  
+## [2734] Palencia               Salamanca              Segovia               
+## [2737] Soria                  Valladolid             Zamora                
+## [2740] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2743] Cuenca                 Guadalajara            Toledo                
+## [2746] Cataluña               Barcelona              Girona                
+## [2749] Lleida                 Tarragona              Comunidad Valenciana  
+## [2752] Alicante               Castellón              Valencia              
+## [2755] Extremadura            Badajoz                Cáceres               
+## [2758] Galicia                A Coruña               Lugo                  
+## [2761] Ourense                Pontevedra             Madrid                
+## [2764] Murcia                 Navarra                País Vasco            
+## [2767] Alava                  Vizcaya                Gipuzkoa              
+## [2770] La Rioja               Ceuta                  Melilla               
+## [2773] Total                  Andalucía              Almería               
+## [2776] Cádiz                  Córdoba                Granada               
+## [2779] Huelva                 Jaén                   Málaga                
+## [2782] Sevilla                Aragón                 Huesca                
+## [2785] Teruel                 Zaragoza               Asturias              
+## [2788] Baleares               Canarias               Las Palmas            
+## [2791] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2794] Avila                  Burgos                 León                  
+## [2797] Palencia               Salamanca              Segovia               
+## [2800] Soria                  Valladolid             Zamora                
+## [2803] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2806] Cuenca                 Guadalajara            Toledo                
+## [2809] Cataluña               Barcelona              Girona                
+## [2812] Lleida                 Tarragona              Comunidad Valenciana  
+## [2815] Alicante               Castellón              Valencia              
+## [2818] Extremadura            Badajoz                Cáceres               
+## [2821] Galicia                A Coruña               Lugo                  
+## [2824] Ourense                Pontevedra             Madrid                
+## [2827] Murcia                 Navarra                País Vasco            
+## [2830] Alava                  Vizcaya                Gipuzkoa              
+## [2833] La Rioja               Ceuta                  Melilla               
+## [2836] Total                  Andalucía              Almería               
+## [2839] Cádiz                  Córdoba                Granada               
+## [2842] Huelva                 Jaén                   Málaga                
+## [2845] Sevilla                Aragón                 Huesca                
+## [2848] Teruel                 Zaragoza               Asturias              
+## [2851] Baleares               Canarias               Las Palmas            
+## [2854] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2857] Avila                  Burgos                 León                  
+## [2860] Palencia               Salamanca              Segovia               
+## [2863] Soria                  Valladolid             Zamora                
+## [2866] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2869] Cuenca                 Guadalajara            Toledo                
+## [2872] Cataluña               Barcelona              Girona                
+## [2875] Lleida                 Tarragona              Comunidad Valenciana  
+## [2878] Alicante               Castellón              Valencia              
+## [2881] Extremadura            Badajoz                Cáceres               
+## [2884] Galicia                A Coruña               Lugo                  
+## [2887] Ourense                Pontevedra             Madrid                
+## [2890] Murcia                 Navarra                País Vasco            
+## [2893] Alava                  Vizcaya                Gipuzkoa              
+## [2896] La Rioja               Ceuta                  Melilla               
+## [2899] Total                  Andalucía              Almería               
+## [2902] Cádiz                  Córdoba                Granada               
+## [2905] Huelva                 Jaén                   Málaga                
+## [2908] Sevilla                Aragón                 Huesca                
+## [2911] Teruel                 Zaragoza               Asturias              
+## [2914] Baleares               Canarias               Las Palmas            
+## [2917] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2920] Avila                  Burgos                 León                  
+## [2923] Palencia               Salamanca              Segovia               
+## [2926] Soria                  Valladolid             Zamora                
+## [2929] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2932] Cuenca                 Guadalajara            Toledo                
+## [2935] Cataluña               Barcelona              Girona                
+## [2938] Lleida                 Tarragona              Comunidad Valenciana  
+## [2941] Alicante               Castellón              Valencia              
+## [2944] Extremadura            Badajoz                Cáceres               
+## [2947] Galicia                A Coruña               Lugo                  
+## [2950] Ourense                Pontevedra             Madrid                
+## [2953] Murcia                 Navarra                País Vasco            
+## [2956] Alava                  Vizcaya                Gipuzkoa              
+## [2959] La Rioja               Ceuta                  Melilla               
+## [2962] Total                  Andalucía              Almería               
+## [2965] Cádiz                  Córdoba                Granada               
+## [2968] Huelva                 Jaén                   Málaga                
+## [2971] Sevilla                Aragón                 Huesca                
+## [2974] Teruel                 Zaragoza               Asturias              
+## [2977] Baleares               Canarias               Las Palmas            
+## [2980] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [2983] Avila                  Burgos                 León                  
+## [2986] Palencia               Salamanca              Segovia               
+## [2989] Soria                  Valladolid             Zamora                
+## [2992] Castilla - La Mancha   Albacete               Ciudad Real           
+## [2995] Cuenca                 Guadalajara            Toledo                
+## [2998] Cataluña               Barcelona              Girona                
+## [3001] Lleida                 Tarragona              Comunidad Valenciana  
+## [3004] Alicante               Castellón              Valencia              
+## [3007] Extremadura            Badajoz                Cáceres               
+## [3010] Galicia                A Coruña               Lugo                  
+## [3013] Ourense                Pontevedra             Madrid                
+## [3016] Murcia                 Navarra                País Vasco            
+## [3019] Alava                  Vizcaya                Gipuzkoa              
+## [3022] La Rioja               Ceuta                  Melilla               
+## [3025] Total                  Andalucía              Almería               
+## [3028] Cádiz                  Córdoba                Granada               
+## [3031] Huelva                 Jaén                   Málaga                
+## [3034] Sevilla                Aragón                 Huesca                
+## [3037] Teruel                 Zaragoza               Asturias              
+## [3040] Baleares               Canarias               Las Palmas            
+## [3043] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3046] Avila                  Burgos                 León                  
+## [3049] Palencia               Salamanca              Segovia               
+## [3052] Soria                  Valladolid             Zamora                
+## [3055] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3058] Cuenca                 Guadalajara            Toledo                
+## [3061] Cataluña               Barcelona              Girona                
+## [3064] Lleida                 Tarragona              Comunidad Valenciana  
+## [3067] Alicante               Castellón              Valencia              
+## [3070] Extremadura            Badajoz                Cáceres               
+## [3073] Galicia                A Coruña               Lugo                  
+## [3076] Ourense                Pontevedra             Madrid                
+## [3079] Murcia                 Navarra                País Vasco            
+## [3082] Alava                  Vizcaya                Gipuzkoa              
+## [3085] La Rioja               Ceuta                  Melilla               
+## [3088] Total                  Andalucía              Almería               
+## [3091] Cádiz                  Córdoba                Granada               
+## [3094] Huelva                 Jaén                   Málaga                
+## [3097] Sevilla                Aragón                 Huesca                
+## [3100] Teruel                 Zaragoza               Asturias              
+## [3103] Baleares               Canarias               Las Palmas            
+## [3106] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3109] Avila                  Burgos                 León                  
+## [3112] Palencia               Salamanca              Segovia               
+## [3115] Soria                  Valladolid             Zamora                
+## [3118] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3121] Cuenca                 Guadalajara            Toledo                
+## [3124] Cataluña               Barcelona              Girona                
+## [3127] Lleida                 Tarragona              Comunidad Valenciana  
+## [3130] Alicante               Castellón              Valencia              
+## [3133] Extremadura            Badajoz                Cáceres               
+## [3136] Galicia                A Coruña               Lugo                  
+## [3139] Ourense                Pontevedra             Madrid                
+## [3142] Murcia                 Navarra                País Vasco            
+## [3145] Alava                  Vizcaya                Gipuzkoa              
+## [3148] La Rioja               Ceuta                  Melilla               
+## [3151] Total                  Andalucía              Almería               
+## [3154] Cádiz                  Córdoba                Granada               
+## [3157] Huelva                 Jaén                   Málaga                
+## [3160] Sevilla                Aragón                 Huesca                
+## [3163] Teruel                 Zaragoza               Asturias              
+## [3166] Baleares               Canarias               Las Palmas            
+## [3169] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3172] Avila                  Burgos                 León                  
+## [3175] Palencia               Salamanca              Segovia               
+## [3178] Soria                  Valladolid             Zamora                
+## [3181] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3184] Cuenca                 Guadalajara            Toledo                
+## [3187] Cataluña               Barcelona              Girona                
+## [3190] Lleida                 Tarragona              Comunidad Valenciana  
+## [3193] Alicante               Castellón              Valencia              
+## [3196] Extremadura            Badajoz                Cáceres               
+## [3199] Galicia                A Coruña               Lugo                  
+## [3202] Ourense                Pontevedra             Madrid                
+## [3205] Murcia                 Navarra                País Vasco            
+## [3208] Alava                  Vizcaya                Gipuzkoa              
+## [3211] La Rioja               Ceuta                  Melilla               
+## [3214] Total                  Andalucía              Almería               
+## [3217] Cádiz                  Córdoba                Granada               
+## [3220] Huelva                 Jaén                   Málaga                
+## [3223] Sevilla                Aragón                 Huesca                
+## [3226] Teruel                 Zaragoza               Asturias              
+## [3229] Baleares               Canarias               Las Palmas            
+## [3232] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3235] Avila                  Burgos                 León                  
+## [3238] Palencia               Salamanca              Segovia               
+## [3241] Soria                  Valladolid             Zamora                
+## [3244] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3247] Cuenca                 Guadalajara            Toledo                
+## [3250] Cataluña               Barcelona              Girona                
+## [3253] Lleida                 Tarragona              Comunidad Valenciana  
+## [3256] Alicante               Castellón              Valencia              
+## [3259] Extremadura            Badajoz                Cáceres               
+## [3262] Galicia                A Coruña               Lugo                  
+## [3265] Ourense                Pontevedra             Madrid                
+## [3268] Murcia                 Navarra                País Vasco            
+## [3271] Alava                  Vizcaya                Gipuzkoa              
+## [3274] La Rioja               Ceuta                  Melilla               
+## [3277] Total                  Andalucía              Almería               
+## [3280] Cádiz                  Córdoba                Granada               
+## [3283] Huelva                 Jaén                   Málaga                
+## [3286] Sevilla                Aragón                 Huesca                
+## [3289] Teruel                 Zaragoza               Asturias              
+## [3292] Baleares               Canarias               Las Palmas            
+## [3295] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3298] Avila                  Burgos                 León                  
+## [3301] Palencia               Salamanca              Segovia               
+## [3304] Soria                  Valladolid             Zamora                
+## [3307] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3310] Cuenca                 Guadalajara            Toledo                
+## [3313] Cataluña               Barcelona              Girona                
+## [3316] Lleida                 Tarragona              Comunidad Valenciana  
+## [3319] Alicante               Castellón              Valencia              
+## [3322] Extremadura            Badajoz                Cáceres               
+## [3325] Galicia                A Coruña               Lugo                  
+## [3328] Ourense                Pontevedra             Madrid                
+## [3331] Murcia                 Navarra                País Vasco            
+## [3334] Alava                  Vizcaya                Gipuzkoa              
+## [3337] La Rioja               Ceuta                  Melilla               
+## [3340] Total                  Andalucía              Almería               
+## [3343] Cádiz                  Córdoba                Granada               
+## [3346] Huelva                 Jaén                   Málaga                
+## [3349] Sevilla                Aragón                 Huesca                
+## [3352] Teruel                 Zaragoza               Asturias              
+## [3355] Baleares               Canarias               Las Palmas            
+## [3358] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3361] Avila                  Burgos                 León                  
+## [3364] Palencia               Salamanca              Segovia               
+## [3367] Soria                  Valladolid             Zamora                
+## [3370] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3373] Cuenca                 Guadalajara            Toledo                
+## [3376] Cataluña               Barcelona              Girona                
+## [3379] Lleida                 Tarragona              Comunidad Valenciana  
+## [3382] Alicante               Castellón              Valencia              
+## [3385] Extremadura            Badajoz                Cáceres               
+## [3388] Galicia                A Coruña               Lugo                  
+## [3391] Ourense                Pontevedra             Madrid                
+## [3394] Murcia                 Navarra                País Vasco            
+## [3397] Alava                  Vizcaya                Gipuzkoa              
+## [3400] La Rioja               Ceuta                  Melilla               
+## [3403] Total                  Andalucía              Almería               
+## [3406] Cádiz                  Córdoba                Granada               
+## [3409] Huelva                 Jaén                   Málaga                
+## [3412] Sevilla                Aragón                 Huesca                
+## [3415] Teruel                 Zaragoza               Asturias              
+## [3418] Baleares               Canarias               Las Palmas            
+## [3421] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3424] Avila                  Burgos                 León                  
+## [3427] Palencia               Salamanca              Segovia               
+## [3430] Soria                  Valladolid             Zamora                
+## [3433] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3436] Cuenca                 Guadalajara            Toledo                
+## [3439] Cataluña               Barcelona              Girona                
+## [3442] Lleida                 Tarragona              Comunidad Valenciana  
+## [3445] Alicante               Castellón              Valencia              
+## [3448] Extremadura            Badajoz                Cáceres               
+## [3451] Galicia                A Coruña               Lugo                  
+## [3454] Ourense                Pontevedra             Madrid                
+## [3457] Murcia                 Navarra                País Vasco            
+## [3460] Alava                  Vizcaya                Gipuzkoa              
+## [3463] La Rioja               Ceuta                  Melilla               
+## [3466] Total                  Andalucía              Almería               
+## [3469] Cádiz                  Córdoba                Granada               
+## [3472] Huelva                 Jaén                   Málaga                
+## [3475] Sevilla                Aragón                 Huesca                
+## [3478] Teruel                 Zaragoza               Asturias              
+## [3481] Baleares               Canarias               Las Palmas            
+## [3484] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3487] Avila                  Burgos                 León                  
+## [3490] Palencia               Salamanca              Segovia               
+## [3493] Soria                  Valladolid             Zamora                
+## [3496] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3499] Cuenca                 Guadalajara            Toledo                
+## [3502] Cataluña               Barcelona              Girona                
+## [3505] Lleida                 Tarragona              Comunidad Valenciana  
+## [3508] Alicante               Castellón              Valencia              
+## [3511] Extremadura            Badajoz                Cáceres               
+## [3514] Galicia                A Coruña               Lugo                  
+## [3517] Ourense                Pontevedra             Madrid                
+## [3520] Murcia                 Navarra                País Vasco            
+## [3523] Alava                  Vizcaya                Gipuzkoa              
+## [3526] La Rioja               Ceuta                  Melilla               
+## [3529] Total                  Andalucía              Almería               
+## [3532] Cádiz                  Córdoba                Granada               
+## [3535] Huelva                 Jaén                   Málaga                
+## [3538] Sevilla                Aragón                 Huesca                
+## [3541] Teruel                 Zaragoza               Asturias              
+## [3544] Baleares               Canarias               Las Palmas            
+## [3547] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3550] Avila                  Burgos                 León                  
+## [3553] Palencia               Salamanca              Segovia               
+## [3556] Soria                  Valladolid             Zamora                
+## [3559] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3562] Cuenca                 Guadalajara            Toledo                
+## [3565] Cataluña               Barcelona              Girona                
+## [3568] Lleida                 Tarragona              Comunidad Valenciana  
+## [3571] Alicante               Castellón              Valencia              
+## [3574] Extremadura            Badajoz                Cáceres               
+## [3577] Galicia                A Coruña               Lugo                  
+## [3580] Ourense                Pontevedra             Madrid                
+## [3583] Murcia                 Navarra                País Vasco            
+## [3586] Alava                  Vizcaya                Gipuzkoa              
+## [3589] La Rioja               Ceuta                  Melilla               
+## [3592] Total                  Andalucía              Almería               
+## [3595] Cádiz                  Córdoba                Granada               
+## [3598] Huelva                 Jaén                   Málaga                
+## [3601] Sevilla                Aragón                 Huesca                
+## [3604] Teruel                 Zaragoza               Asturias              
+## [3607] Baleares               Canarias               Las Palmas            
+## [3610] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3613] Avila                  Burgos                 León                  
+## [3616] Palencia               Salamanca              Segovia               
+## [3619] Soria                  Valladolid             Zamora                
+## [3622] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3625] Cuenca                 Guadalajara            Toledo                
+## [3628] Cataluña               Barcelona              Girona                
+## [3631] Lleida                 Tarragona              Comunidad Valenciana  
+## [3634] Alicante               Castellón              Valencia              
+## [3637] Extremadura            Badajoz                Cáceres               
+## [3640] Galicia                A Coruña               Lugo                  
+## [3643] Ourense                Pontevedra             Madrid                
+## [3646] Murcia                 Navarra                País Vasco            
+## [3649] Alava                  Vizcaya                Gipuzkoa              
+## [3652] La Rioja               Ceuta                  Melilla               
+## [3655] Total                  Andalucía              Almería               
+## [3658] Cádiz                  Córdoba                Granada               
+## [3661] Huelva                 Jaén                   Málaga                
+## [3664] Sevilla                Aragón                 Huesca                
+## [3667] Teruel                 Zaragoza               Asturias              
+## [3670] Baleares               Canarias               Las Palmas            
+## [3673] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3676] Avila                  Burgos                 León                  
+## [3679] Palencia               Salamanca              Segovia               
+## [3682] Soria                  Valladolid             Zamora                
+## [3685] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3688] Cuenca                 Guadalajara            Toledo                
+## [3691] Cataluña               Barcelona              Girona                
+## [3694] Lleida                 Tarragona              Comunidad Valenciana  
+## [3697] Alicante               Castellón              Valencia              
+## [3700] Extremadura            Badajoz                Cáceres               
+## [3703] Galicia                A Coruña               Lugo                  
+## [3706] Ourense                Pontevedra             Madrid                
+## [3709] Murcia                 Navarra                País Vasco            
+## [3712] Alava                  Vizcaya                Gipuzkoa              
+## [3715] La Rioja               Ceuta                  Melilla               
+## [3718] Total                  Andalucía              Almería               
+## [3721] Cádiz                  Córdoba                Granada               
+## [3724] Huelva                 Jaén                   Málaga                
+## [3727] Sevilla                Aragón                 Huesca                
+## [3730] Teruel                 Zaragoza               Asturias              
+## [3733] Baleares               Canarias               Las Palmas            
+## [3736] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3739] Avila                  Burgos                 León                  
+## [3742] Palencia               Salamanca              Segovia               
+## [3745] Soria                  Valladolid             Zamora                
+## [3748] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3751] Cuenca                 Guadalajara            Toledo                
+## [3754] Cataluña               Barcelona              Girona                
+## [3757] Lleida                 Tarragona              Comunidad Valenciana  
+## [3760] Alicante               Castellón              Valencia              
+## [3763] Extremadura            Badajoz                Cáceres               
+## [3766] Galicia                A Coruña               Lugo                  
+## [3769] Ourense                Pontevedra             Madrid                
+## [3772] Murcia                 Navarra                País Vasco            
+## [3775] Alava                  Vizcaya                Gipuzkoa              
+## [3778] La Rioja               Ceuta                  Melilla               
+## [3781] Total                  Andalucía              Almería               
+## [3784] Cádiz                  Córdoba                Granada               
+## [3787] Huelva                 Jaén                   Málaga                
+## [3790] Sevilla                Aragón                 Huesca                
+## [3793] Teruel                 Zaragoza               Asturias              
+## [3796] Baleares               Canarias               Las Palmas            
+## [3799] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3802] Avila                  Burgos                 León                  
+## [3805] Palencia               Salamanca              Segovia               
+## [3808] Soria                  Valladolid             Zamora                
+## [3811] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3814] Cuenca                 Guadalajara            Toledo                
+## [3817] Cataluña               Barcelona              Girona                
+## [3820] Lleida                 Tarragona              Comunidad Valenciana  
+## [3823] Alicante               Castellón              Valencia              
+## [3826] Extremadura            Badajoz                Cáceres               
+## [3829] Galicia                A Coruña               Lugo                  
+## [3832] Ourense                Pontevedra             Madrid                
+## [3835] Murcia                 Navarra                País Vasco            
+## [3838] Alava                  Vizcaya                Gipuzkoa              
+## [3841] La Rioja               Ceuta                  Melilla               
+## [3844] Total                  Andalucía              Almería               
+## [3847] Cádiz                  Córdoba                Granada               
+## [3850] Huelva                 Jaén                   Málaga                
+## [3853] Sevilla                Aragón                 Huesca                
+## [3856] Teruel                 Zaragoza               Asturias              
+## [3859] Baleares               Canarias               Las Palmas            
+## [3862] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3865] Avila                  Burgos                 León                  
+## [3868] Palencia               Salamanca              Segovia               
+## [3871] Soria                  Valladolid             Zamora                
+## [3874] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3877] Cuenca                 Guadalajara            Toledo                
+## [3880] Cataluña               Barcelona              Girona                
+## [3883] Lleida                 Tarragona              Comunidad Valenciana  
+## [3886] Alicante               Castellón              Valencia              
+## [3889] Extremadura            Badajoz                Cáceres               
+## [3892] Galicia                A Coruña               Lugo                  
+## [3895] Ourense                Pontevedra             Madrid                
+## [3898] Murcia                 Navarra                País Vasco            
+## [3901] Alava                  Vizcaya                Gipuzkoa              
+## [3904] La Rioja               Ceuta                  Melilla               
+## [3907] Total                  Andalucía              Almería               
+## [3910] Cádiz                  Córdoba                Granada               
+## [3913] Huelva                 Jaén                   Málaga                
+## [3916] Sevilla                Aragón                 Huesca                
+## [3919] Teruel                 Zaragoza               Asturias              
+## [3922] Baleares               Canarias               Las Palmas            
+## [3925] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3928] Avila                  Burgos                 León                  
+## [3931] Palencia               Salamanca              Segovia               
+## [3934] Soria                  Valladolid             Zamora                
+## [3937] Castilla - La Mancha   Albacete               Ciudad Real           
+## [3940] Cuenca                 Guadalajara            Toledo                
+## [3943] Cataluña               Barcelona              Girona                
+## [3946] Lleida                 Tarragona              Comunidad Valenciana  
+## [3949] Alicante               Castellón              Valencia              
+## [3952] Extremadura            Badajoz                Cáceres               
+## [3955] Galicia                A Coruña               Lugo                  
+## [3958] Ourense                Pontevedra             Madrid                
+## [3961] Murcia                 Navarra                País Vasco            
+## [3964] Alava                  Vizcaya                Gipuzkoa              
+## [3967] La Rioja               Ceuta                  Melilla               
+## [3970] Total                  Andalucía              Almería               
+## [3973] Cádiz                  Córdoba                Granada               
+## [3976] Huelva                 Jaén                   Málaga                
+## [3979] Sevilla                Aragón                 Huesca                
+## [3982] Teruel                 Zaragoza               Asturias              
+## [3985] Baleares               Canarias               Las Palmas            
+## [3988] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [3991] Avila                  Burgos                 León                  
+## [3994] Palencia               Salamanca              Segovia               
+## [3997] Soria                  Valladolid             Zamora                
+## [4000] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4003] Cuenca                 Guadalajara            Toledo                
+## [4006] Cataluña               Barcelona              Girona                
+## [4009] Lleida                 Tarragona              Comunidad Valenciana  
+## [4012] Alicante               Castellón              Valencia              
+## [4015] Extremadura            Badajoz                Cáceres               
+## [4018] Galicia                A Coruña               Lugo                  
+## [4021] Ourense                Pontevedra             Madrid                
+## [4024] Murcia                 Navarra                País Vasco            
+## [4027] Alava                  Vizcaya                Gipuzkoa              
+## [4030] La Rioja               Ceuta                  Melilla               
+## [4033] Total                  Andalucía              Almería               
+## [4036] Cádiz                  Córdoba                Granada               
+## [4039] Huelva                 Jaén                   Málaga                
+## [4042] Sevilla                Aragón                 Huesca                
+## [4045] Teruel                 Zaragoza               Asturias              
+## [4048] Baleares               Canarias               Las Palmas            
+## [4051] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4054] Avila                  Burgos                 León                  
+## [4057] Palencia               Salamanca              Segovia               
+## [4060] Soria                  Valladolid             Zamora                
+## [4063] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4066] Cuenca                 Guadalajara            Toledo                
+## [4069] Cataluña               Barcelona              Girona                
+## [4072] Lleida                 Tarragona              Comunidad Valenciana  
+## [4075] Alicante               Castellón              Valencia              
+## [4078] Extremadura            Badajoz                Cáceres               
+## [4081] Galicia                A Coruña               Lugo                  
+## [4084] Ourense                Pontevedra             Madrid                
+## [4087] Murcia                 Navarra                País Vasco            
+## [4090] Alava                  Vizcaya                Gipuzkoa              
+## [4093] La Rioja               Ceuta                  Melilla               
+## [4096] Total                  Andalucía              Almería               
+## [4099] Cádiz                  Córdoba                Granada               
+## [4102] Huelva                 Jaén                   Málaga                
+## [4105] Sevilla                Aragón                 Huesca                
+## [4108] Teruel                 Zaragoza               Asturias              
+## [4111] Baleares               Canarias               Las Palmas            
+## [4114] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4117] Avila                  Burgos                 León                  
+## [4120] Palencia               Salamanca              Segovia               
+## [4123] Soria                  Valladolid             Zamora                
+## [4126] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4129] Cuenca                 Guadalajara            Toledo                
+## [4132] Cataluña               Barcelona              Girona                
+## [4135] Lleida                 Tarragona              Comunidad Valenciana  
+## [4138] Alicante               Castellón              Valencia              
+## [4141] Extremadura            Badajoz                Cáceres               
+## [4144] Galicia                A Coruña               Lugo                  
+## [4147] Ourense                Pontevedra             Madrid                
+## [4150] Murcia                 Navarra                País Vasco            
+## [4153] Alava                  Vizcaya                Gipuzkoa              
+## [4156] La Rioja               Ceuta                  Melilla               
+## [4159] Total                  Andalucía              Almería               
+## [4162] Cádiz                  Córdoba                Granada               
+## [4165] Huelva                 Jaén                   Málaga                
+## [4168] Sevilla                Aragón                 Huesca                
+## [4171] Teruel                 Zaragoza               Asturias              
+## [4174] Baleares               Canarias               Las Palmas            
+## [4177] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4180] Avila                  Burgos                 León                  
+## [4183] Palencia               Salamanca              Segovia               
+## [4186] Soria                  Valladolid             Zamora                
+## [4189] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4192] Cuenca                 Guadalajara            Toledo                
+## [4195] Cataluña               Barcelona              Girona                
+## [4198] Lleida                 Tarragona              Comunidad Valenciana  
+## [4201] Alicante               Castellón              Valencia              
+## [4204] Extremadura            Badajoz                Cáceres               
+## [4207] Galicia                A Coruña               Lugo                  
+## [4210] Ourense                Pontevedra             Madrid                
+## [4213] Murcia                 Navarra                País Vasco            
+## [4216] Alava                  Vizcaya                Gipuzkoa              
+## [4219] La Rioja               Ceuta                  Melilla               
+## [4222] Total                  Andalucía              Almería               
+## [4225] Cádiz                  Córdoba                Granada               
+## [4228] Huelva                 Jaén                   Málaga                
+## [4231] Sevilla                Aragón                 Huesca                
+## [4234] Teruel                 Zaragoza               Asturias              
+## [4237] Baleares               Canarias               Las Palmas            
+## [4240] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4243] Avila                  Burgos                 León                  
+## [4246] Palencia               Salamanca              Segovia               
+## [4249] Soria                  Valladolid             Zamora                
+## [4252] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4255] Cuenca                 Guadalajara            Toledo                
+## [4258] Cataluña               Barcelona              Girona                
+## [4261] Lleida                 Tarragona              Comunidad Valenciana  
+## [4264] Alicante               Castellón              Valencia              
+## [4267] Extremadura            Badajoz                Cáceres               
+## [4270] Galicia                A Coruña               Lugo                  
+## [4273] Ourense                Pontevedra             Madrid                
+## [4276] Murcia                 Navarra                País Vasco            
+## [4279] Alava                  Vizcaya                Gipuzkoa              
+## [4282] La Rioja               Ceuta                  Melilla               
+## [4285] Total                  Andalucía              Almería               
+## [4288] Cádiz                  Córdoba                Granada               
+## [4291] Huelva                 Jaén                   Málaga                
+## [4294] Sevilla                Aragón                 Huesca                
+## [4297] Teruel                 Zaragoza               Asturias              
+## [4300] Baleares               Canarias               Las Palmas            
+## [4303] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4306] Avila                  Burgos                 León                  
+## [4309] Palencia               Salamanca              Segovia               
+## [4312] Soria                  Valladolid             Zamora                
+## [4315] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4318] Cuenca                 Guadalajara            Toledo                
+## [4321] Cataluña               Barcelona              Girona                
+## [4324] Lleida                 Tarragona              Comunidad Valenciana  
+## [4327] Alicante               Castellón              Valencia              
+## [4330] Extremadura            Badajoz                Cáceres               
+## [4333] Galicia                A Coruña               Lugo                  
+## [4336] Ourense                Pontevedra             Madrid                
+## [4339] Murcia                 Navarra                País Vasco            
+## [4342] Alava                  Vizcaya                Gipuzkoa              
+## [4345] La Rioja               Ceuta                  Melilla               
+## [4348] Total                  Andalucía              Almería               
+## [4351] Cádiz                  Córdoba                Granada               
+## [4354] Huelva                 Jaén                   Málaga                
+## [4357] Sevilla                Aragón                 Huesca                
+## [4360] Teruel                 Zaragoza               Asturias              
+## [4363] Baleares               Canarias               Las Palmas            
+## [4366] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4369] Avila                  Burgos                 León                  
+## [4372] Palencia               Salamanca              Segovia               
+## [4375] Soria                  Valladolid             Zamora                
+## [4378] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4381] Cuenca                 Guadalajara            Toledo                
+## [4384] Cataluña               Barcelona              Girona                
+## [4387] Lleida                 Tarragona              Comunidad Valenciana  
+## [4390] Alicante               Castellón              Valencia              
+## [4393] Extremadura            Badajoz                Cáceres               
+## [4396] Galicia                A Coruña               Lugo                  
+## [4399] Ourense                Pontevedra             Madrid                
+## [4402] Murcia                 Navarra                País Vasco            
+## [4405] Alava                  Vizcaya                Gipuzkoa              
+## [4408] La Rioja               Ceuta                  Melilla               
+## [4411] Total                  Andalucía              Almería               
+## [4414] Cádiz                  Córdoba                Granada               
+## [4417] Huelva                 Jaén                   Málaga                
+## [4420] Sevilla                Aragón                 Huesca                
+## [4423] Teruel                 Zaragoza               Asturias              
+## [4426] Baleares               Canarias               Las Palmas            
+## [4429] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4432] Avila                  Burgos                 León                  
+## [4435] Palencia               Salamanca              Segovia               
+## [4438] Soria                  Valladolid             Zamora                
+## [4441] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4444] Cuenca                 Guadalajara            Toledo                
+## [4447] Cataluña               Barcelona              Girona                
+## [4450] Lleida                 Tarragona              Comunidad Valenciana  
+## [4453] Alicante               Castellón              Valencia              
+## [4456] Extremadura            Badajoz                Cáceres               
+## [4459] Galicia                A Coruña               Lugo                  
+## [4462] Ourense                Pontevedra             Madrid                
+## [4465] Murcia                 Navarra                País Vasco            
+## [4468] Alava                  Vizcaya                Gipuzkoa              
+## [4471] La Rioja               Ceuta                  Melilla               
+## [4474] Total                  Andalucía              Almería               
+## [4477] Cádiz                  Córdoba                Granada               
+## [4480] Huelva                 Jaén                   Málaga                
+## [4483] Sevilla                Aragón                 Huesca                
+## [4486] Teruel                 Zaragoza               Asturias              
+## [4489] Baleares               Canarias               Las Palmas            
+## [4492] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4495] Avila                  Burgos                 León                  
+## [4498] Palencia               Salamanca              Segovia               
+## [4501] Soria                  Valladolid             Zamora                
+## [4504] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4507] Cuenca                 Guadalajara            Toledo                
+## [4510] Cataluña               Barcelona              Girona                
+## [4513] Lleida                 Tarragona              Comunidad Valenciana  
+## [4516] Alicante               Castellón              Valencia              
+## [4519] Extremadura            Badajoz                Cáceres               
+## [4522] Galicia                A Coruña               Lugo                  
+## [4525] Ourense                Pontevedra             Madrid                
+## [4528] Murcia                 Navarra                País Vasco            
+## [4531] Alava                  Vizcaya                Gipuzkoa              
+## [4534] La Rioja               Ceuta                  Melilla               
+## [4537] Total                  Andalucía              Almería               
+## [4540] Cádiz                  Córdoba                Granada               
+## [4543] Huelva                 Jaén                   Málaga                
+## [4546] Sevilla                Aragón                 Huesca                
+## [4549] Teruel                 Zaragoza               Asturias              
+## [4552] Baleares               Canarias               Las Palmas            
+## [4555] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4558] Avila                  Burgos                 León                  
+## [4561] Palencia               Salamanca              Segovia               
+## [4564] Soria                  Valladolid             Zamora                
+## [4567] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4570] Cuenca                 Guadalajara            Toledo                
+## [4573] Cataluña               Barcelona              Girona                
+## [4576] Lleida                 Tarragona              Comunidad Valenciana  
+## [4579] Alicante               Castellón              Valencia              
+## [4582] Extremadura            Badajoz                Cáceres               
+## [4585] Galicia                A Coruña               Lugo                  
+## [4588] Ourense                Pontevedra             Madrid                
+## [4591] Murcia                 Navarra                País Vasco            
+## [4594] Alava                  Vizcaya                Gipuzkoa              
+## [4597] La Rioja               Ceuta                  Melilla               
+## [4600] Total                  Andalucía              Almería               
+## [4603] Cádiz                  Córdoba                Granada               
+## [4606] Huelva                 Jaén                   Málaga                
+## [4609] Sevilla                Aragón                 Huesca                
+## [4612] Teruel                 Zaragoza               Asturias              
+## [4615] Baleares               Canarias               Las Palmas            
+## [4618] Santa Cruz de Tenerife Cantabria              Castilla y León       
+## [4621] Avila                  Burgos                 León                  
+## [4624] Palencia               Salamanca              Segovia               
+## [4627] Soria                  Valladolid             Zamora                
+## [4630] Castilla - La Mancha   Albacete               Ciudad Real           
+## [4633] Cuenca                 Guadalajara            Toledo                
+## [4636] Cataluña               Barcelona              Girona                
+## [4639] Lleida                 Tarragona              Comunidad Valenciana  
+## [4642] Alicante               Castellón              Valencia              
+## [4645] Extremadura            Badajoz                Cáceres               
+## [4648] Galicia                A Coruña               Lugo                  
+## [4651] Ourense                Pontevedra             Madrid                
+## [4654] Murcia                 Navarra                País Vasco            
+## [4657] Alava                  Vizcaya                Gipuzkoa              
+## [4660] La Rioja               Ceuta                  Melilla               
+## 63 Levels: A Coruña Alava Albacete Alicante Almería Andalucía ... Zaragoza</code></pre>
 </div>
 <div id="cargamos-los-datos-de-muertes" class="section level1">
 <h1>Cargamos los datos de muertes</h1>
@@ -3013,7 +4564,35 @@ head(datos_met)</code></pre>
 <pre><code>## [1] &quot;datos_met&quot;</code></pre>
 <p>Muestra de cómo se estructura la información de la consulta a
 aemet.</p>
-<pre class="r"><code>View(met_prov)</code></pre>
+<pre class="r"><code>head(met_prov)</code></pre>
+<pre><code>##     fecha indicativo   p_max   glo hr n_gra n_fog inso      q_max nw_55  q_mar
+## 1 2020-01      C449C 1.0(05) 41023 57     0     0  7.3 1027.0(18)     0 1024.3
+## 2 2020-02      C449C 0.0(--) 49011 55     0     0  8.9 1025.9(10)     0 1022.9
+## 3 2020-03      C449C 9.8(23) 56971 63     0     0  7.8 1022.1(06)     3 1019.2
+## 4 2020-04      C449C 2.2(17) 70018 60     0     0  9.7 1021.1(29)     1 1017.9
+## 5 2020-05      C449C 0.0(--) 80829 59     0     0 10.8 1020.4(01)     1 1017.7
+## 6 2020-06      C449C 0.2(14) 76194 62     0     0 10.0 1020.5(15)     0 1018.1
+##    q_med tm_min   ta_max ts_min nt_30 nv_0050     w_racha np_100 p_sol nw_91
+## 1 1020.0   15.7 25.0(31)   17.7     0       0 33/13.1(20)      0    69     0
+## 2 1018.7   17.0 27.6(03)   21.6     0       0 21/15.0(04)      0    80     0
+## 3 1014.9   16.1 25.1(02)   17.8     0       0 33/21.9(23)      0    65     0
+## 4 1013.6   17.8 27.1(09)   20.6     0       0 32/15.3(18)      0    76     0
+## 5 1013.5   18.9 28.6(21)   20.7     0       0 32/17.8(10)      0    79     0
+## 6 1013.9   21.1 30.3(22)   22.9     1       0 32/15.0(16)      0    72     0
+##   np_001   ta_min w_rec   e np_300 nv_1000 p_mes n_llu n_tor w_med nt_00 ti_max
+## 1      4 13.4(22)   221 121      0       0   2.0     5     0    10     0   19.2
+## 2      0 14.3(22)   208 131      0       1   0.0     0     0    10     0   21.0
+## 3     11 14.6(17)   248 141      0       0  32.4    13     0    11     0   19.7
+## 4      5 15.7(02)   225 149      0       0   5.8     6     0    11     0   21.9
+## 5      0 17.4(22)   245 160      0       0   0.0     6     0    11     0   23.2
+## 6      2 19.6(02)   242 186      0       0   0.4     4     0    11     0   24.1
+##   n_nie tm_mes tm_max nv_0100      q_min np_010 evap
+## 1     0   18.7   21.6       0 1010.9(21)      1   NA
+## 2     0   20.4   23.8       0 1011.5(22)      0   NA
+## 3     0   19.2   22.3       0 1004.4(23)      5   NA
+## 4     0   21.0   24.2       0 1005.0(03)      3   NA
+## 5     0   22.4   25.9       0 1007.9(30)      0   NA
+## 6     0   24.1   27.1       0 1007.7(06)      0   NA</code></pre>
 </div>
 <div id="esto-es-una-prueba-del-shiny-e-inicio-del-mismo" class="section level2">
 <h2>Esto es una prueba del shiny e inicio del mismo</h2>
