@@ -181,12 +181,29 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all("Rioja (La)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
   str_replace_all("Rioja, La", 'La Rioja') %>%
   str_replace_all("RIOJA, LA", 'La Rioja') %>% 
-  str_replace_all("TOTAL NACIONAL", 'TotalL') %>% 
+  str_replace_all("TOTAL NACIONAL", 'Total') %>% 
   str_replace_all("Total Nacional", 'Total') %>% 
   str_replace_all("/València", '') %>% 
   str_replace_all("Bizkaia", 'Vizcaya')
 
-  typeof(df_i$Provincia.de.hospitalización)
+typeof(df_i$Provincia.de.hospitalización)
+  
+#Cambia varones por hombres
+df_i$Sexo <- str_replace_all(df_i$Sexo,"Varones", 'Hombres')
+
+
+#Esto es para crear una nueva columna con la comunidad autonoma a la que corresponde cada provincia
+#Necesario para tener una mejor vision de los diagramas de dispersion (puede que exista una forma mas eficiente)
+mapeo_comunidades <- c(
+  "A Coruña" = "Galicia",
+  "Alava" = "Pais Vasco",
+  "Albacete" = "Castilla - La Mancha",
+  "Almería" = "Andalucía",
+  "Alicante" = "Comunidad Valenciana"
+  )
+df_i <- df_i %>%
+  mutate(Comunidad.Autonoma = mapeo_comunidades[Provincia.de.hospitalización])
+  
 
 #Lo mismo para los datos de muertes
 datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
@@ -200,49 +217,49 @@ head(df_m)
 #--------------------------------------------------
 library(shiny)
 library(ggplot2)
-
-# Supongamos que el dataframe ya está cargado en tu entorno de trabajo con el nombre df_i
+library(plotly)
 
 # Interfaz de usuario
 ui <- fluidPage(
-  titlePanel("Comparación de Casos por Provincia entre Dos Años"),
+  titlePanel("Diagrama de dispersión de casos por año y provincia"),
   sidebarLayout(
     sidebarPanel(
-      selectInput("year1", "Seleccione el primer año:", choices = NULL),  # Se llenará dinámicamente
-      selectInput("year2", "Seleccione el segundo año:", choices = NULL), # Se llenará dinámicamente
       selectInput("sex", "Seleccione el sexo:", choices = NULL)           # Se llenará dinámicamente
     ),
     mainPanel(
-      plotOutput("histPlot")
+      plotlyOutput("scatterPlot", width = "100%", height = "600px")
     )
   )
 )
 
 # Servidor
 server <- function(input, output, session) {
-  # Actualizar las opciones de los menús desplegables dinámicamente
+  # Actualiza las opciones de sexo basadas en los datos cargados
   observe({
-    updateSelectInput(session, "year1", choices = unique(df_i$Año))
-    updateSelectInput(session, "year2", choices = unique(df_i$Año))
     updateSelectInput(session, "sex", choices = unique(df_i$Sexo))
   })
   
-  output$histPlot <- renderPlot({
-    # Filtrar los datos en función de los años y el sexo seleccionados
-    datos_filtrados <- df_i[(df_i$Año == input$year1 | df_i$Año == input$year2) & df_i$Sexo == input$sex, ]
+  # Renderiza el gráfico de dispersión
+  output$scatterPlot <- renderPlotly({
+    #req(input$sexo)  # Asegura que se haya seleccionado un sexo
     
-    # Crear el histograma comparativo
-    ggplot(datos_filtrados, aes(x = Provincia.de.hospitalización, y = value, fill = as.factor(Año))) +
-      geom_bar(stat = "identity", position = "dodge") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-      labs(x = "Provincia", y = "Casos", title = paste("Comparación de casos entre", input$year1, "y", input$year2),
-           fill = "Año")
+    # Filtra los datos por el sexo seleccionado
+    datos_filtrados <- subset(df_i, Sexo == input$sex)
+    
+    # Crea el gráfico con ggplot2
+    p<- ggplot(df_i, aes(x = Año, y = value, color = Provincia.de.hospitalización)) +
+      geom_point() +
+      labs(title = paste("Casos por año y provincia (Sexo:", input$sex, ")"),
+           x = "Año", y = "Casos") +
+      theme_minimal()
+    
+    ggplotly(p)
   })
 }
 
 # Correr la aplicación
 #para que la aplicacion funcione descomentar la siguiente linea (comentada para que no se de por error y se os ejecute)
-#shinyApp(ui = ui, server = server)
+shinyApp(ui, server)
 
 
 
