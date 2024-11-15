@@ -136,11 +136,12 @@ for (i in 2:length(archivos_pc)){
 # dataframe con todos los datos de ingresos de todos los años
 df_i
 df_i <- select(df_i,-Diagnóstico)
+
 head(df_i)
 
 
 # análisis de los valores/niveles de cada atributo
-factor(df_i$Provincia.de.hospitalización)
+length(levels(factor(df_i$Provincia.de.hospitalización)))
 
 #Quita los numeros de la provincia | 
 df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospitalización,"[0123456789]","") %>% 
@@ -192,6 +193,10 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all("/València", '') %>% 
   str_replace_all("Bizkaia", 'Vizcaya')
 
+
+factor(df_i$Provincia.de.hospitalización)
+length(levels(factor(df_i$Provincia.de.hospitalización)))
+ 
 typeof(df_i$Provincia.de.hospitalización)
   
 #Cambia varones por hombres
