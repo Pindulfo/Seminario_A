@@ -193,11 +193,10 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all("/València", '') %>% 
   str_replace_all("Bizkaia", 'Vizcaya')
 
-<<<<<<< HEAD
+
 factor(df_i$Provincia.de.hospitalización)
 length(levels(factor(df_i$Provincia.de.hospitalización)))
  
-=======
 typeof(df_i$Provincia.de.hospitalización)
   
 #Cambia varones por hombres
@@ -217,7 +216,6 @@ df_i <- df_i %>%
   mutate(Comunidad.Autonoma = mapeo_comunidades[Provincia.de.hospitalización])
   
 
->>>>>>> 824e55ea311675fe9e0aa09e98de640266521f4d
 #Lo mismo para los datos de muertes
 datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
 datos_muertes
