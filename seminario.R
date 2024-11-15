@@ -136,11 +136,12 @@ for (i in 2:length(archivos_pc)){
 # dataframe con todos los datos de ingresos de todos los años
 df_i
 df_i <- select(df_i,-Diagnóstico)
+
 head(df_i)
 
 
 # análisis de los valores/niveles de cada atributo
-factor(df_i$Provincia.de.hospitalización)
+length(levels(factor(df_i$Provincia.de.hospitalización)))
 
 #Quita los numeros de la provincia | 
 df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospitalización,"[0123456789]","") %>% 
@@ -150,7 +151,9 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all("ANDALUCÍA", 'Andalucía') %>% 
   str_replace_all('ARAGÓN', 'Aragón') %>% 
   str_replace_all('ASTURIAS','Asturias') %>% 
-  str_replace_all('Asturias*', 'Asturias') %>% 
+  str_replace_all('Asturias \\(Principado de\\)', 'Asturias') %>%
+  str_replace_all('Asturias, Principado de', 'Asturias') %>%  
+  str_replace_all('Asturias, PRINCIPADO DE', 'Asturias') %>%
   str_replace_all('Ávila', 'Avila') %>% 
   str_replace_all('BALEARS, ILLES', 'Baleares') %>% 
   str_replace_all('Balears, Illes', 'Baleares') %>% 
@@ -164,30 +167,35 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all("CATALUÑA", 'Cataluña') %>% 
   str_replace_all("Comunitat Valenciana", 'Comunidad Valenciana') %>% 
   str_replace_all("COMUNITAT VALENCIANA", 'Comunidad Valenciana') %>% 
-  str_replace_all("Coruña (A)", 'A Coruña') %>% #revisar el Coruña (A) no se ha modificado con esto
+  str_replace_all("Coruña \\(A\\)", 'A Coruña') %>% #revisar el Coruña (A) no se ha modificado con esto
   str_replace_all("Coruña, A", 'A Coruña') %>% 
   str_replace_all("EXTREMADURA", 'Extremadura') %>% 
   str_replace_all("GALICIA", 'Galicia') %>% 
   str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
   str_replace_all('MADRID, COMUNIDAD DE','Madrid') %>% #revisar al igual que asturias para que solo salga Madrid
-  str_replace_all('Madrid*', 'Madrid') %>%
+  str_replace_all('Madrid, Comunidad de', 'Madrid') %>%
+  str_replace_all('Madrid \\(Comunidad de\\)', 'Madrid')
   str_replace_all('MURCIA, REGIÓN DE','Murcia') %>% #revisar para que solo salga Murcia
+  str_replace_all('Murcia \\(Región de\\)','Murcia') %>%
+  str_replace_all('Murcia, Región de','Murcia') %>%
   str_replace_all('Murcia*', 'Murcia') %>% 
   str_replace_all('NAVARRA, COMUNIDAD FORAL DE','Navarra') %>% #revisar para que salga solo Navarra
-  str_replace_all('Navarra*', 'Navarra') %>% 
+  str_replace_all('Navarra \\(Comun. Foral de\\)', 'Navarra') %>%
+  str_replace_all('Navarra, Comunidad Foral de', 'Navarra') %>% 
   str_replace_all('PAÍS VASCO', 'País Vasco') %>% 
-  str_replace_all("Palmas (Las)", 'Las Palmas') %>% #revisar el Palmas (Las) no se ha modificado con esto
+  str_replace_all("Palmas \\(Las\\)", 'Las Palmas') %>% #revisar el Palmas (Las) no se ha modificado con esto
   str_replace_all("Palmas, Las", 'Las Palmas') %>%
-  str_replace_all("Rioja (La)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
+  str_replace_all("Rioja \\(La\\)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
   str_replace_all("Rioja, La", 'La Rioja') %>%
   str_replace_all("RIOJA, LA", 'La Rioja') %>% 
-  str_replace_all("TOTAL NACIONAL", 'TotalL') %>% 
+  str_replace_all("TOTAL NACIONAL", 'Total') %>% 
   str_replace_all("Total Nacional", 'Total') %>% 
   str_replace_all("/València", '') %>% 
   str_replace_all("Bizkaia", 'Vizcaya')
 
-  typeof(df_i$Provincia.de.hospitalización)
-
+factor(df_i$Provincia.de.hospitalización)
+length(levels(factor(df_i$Provincia.de.hospitalización)))
+ 
 #Lo mismo para los datos de muertes
 datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
 datos_muertes
