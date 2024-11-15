@@ -150,7 +150,9 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all("ANDALUCÍA", 'Andalucía') %>% 
   str_replace_all('ARAGÓN', 'Aragón') %>% 
   str_replace_all('ASTURIAS','Asturias') %>% 
-  str_replace_all('Asturias*', 'Asturias') %>% 
+  str_replace_all('Asturias \\(Principado de\\)', 'Asturias') %>%
+  str_replace_all('Asturias, Principado de', 'Asturias') %>%  
+  str_replace_all('Asturias, PRINCIPADO DE', 'Asturias') %>%
   str_replace_all('Ávila', 'Avila') %>% 
   str_replace_all('BALEARS, ILLES', 'Baleares') %>% 
   str_replace_all('Balears, Illes', 'Baleares') %>% 
@@ -164,21 +166,25 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all("CATALUÑA", 'Cataluña') %>% 
   str_replace_all("Comunitat Valenciana", 'Comunidad Valenciana') %>% 
   str_replace_all("COMUNITAT VALENCIANA", 'Comunidad Valenciana') %>% 
-  str_replace_all("Coruña (A)", 'A Coruña') %>% #revisar el Coruña (A) no se ha modificado con esto
+  str_replace_all("Coruña \\(A\\)", 'A Coruña') %>% #revisar el Coruña (A) no se ha modificado con esto
   str_replace_all("Coruña, A", 'A Coruña') %>% 
   str_replace_all("EXTREMADURA", 'Extremadura') %>% 
   str_replace_all("GALICIA", 'Galicia') %>% 
   str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
   str_replace_all('MADRID, COMUNIDAD DE','Madrid') %>% #revisar al igual que asturias para que solo salga Madrid
-  str_replace_all('Madrid*', 'Madrid') %>%
+  str_replace_all('Madrid, Comunidad de', 'Madrid') %>%
+  str_replace_all('Madrid \\(Comunidad de\\)', 'Madrid') %>% 
   str_replace_all('MURCIA, REGIÓN DE','Murcia') %>% #revisar para que solo salga Murcia
+  str_replace_all('Murcia \\(Región de\\)','Murcia') %>%
+  str_replace_all('Murcia, Región de','Murcia') %>%
   str_replace_all('Murcia*', 'Murcia') %>% 
   str_replace_all('NAVARRA, COMUNIDAD FORAL DE','Navarra') %>% #revisar para que salga solo Navarra
-  str_replace_all('Navarra*', 'Navarra') %>% 
+  str_replace_all('Navarra \\(Comun. Foral de\\)', 'Navarra') %>%
+  str_replace_all('Navarra, Comunidad Foral de', 'Navarra') %>% 
   str_replace_all('PAÍS VASCO', 'País Vasco') %>% 
-  str_replace_all("Palmas (Las)", 'Las Palmas') %>% #revisar el Palmas (Las) no se ha modificado con esto
+  str_replace_all("Palmas \\(Las\\)", 'Las Palmas') %>% #revisar el Palmas (Las) no se ha modificado con esto
   str_replace_all("Palmas, Las", 'Las Palmas') %>%
-  str_replace_all("Rioja (La)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
+  str_replace_all("Rioja \\(La\\)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
   str_replace_all("Rioja, La", 'La Rioja') %>%
   str_replace_all("RIOJA, LA", 'La Rioja') %>% 
   str_replace_all("TOTAL NACIONAL", 'Total') %>% 
@@ -195,11 +201,60 @@ df_i$Sexo <- str_replace_all(df_i$Sexo,"Varones", 'Hombres')
 #Esto es para crear una nueva columna con la comunidad autonoma a la que corresponde cada provincia
 #Necesario para tener una mejor vision de los diagramas de dispersion (puede que exista una forma mas eficiente)
 mapeo_comunidades <- c(
-  "A Coruña" = "Galicia",
-  "Alava" = "Pais Vasco",
-  "Albacete" = "Castilla - La Mancha",
   "Almería" = "Andalucía",
-  "Alicante" = "Comunidad Valenciana"
+  "Cádiz" = "Andalucía",
+  "Albacete" = "Andalucía",
+  "Almería" = "Andalucía",
+  "Córdoba" = "Andalucía",
+  "Granada" = "Andalucía",
+  "Huelva" = "Andalucía",
+  "Jaén" = "Andalucía",
+  "Málaga" = "Andalucía",
+  "Sevilla" = "Andalucía",
+  "Huesca" = "Aragón",
+  "Teruel" = "Aragón",
+  "Zaragoza" = "Aragón",
+  "Baleares" = "Baleares",
+  "Asturias" = "Asturias",
+  "Las Palmas" = "Canarias",
+  "Santa Cruz de Tenerife" = "Canarias",
+  "Cantabria" = "Cantabria",
+  "Avila" = "Castilla y León",
+  "Burgos" = "Castilla y León",
+  "León" = "Castilla y León",
+  "Palencia" = "Castilla y León",
+  "Salamanca" = "Castilla y León",
+  "Segovia" = "Castilla y León",
+  "Soria" = "Castilla y León",
+  "Valladolid" = "Castilla y León",
+  "Zamora" = "Castilla y León",
+  "Albacete" = "Castilla - La Mancha",
+  "Ciudad Real" = "Castilla - La Mancha",
+  "Cuenca" = "Castilla - La Mancha",
+  "Guadalajara" = "Castilla - La Mancha",
+  "Toledo" = "Castilla - La Mancha",
+  "Barcelona" = "Cataluña",
+  "Girona" = "Cataluña",
+  "Lleida" = "Cataluña",
+  "Tarragona" = "Cataluña",
+  "Alicante" = "Comunidad Valenciana",
+  "Castellón" = "Comunidad Valenciana",
+  "Valencia" = "Comunidad Valenciana",
+  "Badajoz" = "Extremadura",
+  "Cáceres" = "Extremadura",
+  "A Coruña" = "Galicia",
+  "Lugo" = "Galicia",
+  "Ourense" = "Galicia",
+  "Pontevedra" = "Galicia",
+  "Madrid" = "Madrid",
+  "Murcia" = "Murcia",
+  "Navarra" = "Navarra",
+  "Alava" = "País Vasco",
+  "Gipuzkoa" = "País Vasco",
+  "Vizcaya" = "País Vasco",
+  "La Rioja" = "La Rioja",
+  "Ceuta" = "Ceuta",
+  "Melilla" = "Melilla"
   )
 df_i <- df_i %>%
   mutate(Comunidad.Autonoma = mapeo_comunidades[Provincia.de.hospitalización])
