@@ -261,9 +261,11 @@ mapeo_comunidades <- c(
   "Ceuta" = "Ceuta",
   "Melilla" = "Melilla"
   )
+#se añade una nueva columna al dt_i con las comunidades autonomas correspondientes
 df_i <- df_i %>%
-  mutate(Comunidad.Autonoma = mapeo_comunidades[Provincia.de.hospitalización])
-  
+  mutate(Comunidad.Autonoma = mapeo_comunidades[Provincia.de.hospitalización]) %>% 
+  filter(!grepl("^(Total|Andalucía|Aragón|Canarias|Castilla y León|Castilla - La Mancha|Cataluña|Comunidad Valenciana|Extremadura|Galicia|País Vasco)"
+                , Provincia.de.hospitalización)) #se retiran los valores globales de las comunidades autonomas de mas de 2 provincias
 
 #Lo mismo para los datos de muertes
 datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
@@ -284,10 +286,13 @@ ui <- fluidPage(
   titlePanel("Diagrama de dispersión de casos por año y provincia"),
   sidebarLayout(
     sidebarPanel(
-      selectInput("sex", "Seleccione el sexo:", choices = NULL)           # Se llenará dinámicamente
+      div(
+        style = "width: 150px;",
+      selectInput("sex", "Seleccione el sexo:", choices = NULL) # Se llenará dinámicamente
+      )
     ),
     mainPanel(
-      plotlyOutput("scatterPlot", width = "100%", height = "600px")
+      plotlyOutput("scatterPlot", width = "130%", height = "700px")
     )
   )
 )
@@ -307,7 +312,7 @@ server <- function(input, output, session) {
     datos_filtrados <- subset(df_i, Sexo == input$sex)
     
     # Crea el gráfico con ggplot2
-    p<- ggplot(df_i, aes(x = Año, y = value, color = Provincia.de.hospitalización)) +
+    p<- ggplot(datos_filtrados, aes(x = Año, y = value, color = Comunidad.Autonoma, text = paste("Provincia", Provincia.de.hospitalización ))) +
       geom_point() +
       labs(title = paste("Casos por año y provincia (Sexo:", input$sex, ")"),
            x = "Año", y = "Casos") +
