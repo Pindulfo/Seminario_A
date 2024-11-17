@@ -10,13 +10,29 @@ aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRp
 
 
 
+load(file = 'objetos.RData')
+load(file = 'datos_aemet.RData')
+cod_estaciones <- estaciones %>% 
+  select(indicativo,provincia) %>% 
+  rename(codigo = indicativo)
+typeof(datos_met$codigo)
+typeof(estaciones$codigo)
 
+datos_met <- merge(datos_met,cod_estaciones, by = 'codigo')
 #-----------------------------------------
 # DATOS AEMET
 #-----------------------------------------
 
 #codigo para extrar todos los datos climaticos de las estaciones de la aemet
 estaciones <- aemet_stations()
+
+estaciones <- estaciones %>% 
+  select(indicativo,provincia) %>% 
+  rename(codigo = indicativo)
+typeof(datos_met$codigo)
+typeof(estaciones$codigo)
+
+datos_met <- merge(datos_met,estaciones, by = 'codigo')
 
 #obtener las estaciones principales (varias por provincia)
 estaciones_ppales <- dplyr::filter(.data = estaciones, nchar(indsinop) > 2)
