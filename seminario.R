@@ -505,4 +505,77 @@ server <- function(input, output, session) {
 # Descomentar la siguiente línea para ejecutar la aplicación en tu entorno local.
 shinyApp(ui, server)
 
+#     Ejemplo de gráficos:
+
+library(ggplot2)
+library(plotly)
+
+# Filtrar y preparar datos climáticos
+datos_met_filtrados <- datos_met %>% filter(!is.na(año))
+
+# Crear el gráfico
+grafico_temperatura <- ggplot(datos_met_filtrados, aes(x = año, y = tm_mes, group = codigo, color = codigo)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Temperatura Promedio por Año",
+    x = "Año",
+    y = "Temperatura Media (°C)",
+    color = "Estación"
+  ) +
+  theme_minimal()
+
+# Mostrar con ggplot
+print(grafico_temperatura)
+
+# Convertir a gráfico interactivo con plotly
+grafico_interactivo <- ggplotly(grafico_temperatura)
+grafico_interactivo
+
+#   Gráfico 2:
+
+# Preparar datos de ingresos por diabetes
+df_i_filtrados <- df_i %>%
+  filter(!is.na(Año), Sexo %in% c("Hombres", "Mujeres")) %>%
+  group_by(Año, Sexo) %>%
+  summarise(Ingresos = sum(Ingresos, na.rm = TRUE))
+
+# Crear el gráfico
+grafico_diabetes <- ggplot(df_i_filtrados, aes(x = as.numeric(Año), y = Ingresos, fill = Sexo)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Ingresos por Diabetes por Año y Sexo",
+    x = "Año",
+    y = "Ingresos",
+    fill = "Sexo"
+  ) +
+  theme_minimal()
+
+# Mostrar con ggplot
+print(grafico_diabetes)
+
+# Convertir a gráfico interactivo con plotly
+grafico_interactivo_diabetes <- ggplotly(grafico_diabetes)
+grafico_interactivo_diabetes
+
+#  Gráfico 3:
+
+# Preparar datos de ingresos por provincia
+df_i_provincia <- df_i %>%
+  group_by(Provincia.de.hospitalización) %>%
+  summarise(Total_Ingresos = sum(Ingresos, na.rm = TRUE))
+
+# Crear el gráfico
+grafico_provincias <- ggplot(df_i_provincia, aes(x = reorder(Provincia.de.hospitalización, -Total_Ingresos), y = Total_Ingresos)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Ingresos por Diabetes por Provincia",
+    x = "Provincia",
+    y = "Ingresos Totales"
+  ) +
+  theme_minimal()
+
+# Mostrar con ggplot
+print(grafico_provincias)
 
