@@ -442,7 +442,7 @@ ui <- fluidPage(
         div(
           style = "width: 150px;",
           selectInput("sex", "Seleccione el sexo:", choices = NULL),
-          selectInput("valor", "Seleccione el Diagnosticos/muertes:", choices = c("diagnostico", "Muertes"))
+          selectInput("valor", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes"))
         )
       ),
       
@@ -453,7 +453,7 @@ ui <- fluidPage(
           selectInput("temp_var", "Seleccione la variable de temperatura:",
                       choices = c("ta_max", "ta_min", "tm_mes")),
           selectInput("sex_temp", "Seleccione el sexo:", choices = NULL),
-          selectInput("valor_temp", "Seleccione el Diagnosticos/muertes:", choices = c("diagnostico", "Muertes"))
+          selectInput("valor_temp", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes"))
           
         )
       )
