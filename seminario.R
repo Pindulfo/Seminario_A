@@ -4,6 +4,9 @@ library(pxR)
 library(climaemet)
 library(dplyr)
 library(stringr)
+library(shiny)
+library(ggplot2)
+library(plotly)
 
 ## Use this function to register your API Key temporarly or permanently
 aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
@@ -289,6 +292,133 @@ datos_muertes
 df_m <- as.data.frame(datos_muertes)
 head(df_m)
 
+df_m$Provincias <- str_replace_all(df_m$Provincias,"[0123456789]","") %>% 
+  str_replace_all("^ ","") %>% 
+  str_replace_all("Araba/Á","A") %>% 
+  str_replace_all("/Alacant", '') %>% 
+  str_replace_all("ANDALUCÍA", 'Andalucía') %>% 
+  str_replace_all('ARAGÓN', 'Aragón') %>% 
+  str_replace_all('ASTURIAS','Asturias') %>% 
+  str_replace_all('Asturias \\(Principado de\\)', 'Asturias') %>%
+  str_replace_all('Asturias, Principado de', 'Asturias') %>%  
+  str_replace_all('Asturias, PRINCIPADO DE', 'Asturias') %>%
+  str_replace_all('Ávila', 'Avila') %>% 
+  str_replace_all('BALEARS, ILLES', 'Baleares') %>% 
+  str_replace_all('Balears, Illes', 'Baleares') %>% 
+  str_replace_all('Balears \\(Illes\\)', 'Baleares') %>% 
+  str_replace_all("CANARIAS", 'Canarias') %>% 
+  str_replace_all("CANTABRIA", 'Cantabria') %>% 
+  str_replace_all("Castellón de la Plana", 'Castellón') %>% 
+  str_replace_all("/Castelló", '') %>% 
+  str_replace_all("CASTILLA - LA MANCHA", 'Castilla - La Mancha') %>% 
+  str_replace_all("CASTILLA Y LEÓN", 'Castilla y León') %>% 
+  str_replace_all("CATALUÑA", 'Cataluña') %>% 
+  str_replace_all("Comunitat Valenciana", 'Comunidad Valenciana') %>% 
+  str_replace_all("COMUNITAT VALENCIANA", 'Comunidad Valenciana') %>% 
+  str_replace_all("Coruña \\(A\\)", 'A Coruña') %>% #revisar el Coruña (A) no se ha modificado con esto
+  str_replace_all("Coruña, A", 'A Coruña') %>% 
+  str_replace_all("EXTREMADURA", 'Extremadura') %>% 
+  str_replace_all("GALICIA", 'Galicia') %>% 
+  str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
+  str_replace_all('MADRID, COMUNIDAD DE','Madrid') %>% #revisar al igual que asturias para que solo salga Madrid
+  str_replace_all('Madrid, Comunidad de', 'Madrid') %>%
+  str_replace_all('Madrid \\(Comunidad de\\)', 'Madrid') %>% 
+  str_replace_all('MURCIA, REGIÓN DE','Murcia') %>% #revisar para que solo salga Murcia
+  str_replace_all('Murcia \\(Región de\\)','Murcia') %>%
+  str_replace_all('Murcia, Región de','Murcia') %>%
+  str_replace_all('Murcia*', 'Murcia') %>% 
+  str_replace_all('NAVARRA, COMUNIDAD FORAL DE','Navarra') %>% #revisar para que salga solo Navarra
+  str_replace_all('Navarra \\(Comun. Foral de\\)', 'Navarra') %>%
+  str_replace_all('Navarra, Comunidad Foral de', 'Navarra') %>% 
+  str_replace_all('PAÍS VASCO', 'País Vasco') %>% 
+  str_replace_all("Palmas \\(Las\\)", 'Las Palmas') %>% #revisar el Palmas (Las) no se ha modificado con esto
+  str_replace_all("Palmas, Las", 'Las Palmas') %>%
+  str_replace_all("Rioja \\(La\\)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
+  str_replace_all("Rioja, La", 'La Rioja') %>%
+  str_replace_all("RIOJA, LA", 'La Rioja') %>% 
+  str_replace_all("TOTAL NACIONAL", 'Total') %>% 
+  str_replace_all("Total Nacional", 'Total') %>% 
+  str_replace_all("/València", '') %>% 
+  str_replace_all("Bizkaia", 'Vizcaya')
+
+df_m <- df_m %>%
+  mutate(Comunidad.Autonoma = mapeo_comunidades[Provincias]) %>% 
+  filter(!grepl("^(Extranjero|Nacional|Total|Andalucía|Aragón|Canarias|Castilla y León|Castilla - La Mancha|Cataluña|Comunidad Valenciana|Extremadura|Galicia|País Vasco)"
+                , Provincias))   #se retiran los valores globales de las comunidades autonomas de mas de 2 provincias
+df_m <- select(df_m,-Causa.de.muerte)
+df_m$Sexo <-  str_replace_all(df_m$Sexo,"Total","Ambos sexos")
+
+#--------------------------------------------
+#Modificacion de los dataframes para unirlos todos en el mismo (df_combined)
+#--------------------------------------------
+#Modificacion del df_i
+df_i <- rename(.data = df_i, Provincia = Provincia.de.hospitalización, Diagnosticos = value)
+
+#Modificacion del df_m
+df_m<-rename(.data = df_m, Provincia = Provincias, Muertes = value, Año = Periodo)
+
+df_combined <- left_join(x = df_i, y = df_m, by = c("Provincia", "Año", "Comunidad.Autonoma", "Sexo"))
+
+#modificacion de datos_met
+
+datos_met<-rename(.data = datos_met, Provincia = provincia, Año = año)
+datos_met <- select(datos_met,-codigo)
+datos_met$Año <- as.character(datos_met$Año)
+
+datos_met$Provincia <- str_replace_all(datos_met$Provincia,"TARRAGONA","Tarragona") %>% 
+  str_replace_all("BARCELONA", "Barcelona") %>% 
+  str_replace_all("GIRONA", "Girona") %>% 
+  str_replace_all("GIPUZKOA", "Gipuzkoa") %>% 
+  str_replace_all("BIZKAIA", "Vizcaya") %>% 
+  str_replace_all("CANTABRIA", 'Cantabria') %>% 
+  str_replace_all('ASTURIAS','Asturias') %>% 
+  str_replace_all("A CORUÑA", "A Coruña") %>% 
+  str_replace_all("PONTEVEDRA", "Pontevedra") %>% 
+  str_replace_all("LUGO", "Lugo") %>% 
+  str_replace_all("OURENSE", "Ourense") %>% 
+  str_replace_all("SORIA", "Soria") %>% 
+  str_replace_all("PALENCIA", "Palencia") %>% 
+  str_replace_all("BURGOS", "Burgos") %>% 
+  str_replace_all("VALLADOLID", "Valladolid") %>% 
+  str_replace_all("AVILA", "Avila") %>% 
+  str_replace_all("SEGOVIA", "Segovia") %>% 
+  str_replace_all("ZAMORA", "Zamora") %>% 
+  str_replace_all("LEON", "Leon") %>% 
+  str_replace_all("SALAMANCA", "Salamanca") %>% 
+  str_replace_all("GUADALAJARA", "Guadalajara") %>% 
+  str_replace_all("MADRID", "Madrid") %>% 
+  str_replace_all("TOLEDO", "Toledo") %>% 
+  str_replace_all("CACERES", "Cáceres") %>% 
+  str_replace_all("CIUDAD REAL", "Ciudad Real") %>% 
+  str_replace_all("BADAJOZ", "Badajoz") %>% 
+  str_replace_all("HUELVA", "Huelva") %>% 
+  str_replace_all("CEUTA", "Ceuta") %>% 
+  str_replace_all("JAEN", "Jaén") %>% 
+  str_replace_all("CORDOBA", "Córdoba") %>% 
+  str_replace_all("GRANADA", "Granada") %>% 
+  str_replace_all("SEVILLA", "Sevilla") %>% 
+  str_replace_all("CADIZ", "Cádiz") %>% 
+  str_replace_all("MELILLA", "Melilla") %>% 
+  str_replace_all("MALAGA", "Málaga") %>% 
+  str_replace_all("ALMERIA", "Almería") %>% 
+  str_replace_all("MURCIA", "Murcia") %>% 
+  str_replace_all("ALICANTE", "Alicante") %>% 
+  str_replace_all("CUENCA", "Cuenca") %>% 
+  str_replace_all("ALBACETE", "Albacete") %>% 
+  str_replace_all("TERUEL", "Teruel") %>% 
+  str_replace_all("VALENCIA", "Valencia") %>% 
+  str_replace_all("CASTELLON", "Castellón") %>% 
+  str_replace_all("ARABA/ALAVA", "Alava") %>% 
+  str_replace_all("LA RIOJA", "La Rioja") %>% 
+  str_replace_all("NAVARRA", "Navarra") %>% 
+  str_replace_all("ZARAGOZA", "Zaragoza") %>% 
+  str_replace_all("LLEIDA", "Lleida") %>% 
+  str_replace_all("HUESCA", "Huesca") %>% 
+  str_replace_all("ILLES BALEARS", "Baleares") %>% 
+  str_replace_all("STA. CRUZ DE TENERIFE", "Santa Cruz de Tenerife") %>% 
+  str_replace_all("LAS PALMAS", "Las Palmas")
+  
+df_combined <- left_join(x = df_combined, y = datos_met, by = c("Provincia", "Año"))
 
 #--------------------------------------------------
 # Aplicacion shiny (donde generaremos diversos datagramas y graficas)
@@ -299,16 +429,45 @@ library(plotly)
 
 # Interfaz de usuario
 ui <- fluidPage(
-  titlePanel("Diagrama de dispersión de casos por año y provincia"),
+  titlePanel("Selecciona y visualiza gráficos"),
   sidebarLayout(
     sidebarPanel(
-      div(
-        style = "width: 150px;",
-      selectInput("sex", "Seleccione el sexo:", choices = NULL) # Se llenará dinámicamente
+      selectInput("graph_choice", "Seleccione el gráfico a mostrar:",
+                  choices = c("Casos por año y provincia" = "grafico1",
+                              "Temperatura vs número de casos" = "grafico2")),
+      
+      # Controles para el primer gráfico
+      conditionalPanel(
+        condition = "input.graph_choice == 'grafico1'",
+        div(
+          style = "width: 150px;",
+          selectInput("sex", "Seleccione el sexo:", choices = NULL),
+          selectInput("valor", "Seleccione el Diagnosticos/muertes:", choices = c("diagnostico", "Muertes"))
+        )
+      ),
+      
+      # Controles para el segundo gráfico
+      conditionalPanel(
+        condition = "input.graph_choice == 'grafico2'",
+        div(
+          selectInput("temp_var", "Seleccione la variable de temperatura:",
+                      choices = c("ta_max", "ta_min", "tm_mes")),
+          selectInput("sex_temp", "Seleccione el sexo:", choices = NULL),
+          selectInput("valor_temp", "Seleccione el Diagnosticos/muertes:", choices = c("diagnostico", "Muertes"))
+          
+        )
       )
     ),
+    
     mainPanel(
-      plotlyOutput("scatterPlot", width = "130%", height = "700px")
+      conditionalPanel(
+        condition = "input.graph_choice == 'grafico1'",
+        plotlyOutput("scatterPlot1", width = "130%", height = "700px")
+      ),
+      conditionalPanel(
+        condition = "input.graph_choice == 'grafico2'",
+        plotlyOutput("scatterPlot2", width = "130%", height = "700px")
+      )
     )
   )
 )
@@ -317,31 +476,49 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   # Actualiza las opciones de sexo basadas en los datos cargados
   observe({
-    updateSelectInput(session, "sex", choices = unique(df_i$Sexo))
+    updateSelectInput(session, "sex", choices = unique(df_combined$Sexo))
+    updateSelectInput(session, "sex_temp", choices = unique(df_combined$Sexo))
   })
   
-  # Renderiza el gráfico de dispersión
-  output$scatterPlot <- renderPlotly({
-    #req(input$sexo)  # Asegura que se haya seleccionado un sexo
+  # Renderiza el primer gráfico de dispersión
+  output$scatterPlot1 <- renderPlotly({
+    req(input$graph_choice == "grafico1")
     
-    # Filtra los datos por el sexo seleccionado
-    datos_filtrados <- subset(df_i, Sexo == input$sex)
+    datos_filtrados <- subset(df_combined, Sexo == input$sex)
     
-    # Crea el gráfico con ggplot2
-    p<- ggplot(datos_filtrados, aes(x = Año, y = value, color = Comunidad.Autonoma, text = paste("Provincia", Provincia.de.hospitalización ))) +
+    p <- ggplot(datos_filtrados, aes_string(x = "Año", y = input$valor, color = "Comunidad.Autonoma",
+                                     text = "paste('Provincia:', Provincia)")) +
       geom_point() +
-      labs(title = paste("Casos por año y provincia (Sexo:", input$sex, ")"),
-           x = "Año", y = "Casos") +
+      labs(title = paste(input$valor, "por año y provincia (Sexo:", input$sex, ")"),
+           x = "Año", y = input$valor) +
       theme_minimal()
     
     ggplotly(p)
   })
+  
+  # Renderiza el segundo gráfico de dispersión
+  output$scatterPlot2 <- renderPlotly({
+    req(input$graph_choice == "grafico2")
+    
+    datos_filtrados_temp <- subset(df_combined, Sexo == input$sex_temp)
+    
+    p2 <- ggplot(datos_filtrados_temp, aes_string(
+      x = input$temp_var,
+      y = input$valor_temp,
+      color = "Comunidad.Autonoma",
+      text = "paste('Provincia:', Provincia, '<br>Año:', Año)"
+    )) +
+      geom_point() +
+      labs(title = paste("Relación entre", input$temp_var, "y",input$valor_temp, "(Sexo:", input$sex, ")"),
+           x = input$temp_var, y = "Número de:", input$valor_temp) +
+      theme_minimal()
+    
+    ggplotly(p2)
+  })
 }
 
 # Correr la aplicación
-#para que la aplicacion funcione descomentar la siguiente linea (comentada para que no se de por error y se os ejecute)
+# Descomentar la siguiente línea para ejecutar la aplicación en tu entorno local.
 shinyApp(ui, server)
-
-
 
 
