@@ -222,69 +222,33 @@ typeof(df_i$Provincia.de.hospitalización)
 df_i$Sexo <- str_replace_all(df_i$Sexo,"Varones", 'Hombres')
 
 
+
 #Esto es para crear una nueva columna con la comunidad autonoma a la que corresponde cada provincia
-#Necesario para tener una mejor vision de los diagramas de dispersion (puede que exista una forma mas eficiente)
-mapeo_comunidades <- c(
-  "Almería" = "Andalucía",
-  "Cádiz" = "Andalucía",
-  "Albacete" = "Andalucía",
-  "Almería" = "Andalucía",
-  "Córdoba" = "Andalucía",
-  "Granada" = "Andalucía",
-  "Huelva" = "Andalucía",
-  "Jaén" = "Andalucía",
-  "Málaga" = "Andalucía",
-  "Sevilla" = "Andalucía",
-  "Huesca" = "Aragón",
-  "Teruel" = "Aragón",
-  "Zaragoza" = "Aragón",
-  "Baleares" = "Baleares",
-  "Asturias" = "Asturias",
-  "Las Palmas" = "Canarias",
-  "Santa Cruz de Tenerife" = "Canarias",
-  "Cantabria" = "Cantabria",
-  "Avila" = "Castilla y León",
-  "Burgos" = "Castilla y León",
-  "León" = "Castilla y León",
-  "Palencia" = "Castilla y León",
-  "Salamanca" = "Castilla y León",
-  "Segovia" = "Castilla y León",
-  "Soria" = "Castilla y León",
-  "Valladolid" = "Castilla y León",
-  "Zamora" = "Castilla y León",
-  "Albacete" = "Castilla - La Mancha",
-  "Ciudad Real" = "Castilla - La Mancha",
-  "Cuenca" = "Castilla - La Mancha",
-  "Guadalajara" = "Castilla - La Mancha",
-  "Toledo" = "Castilla - La Mancha",
-  "Barcelona" = "Cataluña",
-  "Girona" = "Cataluña",
-  "Lleida" = "Cataluña",
-  "Tarragona" = "Cataluña",
-  "Alicante" = "Comunidad Valenciana",
-  "Castellón" = "Comunidad Valenciana",
-  "Valencia" = "Comunidad Valenciana",
-  "Badajoz" = "Extremadura",
-  "Cáceres" = "Extremadura",
-  "A Coruña" = "Galicia",
-  "Lugo" = "Galicia",
-  "Ourense" = "Galicia",
-  "Pontevedra" = "Galicia",
-  "Madrid" = "Madrid",
-  "Murcia" = "Murcia",
-  "Navarra" = "Navarra",
-  "Alava" = "País Vasco",
-  "Gipuzkoa" = "País Vasco",
-  "Vizcaya" = "País Vasco",
-  "La Rioja" = "La Rioja",
-  "Ceuta" = "Ceuta",
-  "Melilla" = "Melilla"
-  )
-#se añade una nueva columna al dt_i con las comunidades autonomas correspondientes
-df_i <- df_i %>%
-  mutate(Comunidad.Autonoma = mapeo_comunidades[Provincia.de.hospitalización]) %>% 
+df_i<- df_i %>% 
+  mutate(Comunidad.Autonoma = case_when(
+    Provincia.de.hospitalización %in% c("Almería","Cádiz","Córdoba","Granada","Huelva","Jaén","Málaga","Sevilla") ~ "Andalucía",
+    Provincia.de.hospitalización %in% c("Huesca","Teruel","Zaragoza") ~ "Aragón",
+    Provincia.de.hospitalización == "Baleares" ~ "Baleares",
+    Provincia.de.hospitalización == "Asturias" ~ "Asturias",
+    Provincia.de.hospitalización %in% c("Las Palmas","Santa Cruz de Tenerife") ~ "Canarias",
+    Provincia.de.hospitalización == "Cantabria" ~ "Cantabria",
+    Provincia.de.hospitalización %in% c("Avila","Burgos", "León", "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora") ~ "Castilla y León",
+    Provincia.de.hospitalización %in% c("Albacete", "Ciudad Real", "Cuenca", "Guadalajara", "Toledo") ~ "Castilla - La Mancha",
+    Provincia.de.hospitalización %in% c("Barcelona", "Girona", "Lleida", "Tarragona") ~ "Cataluña",
+    Provincia.de.hospitalización %in% c("Alicante", "Castellón", "Valencia") ~ "Comunidad Valenciana",
+    Provincia.de.hospitalización %in% c("Badajoz", "Cáceres") ~ "Extremadura",
+    Provincia.de.hospitalización %in% c("A Coruña", "Lugo", "Ourense", "Pontevedra") ~ "Galicia", 
+    Provincia.de.hospitalización == "Madrid" ~ "Madrid",
+    Provincia.de.hospitalización == "Murcia" ~ "Murcia",
+    Provincia.de.hospitalización == "Navarra" ~ "Navarra",
+    Provincia.de.hospitalización %in% c("Alava", "Gipuzkoa", "Vizcaya") ~ "País Vasco",
+    Provincia.de.hospitalización == "La Rioja" ~ "La Rioja",
+    Provincia.de.hospitalización == "Ceuta" ~ "Ceuta",
+    Provincia.de.hospitalización == "Melilla" ~ "Melilla"
+  )) %>% 
   filter(!grepl("^(Total|Andalucía|Aragón|Canarias|Castilla y León|Castilla - La Mancha|Cataluña|Comunidad Valenciana|Extremadura|Galicia|País Vasco)"
                 , Provincia.de.hospitalización)) #se retiran los valores globales de las comunidades autonomas de mas de 2 provincias
+
 
 #Lo mismo para los datos de muertes
 datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
@@ -342,7 +306,27 @@ df_m$Provincias <- str_replace_all(df_m$Provincias,"[0123456789]","") %>%
   str_replace_all("Bizkaia", 'Vizcaya')
 
 df_m <- df_m %>%
-  mutate(Comunidad.Autonoma = mapeo_comunidades[Provincias]) %>% 
+  mutate(Comunidad.Autonoma = case_when(
+    Provincias %in% c("Almería","Cádiz","Córdoba","Granada","Huelva","Jaén","Málaga","Sevilla") ~ "Andalucía",
+    Provincias %in% c("Huesca","Teruel","Zaragoza") ~ "Aragón",
+    Provincias == "Baleares" ~ "Baleares",
+    Provincias == "Asturias" ~ "Asturias",
+    Provincias %in% c("Las Palmas","Santa Cruz de Tenerife") ~ "Canarias",
+    Provincias == "Cantabria" ~ "Cantabria",
+    Provincias %in% c("Avila","Burgos", "León", "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora") ~ "Castilla y León",
+    Provincias %in% c("Albacete", "Ciudad Real", "Cuenca", "Guadalajara", "Toledo") ~ "Castilla - La Mancha",
+    Provincias %in% c("Barcelona", "Girona", "Lleida", "Tarragona") ~ "Cataluña",
+    Provincias %in% c("Alicante", "Castellón", "Valencia") ~ "Comunidad Valenciana",
+    Provincias %in% c("Badajoz", "Cáceres") ~ "Extremadura",
+    Provincias %in% c("A Coruña", "Lugo", "Ourense", "Pontevedra") ~ "Galicia", 
+    Provincias == "Madrid" ~ "Madrid",
+    Provincias == "Murcia" ~ "Murcia",
+    Provincias == "Navarra" ~ "Navarra",
+    Provincias %in% c("Alava", "Gipuzkoa", "Vizcaya") ~ "País Vasco",
+    Provincias == "La Rioja" ~ "La Rioja",
+    Provincias == "Ceuta" ~ "Ceuta",
+    Provincias == "Melilla" ~ "Melilla"
+  )) %>% 
   filter(!grepl("^(Extranjero|Nacional|Total|Andalucía|Aragón|Canarias|Castilla y León|Castilla - La Mancha|Cataluña|Comunidad Valenciana|Extremadura|Galicia|País Vasco)"
                 , Provincias))   #se retiran los valores globales de las comunidades autonomas de mas de 2 provincias
 df_m <- select(df_m,-Causa.de.muerte)
