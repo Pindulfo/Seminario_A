@@ -2,7 +2,10 @@
 title: "Relación del las tempertatura con la diabetes"
 author: "Mario Benito, Guillermo de la Fuente,Pablo Fernández"
 date: "`r Sys.Date()`"
-output: html_document
+output: output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 # Este es el HTML que hemos de entregar
