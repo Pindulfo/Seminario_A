@@ -134,7 +134,7 @@ datos_met$Provincia <- str_replace_all(datos_met$Provincia,"TARRAGONA","Tarragon
   str_replace_all("AVILA", "Avila") %>% 
   str_replace_all("SEGOVIA", "Segovia") %>% 
   str_replace_all("ZAMORA", "Zamora") %>% 
-  str_replace_all("LEON", "Leon") %>% 
+  str_replace_all("LEON", "León") %>%
   str_replace_all("SALAMANCA", "Salamanca") %>% 
   str_replace_all("GUADALAJARA", "Guadalajara") %>% 
   str_replace_all("MADRID", "Madrid") %>% 
