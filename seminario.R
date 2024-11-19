@@ -106,7 +106,7 @@ cod_estaciones <- estaciones %>%
   select(indicativo,provincia) %>% 
   rename(codigo = indicativo)
 typeof(datos_met$codigo)
-typeof(estaciones$codigo)
+typeof(cod_estaciones$codigo)
 
 #Union de datos_met y cod_estaciones
 datos_met <- merge(datos_met,cod_estaciones, by = 'codigo')
@@ -230,7 +230,7 @@ df_i
 df_i <- select(df_i,-Diagnóstico)
 
 head(df_i)
-
+length(levels(factor(df_i$Sexo)))
 
 # análisis de los valores/niveles de cada atributo
 length(levels(factor(df_i$Provincia.de.hospitalización)))
@@ -409,6 +409,7 @@ df_m <- df_m %>%
 
 #Standarizacion y retirada de columnas que no aportan valor
 df_m <- select(df_m,-Causa.de.muerte)
+levels(factor(df_m$Sexo))
 df_m$Sexo <-  str_replace_all(df_m$Sexo,"Total","Ambos sexos")
 df_m<-rename(.data = df_m, Provincia = Provincias, Muertes = value, Año = Periodo)
 
