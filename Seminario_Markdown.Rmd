@@ -8,9 +8,11 @@ output: output:
     toc_float: true
 ---
 
-# Este es el HTML que hemos de entregar
+# Enlace al repositorio
 
 [GitHub](https://github.com/Pindulfo/Seminario_A.git) 
+
+#Ejecuciones
 
 ### 1. Carga de paquetes Estos son los paquetes necesarios para la carga de archivos Pc-axis, la obtención de datos de la aemet y su manipulación.
 
@@ -26,6 +28,8 @@ library(stringr)
 ```
 
 ### 2. Obtención datos diabetes
+
+#### 2.1. Ingresos 
 
 Obtenemos los nombres de archivos con datos de diabetes
 
@@ -74,15 +78,24 @@ Visualizar la estructura de los datos
 head(df_i)
 ```
 
-# Código para Limpiar y estandarizar nombres de provincias en `Provincia.de.hospitalización`
+##### 2.1.1. Código para limpiar y estandarizar valores de atributos.`
 
-Analizamos los valores de cada atributo, por ejemplo, las provincias de hospitalización
-
+Primero eliminamos el atributo 'Diagnóstico'
 ```{r}
-length(levels(factor(df_i$Provincia.de.hospitalización)))
+df_i <- select(df_i,-Diagnóstico)
 ```
 
-Limpiamos los nombres de las provincias: eliminamos números y ajustamos algunos nombres para normalización
+
++ __Provincias__
+
+Si analizamos los distintos valores que toma el atributo 'Provincia.de.hospitalización' observamos que supera la suma de provincias (50), ciudades autónomas (2), comunidades autónomas no uniprovinciales (10) y país (1).
+
+```{r}
+length(levels(df_i$Provincia.de.hospitalización))
+```
+
+
+Limpiamos los nombres de las provincias: eliminamos números y ajustamos algunos nombres para normalización.
 
 ```{r}
 df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospitalización,"[0123456789]","") %>% 
@@ -108,25 +121,25 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all("CATALUÑA", 'Cataluña') %>% 
   str_replace_all("Comunitat Valenciana", 'Comunidad Valenciana') %>% 
   str_replace_all("COMUNITAT VALENCIANA", 'Comunidad Valenciana') %>% 
-  str_replace_all("Coruña \\(A\\)", 'A Coruña') %>% #revisar el Coruña (A) no se ha modificado con esto
+  str_replace_all("Coruña \\(A\\)", 'A Coruña') %>% 
   str_replace_all("Coruña, A", 'A Coruña') %>% 
   str_replace_all("EXTREMADURA", 'Extremadura') %>% 
   str_replace_all("GALICIA", 'Galicia') %>% 
   str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
-  str_replace_all('MADRID, COMUNIDAD DE','Madrid') %>% #revisar al igual que asturias para que solo salga Madrid
+  str_replace_all('MADRID, COMUNIDAD DE','Madrid') %>% 
   str_replace_all('Madrid, Comunidad de', 'Madrid') %>%
   str_replace_all('Madrid \\(Comunidad de\\)', 'Madrid') %>% 
-  str_replace_all('MURCIA, REGIÓN DE','Murcia') %>% #revisar para que solo salga Murcia
+  str_replace_all('MURCIA, REGIÓN DE','Murcia') %>% 
   str_replace_all('Murcia \\(Región de\\)','Murcia') %>%
   str_replace_all('Murcia, Región de','Murcia') %>%
   str_replace_all('Murcia*', 'Murcia') %>% 
-  str_replace_all('NAVARRA, COMUNIDAD FORAL DE','Navarra') %>% #revisar para que salga solo Navarra
+  str_replace_all('NAVARRA, COMUNIDAD FORAL DE','Navarra') %>% 
   str_replace_all('Navarra \\(Comun. Foral de\\)', 'Navarra') %>%
   str_replace_all('Navarra, Comunidad Foral de', 'Navarra') %>% 
   str_replace_all('PAÍS VASCO', 'País Vasco') %>% 
-  str_replace_all("Palmas \\(Las\\)", 'Las Palmas') %>% #revisar el Palmas (Las) no se ha modificado con esto
+  str_replace_all("Palmas \\(Las\\)", 'Las Palmas') %>% 
   str_replace_all("Palmas, Las", 'Las Palmas') %>%
-  str_replace_all("Rioja \\(La\\)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
+  str_replace_all("Rioja \\(La\\)", 'La Rioja') %>%
   str_replace_all("Rioja, La", 'La Rioja') %>%
   str_replace_all("RIOJA, LA", 'La Rioja') %>% 
   str_replace_all("TOTAL NACIONAL", 'Total') %>% 
@@ -135,18 +148,74 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
   str_replace_all("Bizkaia", 'Vizcaya')
 ```  
 
-Comprobamos de neuvo los distintos valores
+Comprobamos de nuevo el número de distintos valores en 'Provincia.de.hospitalización'.
 ```{r}
-length(levels(factor(df_i$Provincia.de.hospitalización)))
+length(levels(df_i$Provincia.de.hospitalización))
 ```
 
-# Cargamos los datos de muertes
++ __Sexo__
+
+Se han registrado el sexo de los individuos masculinos como "Varón" o "Hombres"
+
+```{r}
+levels(df_i$Sexo)
+```
+
+Se modifica de tal manera de que solo se registren como "Hombres"
+
+```{r}
+df_i$Sexo <- str_replace_all(df_i$Sexo,"Varones", 'Hombres')
+```
+
+```{r}
+levels(df_i$Sexo)
+```
+
+##### 2.1.2. Código para añadir como atributo la comunidad autónoma.
+
+Se añade la información refenrente a la comunidad autónoma como un nuevo atributo y se eliminan los registros que aglutinan los datos de las comunidades no uniprovinciales y el total nacional.`
+
+```{r}
+df_i<- df_i %>% 
+  mutate(Comunidad.Autonoma = case_when(
+    Provincia.de.hospitalización %in% c("Almería","Cádiz","Córdoba","Granada","Huelva","Jaén","Málaga","Sevilla") ~ "Andalucía",
+    Provincia.de.hospitalización %in% c("Huesca","Teruel","Zaragoza") ~ "Aragón",
+    Provincia.de.hospitalización == "Baleares" ~ "Baleares",
+    Provincia.de.hospitalización == "Asturias" ~ "Asturias",
+    Provincia.de.hospitalización %in% c("Las Palmas","Santa Cruz de Tenerife") ~ "Canarias",
+    Provincia.de.hospitalización == "Cantabria" ~ "Cantabria",
+    Provincia.de.hospitalización %in% c("Avila","Burgos", "León", "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora") ~ "Castilla y León",
+    Provincia.de.hospitalización %in% c("Albacete", "Ciudad Real", "Cuenca", "Guadalajara", "Toledo") ~ "Castilla - La Mancha",
+    Provincia.de.hospitalización %in% c("Barcelona", "Girona", "Lleida", "Tarragona") ~ "Cataluña",
+    Provincia.de.hospitalización %in% c("Alicante", "Castellón", "Valencia") ~ "Comunidad Valenciana",
+    Provincia.de.hospitalización %in% c("Badajoz", "Cáceres") ~ "Extremadura",
+    Provincia.de.hospitalización %in% c("A Coruña", "Lugo", "Ourense", "Pontevedra") ~ "Galicia", 
+    Provincia.de.hospitalización == "Madrid" ~ "Madrid",
+    Provincia.de.hospitalización == "Murcia" ~ "Murcia",
+    Provincia.de.hospitalización == "Navarra" ~ "Navarra",
+    Provincia.de.hospitalización %in% c("Alava", "Gipuzkoa", "Vizcaya") ~ "País Vasco",
+    Provincia.de.hospitalización == "La Rioja" ~ "La Rioja",
+    Provincia.de.hospitalización == "Ceuta" ~ "Ceuta",
+    Provincia.de.hospitalización == "Melilla" ~ "Melilla"
+  )) %>% 
+  filter(!grepl("^(Total|Andalucía|Aragón|Canarias|Castilla y León|Castilla - La Mancha|Cataluña|Comunidad Valenciana|Extremadura|Galicia|País Vasco)"
+                , Provincia.de.hospitalización)) #se retiran los valores globales de las comunidades autonomas de mas de 2 provincias
+
+```
+
++ __Renombrado de atributos__ 
+
+```{r}
+df_i <- rename(.data = df_i, Provincia = Provincia.de.hospitalización, Diagnosticos = value)
+```
+
+#### 2.2. Muertes
 
 ```{r}
 datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
 ```
 
-Conviertimos los datos de muertes a un dataframe para facilitar el análisis
+Convertimos los datos de muertes a un dataframe para facilitar el análisis
 
 ```{r}
 df_m <- as.data.frame(datos_muertes)
@@ -158,7 +227,118 @@ Mostramos las primeras filas del dataframe para verificar la carga de datos
 head(df_m)
 ```
 
-### Obtención de datos de la aemet
+
+##### 2.2.1. Código para limpiar y estandarizar valores de atributos.`
+
+Realizamos los mismos cambios que con los datos de muertes por diabetes.
+
++ __eliminamos el atributo 'Causa.de.muerte'__ 
+```{r}
+df_m <- select(df_m,-Causa.de.muerte)
+```
+
++ __Provincias__ 
+
+```{r}
+df_m$Provincias <- str_replace_all(df_m$Provincias,"[0123456789]","") %>% 
+  str_replace_all("^ ","") %>% 
+  str_replace_all("Araba/Á","A") %>% 
+  str_replace_all("/Alacant", '') %>% 
+  str_replace_all("ANDALUCÍA", 'Andalucía') %>% 
+  str_replace_all('ARAGÓN', 'Aragón') %>% 
+  str_replace_all('ASTURIAS','Asturias') %>% 
+  str_replace_all('Asturias \\(Principado de\\)', 'Asturias') %>%
+  str_replace_all('Asturias, Principado de', 'Asturias') %>%  
+  str_replace_all('Asturias, PRINCIPADO DE', 'Asturias') %>%
+  str_replace_all('Ávila', 'Avila') %>% 
+  str_replace_all('BALEARS, ILLES', 'Baleares') %>% 
+  str_replace_all('Balears, Illes', 'Baleares') %>% 
+  str_replace_all('Balears \\(Illes\\)', 'Baleares') %>% 
+  str_replace_all("CANARIAS", 'Canarias') %>% 
+  str_replace_all("CANTABRIA", 'Cantabria') %>% 
+  str_replace_all("Castellón de la Plana", 'Castellón') %>% 
+  str_replace_all("/Castelló", '') %>% 
+  str_replace_all("CASTILLA - LA MANCHA", 'Castilla - La Mancha') %>% 
+  str_replace_all("CASTILLA Y LEÓN", 'Castilla y León') %>% 
+  str_replace_all("CATALUÑA", 'Cataluña') %>% 
+  str_replace_all("Comunitat Valenciana", 'Comunidad Valenciana') %>% 
+  str_replace_all("COMUNITAT VALENCIANA", 'Comunidad Valenciana') %>% 
+  str_replace_all("Coruña \\(A\\)", 'A Coruña') %>% 
+  str_replace_all("Coruña, A", 'A Coruña') %>% 
+  str_replace_all("EXTREMADURA", 'Extremadura') %>% 
+  str_replace_all("GALICIA", 'Galicia') %>% 
+  str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
+  str_replace_all('MADRID, COMUNIDAD DE','Madrid') %>% 
+  str_replace_all('Madrid, Comunidad de', 'Madrid') %>%
+  str_replace_all('Madrid \\(Comunidad de\\)', 'Madrid') %>% 
+  str_replace_all('MURCIA, REGIÓN DE','Murcia') %>% 
+  str_replace_all('Murcia \\(Región de\\)','Murcia') %>%
+  str_replace_all('Murcia, Región de','Murcia') %>%
+  str_replace_all('Murcia*', 'Murcia') %>% 
+  str_replace_all('NAVARRA, COMUNIDAD FORAL DE','Navarra') %>% 
+  str_replace_all('Navarra \\(Comun. Foral de\\)', 'Navarra') %>%
+  str_replace_all('Navarra, Comunidad Foral de', 'Navarra') %>% 
+  str_replace_all('PAÍS VASCO', 'País Vasco') %>% 
+  str_replace_all("Palmas \\(Las\\)", 'Las Palmas') %>% 
+  str_replace_all("Palmas, Las", 'Las Palmas') %>%
+  str_replace_all("Rioja \\(La\\)", 'La Rioja') %>% 
+  str_replace_all("Rioja, La", 'La Rioja') %>%
+  str_replace_all("RIOJA, LA", 'La Rioja') %>% 
+  str_replace_all("TOTAL NACIONAL", 'Total') %>% 
+  str_replace_all("Total Nacional", 'Total') %>% 
+  str_replace_all("/València", '') %>% 
+  str_replace_all("Bizkaia", 'Vizcaya')
+```
+
++ __Sexo__
+
+Se modifica el valor "Ambos sexos" por "Total" para que el atributo _sexo_ comparta los mismos niveles en los dataframes de ingresos y muertes.
+
+```{r}
+
+df_m$Sexo <-  str_replace_all(df_m$Sexo,"Total","Ambos sexos")
+```
+
+
+##### 2.2.2. Código para añadir como atributo la comunidad autónoma.
+
+Se añade la información refenrente a la comunidad autónoma como un nuevo atributo y se eliminan los registros que aglutinan los datos de las comunidades no uniprovinciales y el total nacional.
+
+```{r}
+df_m <- df_m %>%
+  mutate(Comunidad.Autonoma = case_when(
+    Provincias %in% c("Almería","Cádiz","Córdoba","Granada","Huelva","Jaén","Málaga","Sevilla") ~ "Andalucía",
+    Provincias %in% c("Huesca","Teruel","Zaragoza") ~ "Aragón",
+    Provincias == "Baleares" ~ "Baleares",
+    Provincias == "Asturias" ~ "Asturias",
+    Provincias %in% c("Las Palmas","Santa Cruz de Tenerife") ~ "Canarias",
+    Provincias == "Cantabria" ~ "Cantabria",
+    Provincias %in% c("Avila","Burgos", "León", "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora") ~ "Castilla y León",
+    Provincias %in% c("Albacete", "Ciudad Real", "Cuenca", "Guadalajara", "Toledo") ~ "Castilla - La Mancha",
+    Provincias %in% c("Barcelona", "Girona", "Lleida", "Tarragona") ~ "Cataluña",
+    Provincias %in% c("Alicante", "Castellón", "Valencia") ~ "Comunidad Valenciana",
+    Provincias %in% c("Badajoz", "Cáceres") ~ "Extremadura",
+    Provincias %in% c("A Coruña", "Lugo", "Ourense", "Pontevedra") ~ "Galicia", 
+    Provincias == "Madrid" ~ "Madrid",
+    Provincias == "Murcia" ~ "Murcia",
+    Provincias == "Navarra" ~ "Navarra",
+    Provincias %in% c("Alava", "Gipuzkoa", "Vizcaya") ~ "País Vasco",
+    Provincias == "La Rioja" ~ "La Rioja",
+    Provincias == "Ceuta" ~ "Ceuta",
+    Provincias == "Melilla" ~ "Melilla"
+  )) %>% 
+  filter(!grepl("^(Extranjero|Nacional|Total|Andalucía|Aragón|Canarias|Castilla y León|Castilla - La Mancha|Cataluña|Comunidad Valenciana|Extremadura|Galicia|País Vasco)"
+                , Provincias))   #se retiran los valores globales de las comunidades autonomas de mas de 2 provincias
+
+```
+
++ __Renombrado de atributos__
+
+```{r}
+df_m<-rename(.data = df_m, Provincia = Provincias, Muertes = value, Año = Periodo)
+```
+
+### 3. Obtención de datos de la AEMET
 
 Se recogen todas las estaciones de la aemet. A continuación, se muestra la estructura de los datos.
 
@@ -182,7 +362,7 @@ colnames(datos_met) <- c('codigo', 'ta_max', 'ta_min', 'tm_mes', 'año')
 ```
 
 Obtención de los datos de tempertatura máxima, mínima y media mesual durante los ños 2003 a 2020 de todas las estaciones selecionadas.
-A continuación, se muestra el código para acceder a la aemet. Para una mayor rapidez de renderizado se importan los datos.
+A continuación, se muestra el código para acceder a la AEMET. Para una mayor rapidez de renderizado se importan los datos.
 
 ```{r eval=FALSE}
 for (año in 2003:2020){
@@ -221,12 +401,104 @@ Muestra de cómo se estructura la información de la consulta a aemet.
 met_prov <- as.data.frame(aemet_monthly_clim('C449C', year = 2020))
 
 ```
-
 ```{r}
 head(met_prov)
 ```
 
-## Esto es una prueba del shiny e inicio del mismo
+Añadimos la provincia correspondiente a cada registro.
+```{r}
+cod_estaciones <- estaciones %>% 
+  select(indicativo,provincia) %>% 
+  rename(codigo = indicativo)
+datos_met <- merge(datos_met,cod_estaciones, by = 'codigo')
+```
+
+
+Estandarizamos los nombres de los atributos y de las provincias. Eliminamos el atributo 'codigo'
+```{r}
+datos_met<-rename(.data = datos_met, Provincia = provincia, Año = año)
+datos_met <- select(datos_met,-codigo)
+datos_met$Año <- as.character(datos_met$Año)
+
+datos_met$Provincia <- str_replace_all(datos_met$Provincia,"TARRAGONA","Tarragona") %>% 
+  str_replace_all("BARCELONA", "Barcelona") %>% 
+  str_replace_all("GIRONA", "Girona") %>% 
+  str_replace_all("GIPUZKOA", "Gipuzkoa") %>% 
+  str_replace_all("BIZKAIA", "Vizcaya") %>% 
+  str_replace_all("CANTABRIA", 'Cantabria') %>% 
+  str_replace_all('ASTURIAS','Asturias') %>% 
+  str_replace_all("A CORUÑA", "A Coruña") %>% 
+  str_replace_all("PONTEVEDRA", "Pontevedra") %>% 
+  str_replace_all("LUGO", "Lugo") %>% 
+  str_replace_all("OURENSE", "Ourense") %>% 
+  str_replace_all("SORIA", "Soria") %>% 
+  str_replace_all("PALENCIA", "Palencia") %>% 
+  str_replace_all("BURGOS", "Burgos") %>% 
+  str_replace_all("VALLADOLID", "Valladolid") %>% 
+  str_replace_all("AVILA", "Avila") %>% 
+  str_replace_all("SEGOVIA", "Segovia") %>% 
+  str_replace_all("ZAMORA", "Zamora") %>% 
+  str_replace_all("LEON", "León") %>%
+  str_replace_all("SALAMANCA", "Salamanca") %>% 
+  str_replace_all("GUADALAJARA", "Guadalajara") %>% 
+  str_replace_all("MADRID", "Madrid") %>% 
+  str_replace_all("TOLEDO", "Toledo") %>% 
+  str_replace_all("CACERES", "Cáceres") %>% 
+  str_replace_all("CIUDAD REAL", "Ciudad Real") %>% 
+  str_replace_all("BADAJOZ", "Badajoz") %>% 
+  str_replace_all("HUELVA", "Huelva") %>% 
+  str_replace_all("CEUTA", "Ceuta") %>% 
+  str_replace_all("JAEN", "Jaén") %>% 
+  str_replace_all("CORDOBA", "Córdoba") %>% 
+  str_replace_all("GRANADA", "Granada") %>% 
+  str_replace_all("SEVILLA", "Sevilla") %>% 
+  str_replace_all("CADIZ", "Cádiz") %>% 
+  str_replace_all("MELILLA", "Melilla") %>% 
+  str_replace_all("MALAGA", "Málaga") %>% 
+  str_replace_all("ALMERIA", "Almería") %>% 
+  str_replace_all("MURCIA", "Murcia") %>% 
+  str_replace_all("ALICANTE", "Alicante") %>% 
+  str_replace_all("CUENCA", "Cuenca") %>% 
+  str_replace_all("ALBACETE", "Albacete") %>% 
+  str_replace_all("TERUEL", "Teruel") %>% 
+  str_replace_all("VALENCIA", "Valencia") %>% 
+  str_replace_all("CASTELLON", "Castellón") %>% 
+  str_replace_all("ARABA/ALAVA", "Alava") %>% 
+  str_replace_all("LA RIOJA", "La Rioja") %>% 
+  str_replace_all("NAVARRA", "Navarra") %>% 
+  str_replace_all("ZARAGOZA", "Zaragoza") %>% 
+  str_replace_all("LLEIDA", "Lleida") %>% 
+  str_replace_all("HUESCA", "Huesca") %>% 
+  str_replace_all("ILLES BALEARS", "Baleares") %>% 
+  str_replace_all("STA. CRUZ DE TENERIFE", "Santa Cruz de Tenerife") %>% 
+  str_replace_all("LAS PALMAS", "Las Palmas")
+```
+
+
+### 4. Fusión de datos en un único dataframe
+
+Unión de datos de ingreso  y muerte
+
+```{r}
+df_combined <- left_join(x = df_i, y = df_m, by = c("Provincia", "Año", "Comunidad.Autonoma", "Sexo"))
+```
+
+Unión de todos los datos de diabetes (en df_combined) y  datos meteorológicos.
+
+```{r}
+df_combined <- left_join(x = df_combined, y = datos_met, by = c("Provincia", "Año"))
+```
+
+Resultado final.
+
+```{r}
+head(df_combined)
+```
+
+
+
+
+### Esto es una prueba del shiny e inicio del mismo
 
 Para poder ejecutar esto correctamente hemos de insertar la carga de datos etc arriba
 
