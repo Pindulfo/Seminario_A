@@ -429,53 +429,6 @@ df_m$Provincias <- str_replace_all(df_m$Provincias,"[0123456789]","") %>%
   str_replace_all("/València", '') %>% 
   str_replace_all("Bizkaia", 'Vizcaya')
 
-#Creacion de una nueva columna Comunidad.Autonoma segun la Provincia
-df_m <- df_m %>%
-  mutate(Comunidad.Autonoma = case_when(
-    Provincias %in% c("Almería","Cádiz","Córdoba","Granada","Huelva","Jaén","Málaga","Sevilla") ~ "Andalucía",
-    Provincias %in% c("Huesca","Teruel","Zaragoza") ~ "Aragón",
-    Provincias == "Baleares" ~ "Baleares",
-    Provincias == "Asturias" ~ "Asturias",
-    Provincias %in% c("Las Palmas","Santa Cruz de Tenerife") ~ "Canarias",
-    Provincias == "Cantabria" ~ "Cantabria",
-    Provincias %in% c("Avila","Burgos", "León", "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora") ~ "Castilla y León",
-    Provincias %in% c("Albacete", "Ciudad Real", "Cuenca", "Guadalajara", "Toledo") ~ "Castilla - La Mancha",
-    Provincias %in% c("Barcelona", "Girona", "Lleida", "Tarragona") ~ "Cataluña",
-    Provincias %in% c("Alicante", "Castellón", "Valencia") ~ "Comunidad Valenciana",
-    Provincias %in% c("Badajoz", "Cáceres") ~ "Extremadura",
-    Provincias %in% c("A Coruña", "Lugo", "Ourense", "Pontevedra") ~ "Galicia", 
-    Provincias == "Madrid" ~ "Madrid",
-    Provincias == "Murcia" ~ "Murcia",
-    Provincias == "Navarra" ~ "Navarra",
-    Provincias %in% c("Alava", "Gipuzkoa", "Vizcaya") ~ "País Vasco",
-    Provincias == "La Rioja" ~ "La Rioja",
-    Provincias == "Ceuta" ~ "Ceuta",
-    Provincias == "Melilla" ~ "Melilla"
-  )) %>% 
-  filter(!grepl("^(Extranjero|Nacional|Total|Andalucía|Aragón|Canarias|Castilla y León|Castilla - La Mancha|Cataluña|Comunidad Valenciana|Extremadura|Galicia|País Vasco)"
-                , Provincias))   #se retiran los valores globales de las comunidades autonomas de mas de 2 provincias
-
-#Standarizacion y retirada de columnas que no aportan valor
-df_m <- select(df_m,-Causa.de.muerte)
-levels(factor(df_m$Sexo))
-df_m$Sexo <-  str_replace_all(df_m$Sexo,"Total","Ambos sexos")
-df_m<-rename(.data = df_m, Provincia = Provincias, Muertes = value, Año = Periodo)
-
-#--------------------------------------------
-#Union de todos los dataframe en el mismo (df_combined)
-#--------------------------------------------
-
-#Union de df_i y de df_m
-
-df_combined <- left_join(x = df_i, y = df_m, by = c("Provincia", "Año", "Comunidad.Autonoma", "Sexo"))
-
-#Union de df_combined y de datos_met
-
-df_combined <- left_join(x = df_combined, y = datos_met, by = c("Provincia", "Año"))
-
-#Guardar df_combined en un nuevo RData
-save(df_combined,file = './Datos_Cargados.RData')
-
 
 #Carga de df_combined
 
@@ -655,5 +608,20 @@ grafico_provincias <- ggplot(df_i_provincia, aes(x = reorder(Provincia.de.hospit
 # Mostrar con ggplot
 print(grafico_provincias)
 
+# 4. Muertes por Diabetes por Comunidad Autónoma
+df_m_filtrados <- df_m %>%
+  group_by(Comunidad.Autonoma) %>%
+  summarise(Muertes_Totales = sum(Muertes, na.rm = TRUE))
 
+grafico_muertes <- ggplot(df_m_filtrados, aes(x = reorder(Comunidad.Autonoma, -Muertes_Totales), y = Muertes_Totales)) +
+  geom_bar(stat = "identity", fill = "darkred") +
+  coord_flip() +
+  labs(
+    title = "Muertes por Diabetes por Comunidad Autónoma",
+    x = "Comunidad Autónoma",
+    y = "Muertes Totales"
+  ) +
+  theme_minimal()
+
+print(grafico_muertes) # Mostrar gráfico con ggplot
 
