@@ -394,3 +394,89 @@ grafico_relacion <- ggplot(datos_combinados, aes(x = Temperatura_Media, y = Ingr
 
 print(grafico_relacion) # Mostrar gráfico con ggplot
 
+# Gráfico de caja y bigotes
+boxplot_temp <- ggplot(datos_met_filtrados, aes(x = as.factor(mes), y = tm_mes)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  labs(
+    title = "Distribución de Temperaturas Mensuales",
+    x = "Mes",
+    y = "Temperatura Media (°C)"
+  ) +
+  theme_minimal()
+
+print(boxplot_temp)
+# Preparación de datos para el mapa de calor
+heatmap_data <- df_i %>%
+  group_by(Año, Mes) %>%
+  summarise(Ingresos_Totales = sum(Ingresos, na.rm = TRUE)) %>%
+  ungroup()
+
+# Gráfico de mapa de calor
+heatmap_ingresos <- ggplot(heatmap_data, aes(x = Mes, y = Año, fill = Ingresos_Totales)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "red") +
+  labs(
+    title = "Mapa de Calor de Ingresos por Mes y Año",
+    x = "Mes",
+    y = "Año",
+    fill = "Ingresos Totales"
+  ) +
+  theme_minimal()
+
+print(heatmap_ingresos)
+# Gráfico de barras apiladas
+barras_sexo <- df_i %>%
+  group_by(Año, Sexo) %>%
+  summarise(Ingresos_Totales = sum(Ingresos, na.rm = TRUE)) %>%
+  ggplot(aes(x = as.factor(Año), y = Ingresos_Totales, fill = Sexo)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(
+    title = "Ingresos Hospitalarios por Sexo y Año",
+    x = "Año",
+    y = "Ingresos Totales",
+    fill = "Sexo"
+  ) +
+  theme_minimal()
+
+print(barras_sexo)
+# Precipitación acumulada anual
+precip_anual <- datos_met_filtrados %>%
+  group_by(año) %>%
+  summarise(Precip_Acumulada = sum(pp_mes, na.rm = TRUE)) 
+
+# Gráfico de línea
+serie_temporal <- ggplot(precip_anual, aes(x = año, y = Precip_Acumulada)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "darkblue", size = 2) +
+  labs(
+    title = "Precipitación Acumulada Anual",
+    x = "Año",
+    y = "Precipitación Total (mm)"
+  ) +
+  theme_minimal()
+
+print(serie_temporal)
+# Histograma de temperaturas
+hist_temp <- ggplot(datos_met_filtrados, aes(x = tm_mes)) +
+  geom_histogram(binwidth = 1, fill = "lightgreen", color = "darkgreen") +
+  labs(
+    title = "Frecuencia de Temperaturas",
+    x = "Temperatura Media (°C)",
+    y = "Frecuencia"
+  ) +
+  theme_minimal()
+
+print(hist_temp)
+# Gráfico de dispersión entre temperatura y precipitación
+dispersion_temp_precip <- ggplot(datos_met_filtrados, aes(x = tm_mes, y = pp_mes, color = as.factor(año))) +
+  geom_point(size = 2, alpha = 0.7) +
+  labs(
+    title = "Relación entre Temperatura y Precipitación",
+    x = "Temperatura Media (°C)",
+    y = "Precipitación Mensual (mm)",
+    color = "Año"
+  ) +
+  theme_minimal()
+
+print(dispersion_temp_precip)
+
