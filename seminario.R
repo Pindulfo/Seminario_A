@@ -1,7 +1,7 @@
 
 
 #----------------------------------------------
-#Paquetes necesarios
+# Paquetes necesarios
 #----------------------------------------------
 install.packages("climaemet")
 library(pxR)
@@ -11,7 +11,7 @@ library(stringr)
 library(shiny)
 library(ggplot2)
 library(plotly)
-
+library(tidyr)
 ## Use this function to register your API Key temporarly or permanently
 aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
 
@@ -191,6 +191,48 @@ bien <- c('C658L','3013','9091O','1014','6155A')
 remplazo <- c('C659H' = 'C658L', '3168D' = '3013','9091R'= '9091O', '1014A' = '1014', '6156X' = '6155A')
 
 codigos <- str_replace_all(codigos, remplazo)
+
+
+# --------------
+# DATOS POBLACIÓN
+# --------------
+library(readr)
+Poblacion <- read_delim("INPUT/DATA/Poblacion/Poblacion.csv", 
+                        delim = ";",locale = locale(encoding = "ISO-8859-1"),  ,escape_double = FALSE, trim_ws = TRUE) %>% 
+  select(!(Edad)) %>% 
+  filter(grepl('enero', Periodo))
+
+Poblacion$Provincias <- str_replace_all(Poblacion$Provincias,"[0123456789]","") %>% 
+  str_replace_all("^ ","")
+
+Poblacion$Periodo <- substr(Poblacion$Periodo,nchar(Poblacion$Periodo)-4,nchar(Poblacion$Periodo)) %>% 
+  as.integer()
+
+Poblacion$Total <- sapply(sapply(Poblacion$Total, strsplit, split = ','), function(x) x[1]) 
+
+Poblacion$Total <- Poblacion$Total %>% 
+  str_replace_all("\\.","") %>% 
+  as.integer()
+
+  
+Poblacion$Provincias <- Poblacion$Provincias %>% 
+  str_replace_all("Araba/Á","A") %>% 
+  str_replace_all("/Alacant", '') %>% 
+  str_replace_all('Ávila', 'Avila') %>% 
+  str_replace_all('Balears, Illes', 'Baleares') %>% 
+  str_replace_all("CANARIAS", 'Canarias') %>% 
+  str_replace_all("CANTABRIA", 'Cantabria') %>% 
+  str_replace_all("/Castelló", '') %>% 
+  str_replace_all("Coruña, A", 'A Coruña') %>% 
+  str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
+  str_replace_all('Murcia*', 'Murcia') %>% 
+  str_replace_all("Palmas, Las", 'Las Palmas') %>%
+  str_replace_all("Rioja, La", 'La Rioja') %>%
+  str_replace_all("/València", '') %>% 
+  str_replace_all("Bizkaia", 'Vizcaya')
+  
+ 
+setequal(levels(Poblacion$Provincias),levels(df_combined$Provincia))
 
 #----------------------------------------
 # DATOS DIABETES
