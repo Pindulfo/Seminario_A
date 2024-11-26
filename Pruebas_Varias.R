@@ -480,3 +480,143 @@ dispersion_temp_precip <- ggplot(datos_met_filtrados, aes(x = tm_mes, y = pp_mes
 
 print(dispersion_temp_precip)
 
+# Servidor
+server <- function(input, output, session) {
+  # Actualiza las opciones de sexo basadas en los datos cargados
+  observe({
+    updateSelectInput(session, "sex", choices = unique(df_combined$Sexo))
+    updateSelectInput(session, "sex_temp", choices = unique(df_combined$Sexo))
+    updateSelectInput(session, "sex_1", choices = unique(df_combined$Sexo))
+    updateSelectInput(session, "provincia_1", choices = unique(df_combined$Provincia))
+  })
+  
+  # Renderiza el primer gráfico de dispersión
+  output$scatterPlot1 <- renderPlotly({
+    req(input$graph_choice == "grafico1")
+    
+    datos_filtrados <- subset(df_combined, Sexo == input$sex)
+    
+    p <- ggplot(datos_filtrados, aes_string(x = "Año", y = input$valor, color = "Comunidad.Autonoma",
+                                            text = "paste('Provincia:', Provincia)")) +
+      geom_point() +
+      labs(title = paste(input$valor, "(cada 100.000 hab) por año y provincia (Sexo:", input$sex, ")"),
+           x = "Año", y = input$valor) +
+      theme_minimal()
+    
+    ggplotly(p)
+  })
+  
+  # Renderiza el segundo gráfico de dispersión
+  output$scatterPlot2 <- renderPlotly({
+    req(input$graph_choice == "grafico2")
+    
+    datos_filtrados_temp <- subset(df_combined, Sexo == input$sex_temp)
+    
+    p2 <- ggplot(datos_filtrados_temp, aes_string(
+      x = input$temp_var,
+      y = input$valor_temp,
+      color = "Comunidad.Autonoma",
+      text = "paste('Provincia:', Provincia, '<br>Año:', Año)"
+    )) +
+      geom_point(alpha = 0.6) +
+      geom_smooth(method = "lm", se = FALSE)+
+      labs(title = paste("Relación entre", input$temp_var, "y",input$valor_temp, "(cada 100.000 hab) (Sexo:", input$sex, ")"),
+           x = input$temp_var, y = "Número de:", input$valor_temp) +
+      theme_minimal()
+    
+    ggplotly(p2)
+  })
+  output$scatterPlot3 <- renderPlotly({
+    req(input$graph_choice == "grafico3")
+    
+    datos_filtrados_prov <- subset(df_combined, Sexo == input$sex_1 & Provincia == input$provincia_1)
+    
+    p3 <- ggplot(datos_filtrados_prov, aes_string(x = input$selecion_1, 
+                                                  y = input$valor_1, 
+                                                  color = "Comunidad.Autonoma",
+                                                  text = "paste('Provincia:', Provincia)"
+    )) +
+      geom_point()+
+      geom_smooth(method = "lm", aes_string(colour = input$selecion_1))+
+      labs(title = paste(input$valor_1, "(cada 100.000 hab) por", input$selecion_1, "y provincia",input$provincia_1, "(Sexo:", input$sex_1, ")"),
+           x = input$selecion_1, y = input$valor_1) +
+      theme_minimal()
+    
+    ggplotly(p3)
+  })
+}
+
+# Correr la aplicación
+# Descomentar la siguiente línea para ejecutar la aplicación en tu entorno local.
+shinyApp(ui, server)
+
+#     Ejemplo de gráficos:
+
+library(ggplot2)
+library(plotly)
+
+# Filtrar y preparar datos climáticos
+datos_met_filtrados <- datos_met %>% filter(!is.na(año))
+
+# Crear el gráfico
+grafico_temperatura <- ggplot(datos_met_filtrados, aes(x = año, y = tm_mes, group = codigo, color = codigo)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Temperatura Promedio por Año",
+    x = "Año",
+    y = "Temperatura Media (°C)",
+    color = "Estación"
+  ) +
+  theme_minimal()
+
+# Mostrar con ggplot
+print(grafico_temperatura)
+
+# Convertir a gráfico interactivo con plotly
+grafico_interactivo <- ggplotly(grafico_temperatura)
+grafico_interactivo
+
+#   Gráfico 2:
+
+# Preparar datos de ingresos por diabetes
+df_i_filtrados <- df_i %>%
+  filter(!is.na(Año), Sexo %in% c("Hombres", "Mujeres")) %>%
+  group_by(Año, Sexo) %>%
+  summarise(Ingresos = sum(Ingresos, na.rm = TRUE))
+
+# Crear el gráfico
+grafico_diabetes <- ggplot(df_i_filtrados, aes(x = as.numeric(Año), y = Ingresos, fill = Sexo)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Ingresos por Diabetes por Año y Sexo",
+    x = "Año",
+    y = "Ingresos",
+    fill = "Sexo"
+  ) +
+  theme_minimal()
+
+# Mostrar con ggplot
+print(grafico_diabetes)
+
+# Convertir a gráfico interactivo con plotly
+grafico_interactivo_diabetes <- ggplotly(grafico_diabetes)
+grafico_interactivo_diabetes
+
+#  Gráfico 3:
+
+# Preparar datos de ingresos por provincia
+df_i_provincia <- df_i %>%
+  group_by(Provincia.de.hospitalización) %>%
+  summarise(Total_Ingresos = sum(Ingresos, na.rm = TRUE))
+
+# Crear el gráfico
+grafico_provincias <- ggplot(df_i_provincia, aes(x = reorder(Provincia.de.hospitalización, -Total_Ingresos), y = Total_Ingresos)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Ingresos por Diabetes por Provincia",
+    x = "Provincia",
+    y = "Ingresos Totales"
+  ) +
+  theme_minimal()
