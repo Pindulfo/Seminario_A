@@ -520,7 +520,9 @@ ui <- fluidPage(
         div(
           style = "width: 150px;",
           selectInput("sex", "Seleccione el sexo:", choices = NULL),
-          selectInput("valor", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes"))
+          selectInput("valor", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes")),
+          checkboxInput("filtro_año", "Mostrar datos desde 2010", value = FALSE),
+          checkboxInput("Limites", "Mostrar intervalo de confianza", value = FALSE)
         )
       ),
       
@@ -531,7 +533,8 @@ ui <- fluidPage(
           selectInput("temp_var", "Seleccione la variable de temperatura:",
                       choices = c("ta_max", "ta_min", "tm_mes")),
           selectInput("sex_temp", "Seleccione el sexo:", choices = NULL),
-          selectInput("valor_temp", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes"))
+          selectInput("valor_temp", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes")),
+          checkboxInput("filtro_año_temp", "Mostrar datos desde 2010", value = FALSE)
           
         )
       ),
@@ -543,7 +546,9 @@ ui <- fluidPage(
           selectInput("selecion_1", "Seleccione la variable del eje de las X (Años, o temperaturas):",
                       choices = c("Año","ta_max", "ta_min", "tm_mes")),
           selectInput("sex_1", "Seleccione el sexo:", choices = NULL),
-          selectInput("valor_1", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes"))
+          selectInput("valor_1", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes")),
+          checkboxInput("filtro_año_1", "Mostrar datos desde 2010", value = FALSE),
+          checkboxInput("Limites_1", "Mostrar intervalo de confianza", value = FALSE)
           
         )
       ),
@@ -580,11 +585,20 @@ server <- function(input, output, session) {
   output$scatterPlot1 <- renderPlotly({
     req(input$graph_choice == "grafico1")
     
-    datos_filtrados <- subset(df_combined, Sexo == input$sex)
+    datos_filtrados <- df_combined %>%
+      filter(Sexo == input$sex)
+    
+    if (input$filtro_año) {
+      datos_filtrados <- datos_filtrados %>% 
+        filter(Año >= 2010)
+    } 
+    
     
     p <- ggplot(datos_filtrados, aes_string(x = "Año", y = input$valor, color = "Comunidad.Autonoma",
-                                            text = "paste('Provincia:', Provincia)")) +
+                                            group = "Comunidad.Autonoma", text = "paste('Provincia:', Provincia)"
+                                            )) +
       geom_point() +
+      geom_smooth(method = "lm", aes(color = Comunidad.Autonoma), se = input$Limites ) +
       labs(title = paste(input$valor, "(cada 100.000 hab) por año y provincia (Sexo:", input$sex, ")"),
            x = "Año", y = input$valor) +
       theme_minimal()
@@ -596,7 +610,13 @@ server <- function(input, output, session) {
   output$scatterPlot2 <- renderPlotly({
     req(input$graph_choice == "grafico2")
     
-    datos_filtrados_temp <- subset(df_combined, Sexo == input$sex_temp)
+    datos_filtrados_temp <- df_combined %>%
+      filter(Sexo == input$sex_temp)
+    
+    if (input$filtro_año_temp) {
+      datos_filtrados_temp <- datos_filtrados_temp %>% 
+        filter(Año >= 2010)
+    }
     
     p2 <- ggplot(datos_filtrados_temp, aes_string(
       x = input$temp_var,
@@ -615,7 +635,13 @@ server <- function(input, output, session) {
   output$scatterPlot3 <- renderPlotly({
     req(input$graph_choice == "grafico3")
     
-    datos_filtrados_prov <- subset(df_combined, Sexo == input$sex_1 & Provincia == input$provincia_1)
+    datos_filtrados_prov <- df_combined %>%
+      filter(Sexo == input$sex_1 & Provincia == input$provincia_1)
+    
+    if (input$filtro_año_1) {
+      datos_filtrados_prov<- datos_filtrados_prov %>% 
+        filter(Año >= 2010)
+    }
     
     p3 <- ggplot(datos_filtrados_prov, aes_string(x = input$selecion_1, 
                                                   y = input$valor_1, 
@@ -623,7 +649,7 @@ server <- function(input, output, session) {
                                                   text = "paste('Provincia:', Provincia)"
     )) +
       geom_point()+
-      geom_smooth(method = "lm", aes_string(colour = input$selecion_1))+
+      geom_smooth(method = "lm", aes(color = input$provincia_1), se = input$Limites_1 )+
       labs(title = paste(input$valor_1, "(cada 100.000 hab) por", input$selecion_1, "y provincia",input$provincia_1, "(Sexo:", input$sex_1, ")"),
            x = input$selecion_1, y = input$valor_1) +
       theme_minimal()
