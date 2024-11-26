@@ -202,6 +202,11 @@ Poblacion <- read_delim("INPUT/DATA/Poblacion/Poblacion.csv",
   select(!(Edad)) %>% 
   filter(grepl('enero', Periodo))
 
+#----------------------------------------------------------------
+#Modificacion de dataframe Poblacion
+#----------------------------------------------------------------
+
+
 Poblacion$Provincias <- str_replace_all(Poblacion$Provincias,"[0123456789]","") %>% 
   str_replace_all("^ ","")
 
@@ -231,8 +236,11 @@ Poblacion$Provincias <- Poblacion$Provincias %>%
   str_replace_all("/València", '') %>% 
   str_replace_all("Bizkaia", 'Vizcaya')
   
- 
-setequal(levels(Poblacion$Provincias),levels(df_combined$Provincia))
+Poblacion <- rename(.data = Poblacion, Provincia = Provincias, Año = Periodo, Total_d = Total)
+Poblacion$Año <- as.character(Poblacion$Año)
+
+
+#dataframe de Poblacion listo para unirlo
 
 #----------------------------------------
 # DATOS DIABETES
@@ -467,6 +475,18 @@ df_combined <- left_join(x = df_i, y = df_m, by = c("Provincia", "Año", "Comuni
   
 df_combined <- left_join(x = df_combined, y = datos_met, by = c("Provincia", "Año"))
 
+#Union de df_combined y de Poblacion
+
+df_combined <- left_join(x= df_combined, y = Poblacion, by = c("Provincia", "Año", "Sexo"))
+df_combined$Año <- as.integer(df_combined$Año)
+
+#Calculo de proporcion de Diagnosticos y de muertes por cada 100.000 hab de cada provincia
+df_combined <- df_combined %>% 
+  mutate(Diagnosticos = (Diagnosticos / Total_d)*100000 )
+
+df_combined<- df_combined %>% 
+  mutate(Muertes = (Muertes / Total_d)*100000)
+
 #Guardar df_combined en un nuevo RData
 save(df_combined,file = './Datos_Cargados.RData')
 
@@ -489,9 +509,9 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       selectInput("graph_choice", "Seleccione el gráfico a mostrar:",
-                  choices = c("Casos por año y provincia" = "grafico1",
-                              "Temperatura vs número de casos" = "grafico2",
-                              "Casos de una provincia en Concreto" = "grafico3"
+                  choices = c("Casos/Muertes (100.000 hab) por año y provincia" = "grafico1",
+                              "Temperatura vs número de casos/Muertes (100.000 hab)" = "grafico2",
+                              "Casos/Muertes (100.000 hab) de una provincia en Concreto (En años y en temperaturas)" = "grafico3"
                   )),
       
       # Controles para el primer gráfico
@@ -565,7 +585,7 @@ server <- function(input, output, session) {
     p <- ggplot(datos_filtrados, aes_string(x = "Año", y = input$valor, color = "Comunidad.Autonoma",
                                             text = "paste('Provincia:', Provincia)")) +
       geom_point() +
-      labs(title = paste(input$valor, "por año y provincia (Sexo:", input$sex, ")"),
+      labs(title = paste(input$valor, "(cada 100.000 hab) por año y provincia (Sexo:", input$sex, ")"),
            x = "Año", y = input$valor) +
       theme_minimal()
     
@@ -586,7 +606,7 @@ server <- function(input, output, session) {
     )) +
       geom_point(alpha = 0.6) +
       geom_smooth(method = "lm", se = FALSE)+
-      labs(title = paste("Relación entre", input$temp_var, "y",input$valor_temp, "(Sexo:", input$sex, ")"),
+      labs(title = paste("Relación entre", input$temp_var, "y",input$valor_temp, "(cada 100.000 hab) (Sexo:", input$sex, ")"),
            x = input$temp_var, y = "Número de:", input$valor_temp) +
       theme_minimal()
     
@@ -604,7 +624,7 @@ server <- function(input, output, session) {
     )) +
       geom_point()+
       geom_smooth(method = "lm", aes_string(colour = input$selecion_1))+
-      labs(title = paste(input$valor_1, "por", input$selecion_1, "y provincia",input$provincia_1, "(Sexo:", input$sex_1, ")"),
+      labs(title = paste(input$valor_1, "(cada 100.000 hab) por", input$selecion_1, "y provincia",input$provincia_1, "(Sexo:", input$sex_1, ")"),
            x = input$selecion_1, y = input$valor_1) +
       theme_minimal()
     
