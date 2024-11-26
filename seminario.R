@@ -490,7 +490,9 @@ ui <- fluidPage(
     sidebarPanel(
       selectInput("graph_choice", "Seleccione el gráfico a mostrar:",
                   choices = c("Casos por año y provincia" = "grafico1",
-                              "Temperatura vs número de casos" = "grafico2")),
+                              "Temperatura vs número de casos" = "grafico2",
+                              "Casos de una provincia en Concreto" = "grafico3"
+                  )),
       
       # Controles para el primer gráfico
       conditionalPanel(
@@ -512,17 +514,33 @@ ui <- fluidPage(
           selectInput("valor_temp", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes"))
           
         )
-      )
+      ),
+      conditionalPanel(
+        condition = "input.graph_choice == 'grafico3'",
+        div(
+          style = "width: 150px;",
+          selectInput("provincia_1", "Seleccione la provincia:", choices = NULL),
+          selectInput("selecion_1", "Seleccione la variable del eje de las X (Años, o temperaturas):",
+                      choices = c("Año","ta_max", "ta_min", "tm_mes")),
+          selectInput("sex_1", "Seleccione el sexo:", choices = NULL),
+          selectInput("valor_1", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes"))
+          
+        )
+      ),
     ),
     
     mainPanel(
       conditionalPanel(
         condition = "input.graph_choice == 'grafico1'",
-        plotlyOutput("scatterPlot1", width = "130%", height = "700px")
+        plotlyOutput("scatterPlot1", width = "100%", height = "700px")
       ),
       conditionalPanel(
         condition = "input.graph_choice == 'grafico2'",
-        plotlyOutput("scatterPlot2", width = "130%", height = "700px")
+        plotlyOutput("scatterPlot2", width = "100%", height = "700px")
+      ),
+      conditionalPanel(
+        condition = "input.graph_choice == 'grafico3'",
+        plotlyOutput("scatterPlot3", width = "100%", height = "700px")
       )
     )
   )
@@ -534,6 +552,8 @@ server <- function(input, output, session) {
   observe({
     updateSelectInput(session, "sex", choices = unique(df_combined$Sexo))
     updateSelectInput(session, "sex_temp", choices = unique(df_combined$Sexo))
+    updateSelectInput(session, "sex_1", choices = unique(df_combined$Sexo))
+    updateSelectInput(session, "provincia_1", choices = unique(df_combined$Provincia))
   })
   
   # Renderiza el primer gráfico de dispersión
@@ -543,7 +563,7 @@ server <- function(input, output, session) {
     datos_filtrados <- subset(df_combined, Sexo == input$sex)
     
     p <- ggplot(datos_filtrados, aes_string(x = "Año", y = input$valor, color = "Comunidad.Autonoma",
-                                     text = "paste('Provincia:', Provincia)")) +
+                                            text = "paste('Provincia:', Provincia)")) +
       geom_point() +
       labs(title = paste(input$valor, "por año y provincia (Sexo:", input$sex, ")"),
            x = "Año", y = input$valor) +
@@ -564,12 +584,31 @@ server <- function(input, output, session) {
       color = "Comunidad.Autonoma",
       text = "paste('Provincia:', Provincia, '<br>Año:', Año)"
     )) +
-      geom_point() +
+      geom_point(alpha = 0.6) +
+      geom_smooth(method = "lm", se = FALSE)+
       labs(title = paste("Relación entre", input$temp_var, "y",input$valor_temp, "(Sexo:", input$sex, ")"),
            x = input$temp_var, y = "Número de:", input$valor_temp) +
       theme_minimal()
     
     ggplotly(p2)
+  })
+  output$scatterPlot3 <- renderPlotly({
+    req(input$graph_choice == "grafico3")
+    
+    datos_filtrados_prov <- subset(df_combined, Sexo == input$sex_1 & Provincia == input$provincia_1)
+    
+    p3 <- ggplot(datos_filtrados_prov, aes_string(x = input$selecion_1, 
+                                                  y = input$valor_1, 
+                                                  color = "Comunidad.Autonoma",
+                                                  text = "paste('Provincia:', Provincia)"
+    )) +
+      geom_point()+
+      geom_smooth(method = "lm", aes_string(colour = input$selecion_1))+
+      labs(title = paste(input$valor_1, "por", input$selecion_1, "y provincia",input$provincia_1, "(Sexo:", input$sex_1, ")"),
+           x = input$selecion_1, y = input$valor_1) +
+      theme_minimal()
+    
+    ggplotly(p3)
   })
 }
 
