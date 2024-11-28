@@ -534,7 +534,8 @@ ui <- fluidPage(
                       choices = c("ta_max", "ta_min", "tm_mes")),
           selectInput("sex_temp", "Seleccione el sexo:", choices = NULL),
           selectInput("valor_temp", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes")),
-          checkboxInput("filtro_año_temp", "Mostrar datos desde 2010", value = FALSE)
+          checkboxInput("filtro_año_temp", "Mostrar datos desde 2010", value = FALSE),
+          checkboxInput("Limites_temp", "Mostrar intervalo de confianza", value = FALSE)
           
         )
       ),
@@ -625,7 +626,13 @@ server <- function(input, output, session) {
       text = "paste('Provincia:', Provincia, '<br>Año:', Año)"
     )) +
       geom_point(alpha = 0.6) +
-      geom_smooth(method = "lm", se = FALSE)+
+      geom_smooth(
+        method = "lm", 
+        se = input$Limites_temp, 
+        aes_string(x = input$temp_var, y = input$valor_temp), 
+        inherit.aes = FALSE, 
+        color = "black"
+      ) +
       labs(title = paste("Relación entre", input$temp_var, "y",input$valor_temp, "(cada 100.000 hab) (Sexo:", input$sex, ")"),
            x = input$temp_var, y = "Número de:", input$valor_temp) +
       theme_minimal()
