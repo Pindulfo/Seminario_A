@@ -4,6 +4,8 @@
 # Paquetes necesarios
 #----------------------------------------------
 install.packages("climaemet")
+install.packages("mapSpain", dependencies = TRUE)
+install.packages("countrycode")
 library(pxR)
 library(climaemet)
 library(dplyr)
@@ -12,6 +14,9 @@ library(shiny)
 library(ggplot2)
 library(plotly)
 library(tidyr)
+library(mapSpain)
+library(countrycode)
+library(sf)
 ## Use this function to register your API Key temporarly or permanently
 aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
 
@@ -463,6 +468,65 @@ levels(factor(df_m$Sexo))
 df_m$Sexo <-  str_replace_all(df_m$Sexo,"Total","Ambos sexos")
 df_m<-rename(.data = df_m, Provincia = Provincias, Muertes = value, Año = Periodo)
 
+#------------------------------------------------------------------------------
+#Valores para el mapa de España y poder emplearlo en el shiny
+#----------------------------------------------------------------------------
+
+provincias_sf <- esp_get_prov()  # Geometría de las provincias
+can <- esp_get_can_box()  # Ajuste para Canarias
+
+provincias_sf$ine.prov.name <- str_replace_all(provincias_sf$ine.prov.name,"[0123456789]","") %>% 
+  str_replace_all("^ ","") %>% 
+  str_replace_all("Araba/Á","A") %>% 
+  str_replace_all("/Alacant", '') %>% 
+  str_replace_all("ANDALUCÍA", 'Andalucía') %>% 
+  str_replace_all('ARAGÓN', 'Aragón') %>% 
+  str_replace_all('ASTURIAS','Asturias') %>% 
+  str_replace_all('Asturias \\(Principado de\\)', 'Asturias') %>%
+  str_replace_all('Asturias, Principado de', 'Asturias') %>%  
+  str_replace_all('Asturias, PRINCIPADO DE', 'Asturias') %>%
+  str_replace_all('Ávila', 'Avila') %>% 
+  str_replace_all('BALEARS, ILLES', 'Baleares') %>% 
+  str_replace_all('Balears, Illes', 'Baleares') %>% 
+  str_replace_all('Balears \\(Illes\\)', 'Baleares') %>% 
+  str_replace_all("CANARIAS", 'Canarias') %>% 
+  str_replace_all("CANTABRIA", 'Cantabria') %>% 
+  str_replace_all("Castellón de la Plana", 'Castellón') %>% 
+  str_replace_all("/Castelló", '') %>% 
+  str_replace_all("CASTILLA - LA MANCHA", 'Castilla - La Mancha') %>% 
+  str_replace_all("CASTILLA Y LEÓN", 'Castilla y León') %>% 
+  str_replace_all("CATALUÑA", 'Cataluña') %>% 
+  str_replace_all("Comunitat Valenciana", 'Comunidad Valenciana') %>% 
+  str_replace_all("COMUNITAT VALENCIANA", 'Comunidad Valenciana') %>% 
+  str_replace_all("Coruña \\(A\\)", 'A Coruña') %>% #revisar el Coruña (A) no se ha modificado con esto
+  str_replace_all("Coruña, A", 'A Coruña') %>% 
+  str_replace_all("EXTREMADURA", 'Extremadura') %>% 
+  str_replace_all("GALICIA", 'Galicia') %>% 
+  str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
+  str_replace_all('MADRID, COMUNIDAD DE','Madrid') %>% #revisar al igual que asturias para que solo salga Madrid
+  str_replace_all('Madrid, Comunidad de', 'Madrid') %>%
+  str_replace_all('Madrid \\(Comunidad de\\)', 'Madrid') %>% 
+  str_replace_all('MURCIA, REGIÓN DE','Murcia') %>% #revisar para que solo salga Murcia
+  str_replace_all('Murcia \\(Región de\\)','Murcia') %>%
+  str_replace_all('Murcia, Región de','Murcia') %>%
+  str_replace_all('Murcia*', 'Murcia') %>% 
+  str_replace_all('NAVARRA, COMUNIDAD FORAL DE','Navarra') %>% #revisar para que salga solo Navarra
+  str_replace_all('Navarra \\(Comun. Foral de\\)', 'Navarra') %>%
+  str_replace_all('Navarra, Comunidad Foral de', 'Navarra') %>% 
+  str_replace_all('PAÍS VASCO', 'País Vasco') %>% 
+  str_replace_all("Palmas \\(Las\\)", 'Las Palmas') %>% #revisar el Palmas (Las) no se ha modificado con esto
+  str_replace_all("Palmas, Las", 'Las Palmas') %>%
+  str_replace_all("Rioja \\(La\\)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
+  str_replace_all("Rioja, La", 'La Rioja') %>%
+  str_replace_all("RIOJA, LA", 'La Rioja') %>% 
+  str_replace_all("TOTAL NACIONAL", 'Total') %>% 
+  str_replace_all("Total Nacional", 'Total') %>% 
+  str_replace_all("/València", '') %>% 
+  str_replace_all("Bizkaia", 'Vizcaya')
+
+provincias_sf <- rename(.data = provincias_sf, Provincia = ine.prov.name)
+
+
 #--------------------------------------------
 #Union de todos los dataframe en el mismo (df_combined)
 #--------------------------------------------
@@ -487,14 +551,30 @@ df_combined <- df_combined %>%
 df_combined<- df_combined %>% 
   mutate(Muertes = (Muertes / Total_d)*100000)
 
+
+
+#combinar df_combined con el de las provincias
+
+provincias_sf <- provincias_sf %>%
+  left_join(x= provincias_sf, y = df_combined, by = c("Provincia"))  # Asegúrate de que los nombres coincidan
+
+provincias_sf <- provincias_sf %>% 
+  filter(Año >= 2010)
+
+
+
 #Guardar df_combined en un nuevo RData
 save(df_combined,file = './Datos_Cargados.RData')
+#Guardar la sesion completa de rdata
 
+save.image(file = './Datos_Cargados_Completo.RData')
 
-#Carga de df_combined
+#Carga de df_combined y de todos los datos cargados 
 
 load(file = 'Datos_Cargados.RData')
 
+#Para ejecutar directamente el Shiny con todas las opciones 
+load(file = 'Datos_Cargados_Completo.RData')
 
 #--------------------------------------------------
 # Aplicacion shiny (donde generaremos diversos datagramas y graficas)
@@ -511,7 +591,8 @@ ui <- fluidPage(
       selectInput("graph_choice", "Seleccione el gráfico a mostrar:",
                   choices = c("Casos/Muertes (100.000 hab) por año y provincia" = "grafico1",
                               "Temperatura vs número de casos/Muertes (100.000 hab)" = "grafico2",
-                              "Casos/Muertes (100.000 hab) de una provincia en Concreto (En años y en temperaturas)" = "grafico3"
+                              "Casos/Muertes (100.000 hab) de una provincia en Concreto (En años y en temperaturas)" = "grafico3",
+                              "Mapa de España Casos/Muertes (100.000 hab) en un año" = "grafico4"
                   )),
       
       # Controles para el primer gráfico
@@ -539,6 +620,7 @@ ui <- fluidPage(
           
         )
       ),
+      #Controles del tercer grafico
       conditionalPanel(
         condition = "input.graph_choice == 'grafico3'",
         div(
@@ -550,6 +632,16 @@ ui <- fluidPage(
           selectInput("valor_1", "Seleccione el Diagnosticos/muertes:", choices = c("Diagnosticos", "Muertes")),
           checkboxInput("filtro_año_1", "Mostrar datos desde 2010", value = FALSE),
           checkboxInput("Limites_1", "Mostrar intervalo de confianza", value = FALSE)
+          
+        )
+      ),
+      #Controles del mapa de España
+      conditionalPanel(
+        condition = "input.graph_choice == 'grafico4'",
+        div(
+          selectInput("sex_map", "Seleccione el sexo:", choices = NULL),
+          selectInput("año_map", "Selecione el año a mostrar", choices = NULL)
+          
           
         )
       ),
@@ -567,6 +659,10 @@ ui <- fluidPage(
       conditionalPanel(
         condition = "input.graph_choice == 'grafico3'",
         plotlyOutput("scatterPlot3", width = "100%", height = "700px")
+      ),
+      conditionalPanel(
+        condition = "input.graph_choice == 'grafico4'",
+        plotlyOutput("scatterPlot4", width = "100%", height = "700px")
       )
     )
   )
@@ -580,6 +676,8 @@ server <- function(input, output, session) {
     updateSelectInput(session, "sex_temp", choices = unique(df_combined$Sexo))
     updateSelectInput(session, "sex_1", choices = unique(df_combined$Sexo))
     updateSelectInput(session, "provincia_1", choices = unique(df_combined$Provincia))
+    updateSelectInput(session, "sex_map", choices = unique(provincias_sf$Sexo))
+    updateSelectInput(session, "año_map", choices = unique(provincias_sf$Año))
   })
   
   # Renderiza el primer gráfico de dispersión
@@ -597,7 +695,7 @@ server <- function(input, output, session) {
     
     p <- ggplot(datos_filtrados, aes_string(x = "Año", y = input$valor, color = "Comunidad.Autonoma",
                                             group = "Comunidad.Autonoma", text = "paste('Provincia:', Provincia)"
-                                            )) +
+    )) +
       geom_point() +
       geom_smooth(method = "lm", aes(color = Comunidad.Autonoma), se = input$Limites ) +
       labs(title = paste(input$valor, "(cada 100.000 hab) por año y provincia (Sexo:", input$sex, ")"),
@@ -662,6 +760,33 @@ server <- function(input, output, session) {
       theme_minimal()
     
     ggplotly(p3)
+  })
+  output$scatterPlot4 <- renderPlotly({
+    req(input$graph_choice == "grafico4")
+    
+    datos_filtrados_map <- provincias_sf %>% 
+      filter(Año == input$año_map & !is.na(ta_max) & Sexo == input$sex_map)
+    
+    interactive_map <- ggplot(datos_filtrados_map) +
+      geom_sf(aes(fill = Diagnosticos, text = paste0(
+        "Provincia: ", Provincia, "<br>",
+        "Diagnósticos: ", Diagnosticos, "<br>",
+        "Temp. Media: ", round(tm_mes, 1)
+      )), color = "grey70", linewidth = 0.3) +  # Incluye información adicional en el hover
+      geom_sf(data = can, color = "grey70") +  # Ajustar Canarias
+      scale_fill_gradientn(
+        colors = hcl.colors(10, "Reds", rev = TRUE),  # Escala de colores para diagnósticos
+        n.breaks = 10,
+        guide = guide_colorbar(title = "Diagnósticos")
+      ) +
+      labs(title = "Diagnósticos por provincia y temperatura media",
+           fill = "Diagnósticos") +
+      theme_void() +
+      theme(legend.position = "right")
+    
+    # Usa plotly para interactividad
+    ggplotly(interactive_map, tooltip = "text")
+    
   })
 }
 
