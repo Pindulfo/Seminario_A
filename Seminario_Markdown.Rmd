@@ -12,6 +12,24 @@ output: output:
 
 [GitHub](https://github.com/Pindulfo/Seminario_A.git) 
 
+# Introducción
+
+La diabetes es una enfermedad crónica que afecta a millones de personas en todo el mundo y que representa un desafío creciente para los sistemas de salud. Las complicaciones asociadas con la diabetes, como enfermedades cardiovasculares, nefropatías y neuropatías, pueden aumentar significativamente la necesidad de hospitalización. Además, diversos estudios han sugerido que factores ambientales, incluyendo las variaciones climáticas, podrían desempeñar un papel importante en la exacerbación de síntomas y el desarrollo de complicaciones en personas con diabetes. 
+
+A pesar de estos indicios, aún existe una considerable falta de conocimiento sobre cómo las condiciones climáticas específicas, como la temperatura, la humedad, o las precipitaciones, pueden influir en la salud de las personas diabéticas y en los patrones de hospitalización. En particular, no se ha explorado suficientemente si existen correlaciones consistentes entre variables climáticas y las tasas de hospitalización. Este vacío de conocimiento es especialmente relevante en el contexto de un clima cambiante que podría exacerbar estas tendencias.
+
+Con este seminario, buscamos abordar estas lagunas mediante un enfoque interdisciplinario que integre datos climáticos históricos y registros de hospitalización para analizar posibles relaciones entre estas variables y aportar al entendimiento de los factores ambientales que afectan a las personas con diabetes.
+
+# Objetivo General
+
+Explorar y analizar la relación entre las hospitalizaciones por diabetes y las variaciones en las condiciones climáticas (como temperatura, humedad y precipitaciones), con el fin de identificar patrones y posibles correlaciones que contribuyan al conocimiento de los factores ambientales que influyen en esta enfermedad.
+
+# Objetivos Específicos
+
+1 Evaluar la relación entre picos de hospitalización por diabetes y extremos climáticos, como olas de calor o periodos de alta humedad.
+2 Identificar posibles correlaciones entre las variaciones climáticas y las tasas de hospitalización, explorando la fuerza y dirección de dichas relaciones.
+3 Determinar si existen diferencias significativas en el impacto de las condiciones climáticas sobre las hospitalizaciones por diabetes en distintas regiones geográficas.
+
 #Ejecuciones
 
 ### 1. Carga de paquetes Estos son los paquetes necesarios para la carga de archivos Pc-axis, la obtención de datos de la aemet y su manipulación.
