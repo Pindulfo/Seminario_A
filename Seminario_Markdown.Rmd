@@ -496,8 +496,54 @@ head(df_combined)
 ```
 
 
+### Algunos graficos de Ejemplo
 
+En la aplicacion shiny ademas de encontrar estos dos primeros graficos de ejemplo encontraremos muchos mas ejemplos
 
+# Grafico de Diagnosticos (100.000 hab) de cada provincia por año (desde 2010)
+```{r}
+datos_filtrados <- df_combined %>% 
+  filter(Año >= 2010 & Sexo == "Ambos sexos")
+p <- ggplot(datos_filtrados, aes_string(x = "Año", y = "Diagnosticos", color = "Comunidad.Autonoma",
+                                        group = "Comunidad.Autonoma", text = "paste('Provincia:', Provincia)"
+)) +
+  geom_point() +
+  geom_smooth(method = "lm", aes(color = Comunidad.Autonoma), se = FALSE ) +
+  labs(title = paste("Diagnosticos", "(cada 100.000 hab) por año y provincia (Sexo:", "Ambos sexos", ")"),
+       x = "Año", y = "Diagnosticos") +
+  theme_minimal()
+
+ggplotly(p)
+print(p)
+```
+
+# Grafico de Diagnosticos (100.000 hab) de cada provincia por año (desde 2010)
+```{r}
+datos_filtrados_temp <- df_combined %>%
+  filter(Sexo == "Ambos sexos" & !is.na(tm_mes) & Año >= 2010)
+
+p2 <- ggplot(datos_filtrados_temp, aes_string(
+  x = "tm_mes",
+  y = "Diagnosticos",
+  color = "Comunidad.Autonoma",
+  text = "paste('Provincia:', Provincia, '<br>Año:', Año)"
+)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(
+    method = "lm", 
+    se = TRUE, 
+    aes_string(x = "tm_mes", y = "Diagnosticos"), 
+    inherit.aes = FALSE, 
+    color = "black"
+  ) +
+  labs(title = paste("Relación entre", "Diagnosticos", "y","tm_mes", "(cada 100.000 hab) (Sexo:", "Ambos sexos", ")"),
+       x = "tm_mes", y = "Número de:Diagnosticos") +
+  theme_minimal()
+
+ggplotly(p2)
+print(p2)
+
+```
 ### Esto es una prueba del shiny e inicio del mismo
 
 Para poder ejecutar esto correctamente hemos de insertar la carga de datos etc arriba
