@@ -2,6 +2,7 @@
 title: "Relación del las tempertatura con la diabetes"
 author: "Mario Benito, Guillermo de la Fuente, Pablo Fernández"
 date: "`r Sys.Date()`"
+bibliography: bibliografia.bib
 output:  
   html_document:
     toc: true
@@ -26,7 +27,7 @@ Explorar y analizar la relación entre las hospitalizaciones por diabetes y las 
 
 # Objetivos Específicos
 
-1. Evaluar la relación entre picos de hospitalización por diabetes y extremos climáticos, como olas de calor o periodos de alta humedad.
+1. Analizar la relación entre las variables climáticas clave (temperatura máxima, mínima y media) y las tasas de hospitalizaciones y muertes por diabetes.
 
 2. Identificar posibles correlaciones entre las variaciones climáticas y las tasas de hospitalización, explorando la fuerza y dirección de dichas relaciones.
 
@@ -724,3 +725,15 @@ shinyApp(ui = ui, server = server)
 
 
 ```
+# Articulos relacionados
+
+### Artíulo 1
+
+El artículo de Preston et al. (2020) realiza una revisión sistemática sobre la relación entre factores climáticos (temperatura ambiente, estacionalidad y humedad) y la diabetes gestacional (GDM) [@preston2020climate]. Se identificaron 16 artículos que analizan estas asociaciones, mostrando evidencia consistente de un efecto estacional, con mayores tasas de GDM y niveles de glucosa más elevados durante el verano. También se encontró evidencia sugestiva de que temperaturas más altas podrían estar asociadas con niveles elevados de glucosa en embarazadas. A pesar de las inconsistencias metodológicas en los estudios, los resultados destacan la necesidad de investigaciones adicionales para comprender los mecanismos detrás de estas asociaciones.  
+
+### Artíulo 2
+
+El artículo de Moon (2021) analiza mediante un meta-análisis cómo las olas de calor afectan la morbilidad y mortalidad en pacientes con diabetes [@moon2021heatwave]. A partir de 36 estudios, se encontró que las olas de calor incrementan ligeramente los riesgos de mortalidad (18 %) y morbilidad (10 %) en esta población. También se identificaron factores importantes como los días de desfase ("lag days") y la definición de ola de calor. Aunque el artículo no aborda directamente las hospitalizaciones, sus hallazgos son relevantes al explorar cómo los extremos climáticos pueden agravar las condiciones de salud en diabéticos, destacando la importancia de estrategias de salud pública para mitigar estos efectos.
+
+# Conclusiones
+
