@@ -594,7 +594,7 @@ ui <- fluidPage(
                   choices = c("Casos/Muertes (100.000 hab) por año y provincia" = "grafico1",
                               "Temperatura vs número de casos/Muertes (100.000 hab)" = "grafico2",
                               "Casos/Muertes (100.000 hab) de una provincia en Concreto (En años y en temperaturas)" = "grafico3",
-                              "Mapa de España Casos/Muertes (100.000 hab) en un año" = "grafico4"
+                              "Mapa de España Casos (100.000 hab) en un año" = "grafico4"
                   )),
       
       # Controles para el primer gráfico
@@ -734,7 +734,7 @@ server <- function(input, output, session) {
         color = "black"
       ) +
       labs(title = paste("Relación entre", input$temp_var, "y",input$valor_temp, "(cada 100.000 hab) (Sexo:", input$sex, ")"),
-           x = input$temp_var, y = "Número de:", input$valor_temp) +
+           x = input$temp_var, y = input$valor_temp) +
       theme_minimal()
     
     ggplotly(p2)
