@@ -285,6 +285,8 @@ df_i
 df_i <- select(df_i,-Diagnóstico)
 
 head(df_i)
+
+
 length(levels(factor(df_i$Sexo)))
 
 # análisis de los valores/niveles de cada atributo

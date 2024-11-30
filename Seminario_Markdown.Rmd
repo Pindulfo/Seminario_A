@@ -1,8 +1,8 @@
 ---
 title: "Relación del las tempertatura con la diabetes"
-author: "Mario Benito, Guillermo de la Fuente,Pablo Fernández"
+author: "Mario Benito, Guillermo de la Fuente, Pablo Fernández"
 date: "`r Sys.Date()`"
-output: output: 
+output:  
   html_document:
     toc: true
     toc_float: true
@@ -26,20 +26,33 @@ Explorar y analizar la relación entre las hospitalizaciones por diabetes y las 
 
 # Objetivos Específicos
 
-1 Evaluar la relación entre picos de hospitalización por diabetes y extremos climáticos, como olas de calor o periodos de alta humedad.
-2 Identificar posibles correlaciones entre las variaciones climáticas y las tasas de hospitalización, explorando la fuerza y dirección de dichas relaciones.
-3 Determinar si existen diferencias significativas en el impacto de las condiciones climáticas sobre las hospitalizaciones por diabetes en distintas regiones geográficas.
+1. Evaluar la relación entre picos de hospitalización por diabetes y extremos climáticos, como olas de calor o periodos de alta humedad.
+
+2. Identificar posibles correlaciones entre las variaciones climáticas y las tasas de hospitalización, explorando la fuerza y dirección de dichas relaciones.
+
+3. Determinar si existen diferencias significativas en el impacto de las condiciones climáticas sobre las hospitalizaciones por diabetes en distintas regiones geográficas.
 
 #Ejecuciones
 
-### 1. Carga de paquetes Estos son los paquetes necesarios para la carga de archivos Pc-axis, la obtención de datos de la aemet y su manipulación.
+### 1. Carga de paquetes 
 
-```{r echo=FALSE}
-# install.packages("climaemet")
+A continuación se recogen todos los paquetes utilizados para el tratamiento de los detos de trabajo.
+
+```{r,message=FALSE, warning=FALSE}
+
 library(pxR)
 library(climaemet)
 library(dplyr)
 library(stringr)
+library(shiny)
+library(ggplot2)
+library(plotly)
+library(tidyr)
+library(mapSpain)
+library(countrycode)
+library(sf)
+library(DT)
+library(readr)
 
 ## Use this function to register your API Key temporarly or permanently
 # aemet_api_key("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcGFibG81NDVAZ21haWwuY29tIiwianRpIjoiYTI2NWIyNzQtY2M4OS00NWZmLThlNGYtMWJlYWQ2NTA1MTAxIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MjkzNTMxNTgsInVzZXJJZCI6ImEyNjViMjc0LWNjODktNDVmZi04ZTRmLTFiZWFkNjUwNTEwMSIsInJvbGUiOiIifQ.TGFw-QlkAkMyQ2hItIpbSF_xDIoN42JpIzUhf-dOm3A", install= TRUE)
@@ -63,14 +76,14 @@ archivos_pc <- sapply(archivos, function(x) paste0('INPUT/DATA/Diabetes/Ingresos
 
 Creamos el dataframe base con el primer archivo, que servirá para concatenar los datos de años siguientes
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 df_i <- data.frame(as.data.frame(read.px(archivos_pc[1])))
 df_i['Año'] <- 1997  # Añadir columna de año
 ```
 
 Bucle para añadir cada año al dataframe
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 for (i in 2:length(archivos_pc)) {
   # Cargar los datos del año específico
   df_provisional <- data.frame(as.data.frame(read.px(archivos_pc[i])))
@@ -90,10 +103,10 @@ for (i in 2:length(archivos_pc)) {
 }
 ```
 
-Visualizar la estructura de los datos
+Tras la carga de datos, el dataframe queda así:
 
-```{r}
-head(df_i)
+```{r, echo=FALSE}
+datatable(df_i)
 ```
 
 ##### 2.1.1. Código para limpiar y estandarizar valores de atributos.`
@@ -168,7 +181,7 @@ df_i$Provincia.de.hospitalización <- str_replace_all(df_i$Provincia.de.hospital
 
 Comprobamos de nuevo el número de distintos valores en 'Provincia.de.hospitalización'.
 ```{r}
-length(levels(df_i$Provincia.de.hospitalización))
+length(levels(factor(df_i$Provincia.de.hospitalización)))
 ```
 
 + __Sexo__
@@ -176,7 +189,7 @@ length(levels(df_i$Provincia.de.hospitalización))
 Se han registrado el sexo de los individuos masculinos como "Varón" o "Hombres"
 
 ```{r}
-levels(df_i$Sexo)
+levels(factor(df_i$Sexo))
 ```
 
 Se modifica de tal manera de que solo se registren como "Hombres"
@@ -186,7 +199,7 @@ df_i$Sexo <- str_replace_all(df_i$Sexo,"Varones", 'Hombres')
 ```
 
 ```{r}
-levels(df_i$Sexo)
+levels(factor(df_i$Sexo))
 ```
 
 ##### 2.1.2. Código para añadir como atributo la comunidad autónoma.
@@ -217,7 +230,7 @@ df_i<- df_i %>%
     Provincia.de.hospitalización == "Melilla" ~ "Melilla"
   )) %>% 
   filter(!grepl("^(Total|Andalucía|Aragón|Canarias|Castilla y León|Castilla - La Mancha|Cataluña|Comunidad Valenciana|Extremadura|Galicia|País Vasco)"
-                , Provincia.de.hospitalización)) #se retiran los valores globales de las comunidades autonomas de mas de 2 provincias
+                , Provincia.de.hospitalización)) 
 
 ```
 
@@ -227,9 +240,15 @@ df_i<- df_i %>%
 df_i <- rename(.data = df_i, Provincia = Provincia.de.hospitalización, Diagnosticos = value)
 ```
 
+##### 2.1.3. Estructura final de los datos
+
+```{r, echo=FALSE}
+datatable(df_i)
+```
+
 #### 2.2. Muertes
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
 datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
 ```
 
@@ -241,8 +260,8 @@ df_m <- as.data.frame(datos_muertes)
 
 Mostramos las primeras filas del dataframe para verificar la carga de datos
 
-```{r}
-head(df_m)
+```{r, echo=FALSE}
+datatable(df_m)
 ```
 
 
@@ -250,12 +269,15 @@ head(df_m)
 
 Realizamos los mismos cambios que con los datos de muertes por diabetes.
 
-+ __eliminamos el atributo 'Causa.de.muerte'__ 
++ __eliminamos el atributo 'Causa.de.muerte'__
+
 ```{r}
 df_m <- select(df_m,-Causa.de.muerte)
 ```
 
 + __Provincias__ 
+
+Estandarizamos los nombres de las provincias.
 
 ```{r}
 df_m$Provincias <- str_replace_all(df_m$Provincias,"[0123456789]","") %>% 
@@ -313,14 +335,14 @@ df_m$Provincias <- str_replace_all(df_m$Provincias,"[0123456789]","") %>%
 Se modifica el valor "Ambos sexos" por "Total" para que el atributo _sexo_ comparta los mismos niveles en los dataframes de ingresos y muertes.
 
 ```{r}
-
+levels(factor(df_m$Sexo))
 df_m$Sexo <-  str_replace_all(df_m$Sexo,"Total","Ambos sexos")
+levels(factor(df_m$Sexo))
 ```
-
 
 ##### 2.2.2. Código para añadir como atributo la comunidad autónoma.
 
-Se añade la información refenrente a la comunidad autónoma como un nuevo atributo y se eliminan los registros que aglutinan los datos de las comunidades no uniprovinciales y el total nacional.
+De igual manera que con los datos de ingresos, se añade la información referente a la comunidad autónoma como un nuevo atributo y se eliminan los registros que aglutinan los datos de las comunidades no uniprovinciales y el total nacional.
 
 ```{r}
 df_m <- df_m %>%
@@ -346,8 +368,7 @@ df_m <- df_m %>%
     Provincias == "Melilla" ~ "Melilla"
   )) %>% 
   filter(!grepl("^(Extranjero|Nacional|Total|Andalucía|Aragón|Canarias|Castilla y León|Castilla - La Mancha|Cataluña|Comunidad Valenciana|Extremadura|Galicia|País Vasco)"
-                , Provincias))   #se retiran los valores globales de las comunidades autonomas de mas de 2 provincias
-
+                , Provincias))   
 ```
 
 + __Renombrado de atributos__
@@ -356,16 +377,28 @@ df_m <- df_m %>%
 df_m<-rename(.data = df_m, Provincia = Provincias, Muertes = value, Año = Periodo)
 ```
 
+##### 2.2.3. Estructura final de los datos
+
+```{r, echo=FALSE}
+datatable(df_m)
+```
+
+
 ### 3. Obtención de datos de la AEMET
 
-Se recogen todas las estaciones de la aemet. A continuación, se muestra la estructura de los datos.
+Se recogen todas las estaciones de la aemet.
 
 ```{r}
 estaciones <- aemet_stations()
-head(estaciones)
 ```
 
-Selección de los códigos de las estaciones meteorológicas de interés. El código ampliado se puede ver en Anexo
+ A continuación, se muestra la estructura de los datos:
+```{r, echo=FALSE}
+datatable(estaciones)
+```
+
+
+Selección de los códigos de las estaciones meteorológicas de interés.
 
 ```{r}
 codigos <- c("C449C", "C658L", "0076", "0367", "1212E", "1387", "1484C", "1505", "1690A", "2030", "2331", "2422", "2465", "2614", "2870", "3129", "3013", "3260B", "4121", "4452", "4642E", "5000C", "5530E", "5783", "6000A", "7178I", "8025", "8096", "8178D", "8368U", "8414A", "9434", "9771C", "9898", "6325O", "9091O", "2444", "B278", "1082", "3469A", "5973", "1111", "8500A", "5402", "1014", "5270B", "9170", "6155A", "9263D", "0016A", "2661", "2235U")
@@ -379,8 +412,9 @@ colnames(datos_met) <- c('codigo', 'ta_max', 'ta_min', 'tm_mes', 'año')
 
 ```
 
-Obtención de los datos de tempertatura máxima, mínima y media mesual durante los ños 2003 a 2020 de todas las estaciones selecionadas.
-A continuación, se muestra el código para acceder a la AEMET. Para una mayor rapidez de renderizado se importan los datos.
+Obtención de los datos de tempertatura máxima, mínima y media mesual durante los años 2003 a 2020 de todas las estaciones selecionadas.
+
+A continuación, se muestra el código para acceder a dichos datos de la AEMET. Para una mayor rapidez de renderizado se importan los datos desde un archivo.
 
 ```{r eval=FALSE}
 for (año in 2003:2020){
@@ -410,20 +444,17 @@ for (año in 2003:2020){
 ```
 
 ```{r}
-datos_met <- load('datos_aemet.RData')
-head(datos_met)
+load('datos_aemet.RData')
+
 ```
 
-Muestra de cómo se estructura la información de la consulta a aemet.
 ```{r, echo=FALSE}
-met_prov <- as.data.frame(aemet_monthly_clim('C449C', year = 2020))
+datatable(datos_met)
+```
 
-```
-```{r}
-head(met_prov)
-```
 
 Añadimos la provincia correspondiente a cada registro.
+
 ```{r}
 cod_estaciones <- estaciones %>% 
   select(indicativo,provincia) %>% 
@@ -433,6 +464,7 @@ datos_met <- merge(datos_met,cod_estaciones, by = 'codigo')
 
 
 Estandarizamos los nombres de los atributos y de las provincias. Eliminamos el atributo 'codigo'
+
 ```{r}
 datos_met<-rename(.data = datos_met, Provincia = provincia, Año = año)
 datos_met <- select(datos_met,-codigo)
@@ -492,8 +524,87 @@ datos_met$Provincia <- str_replace_all(datos_met$Provincia,"TARRAGONA","Tarragon
   str_replace_all("LAS PALMAS", "Las Palmas")
 ```
 
+#### 3.1.Estructura final de los datos
 
-### 4. Fusión de datos en un único dataframe
+```{r, echo=FALSE}
+datatable(datos_met)
+```
+
+### 4. Obtención de datos de población
+
+Para un mejor análisis de los resultados finales se obtienen las poblaciones anuales de cada provincia.
+
+```{r, message=FALSE, warning=FALSE}
+Poblacion <- read_delim("INPUT/DATA/Poblacion/Poblacion.csv", 
+                        delim = ";",locale = locale(encoding = "ISO-8859-1"),  ,escape_double = FALSE, trim_ws = TRUE) %>% 
+  select(!(Edad)) %>% 
+  filter(grepl('enero', Periodo)) %>%  
+  suppressMessages()
+
+```
+
+Inicialmente `Población` se estructura así:
+
+```{r, echo=FALSE}
+datatable(Poblacion)
+```
+
+#### 4.1. Código para limpiar y estandarizar valores de atributos.
+
++ __Provincias__
+
+```{r}
+Poblacion$Provincias <- str_replace_all(Poblacion$Provincias,"[0123456789]","") %>% 
+  str_replace_all("^ ","") %>% 
+  str_replace_all("Araba/Á","A") %>% 
+  str_replace_all("/Alacant", '') %>% 
+  str_replace_all('Ávila', 'Avila') %>% 
+  str_replace_all('Balears, Illes', 'Baleares') %>% 
+  str_replace_all("CANARIAS", 'Canarias') %>% 
+  str_replace_all("CANTABRIA", 'Cantabria') %>% 
+  str_replace_all("/Castelló", '') %>% 
+  str_replace_all("Coruña, A", 'A Coruña') %>% 
+  str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
+  str_replace_all('Murcia*', 'Murcia') %>% 
+  str_replace_all("Palmas, Las", 'Las Palmas') %>%
+  str_replace_all("Rioja, La", 'La Rioja') %>%
+  str_replace_all("/València", '') %>% 
+  str_replace_all("Bizkaia", 'Vizcaya')
+```
+
++ __Periodo__
+
+```{r}
+Poblacion$Periodo <- substr(Poblacion$Periodo,nchar(Poblacion$Periodo)-4,nchar(Poblacion$Periodo)) %>% 
+  as.integer()
+```
+
++ __Valores__
+
+Nos quedamos con la parte entera del valor referente a población y lo guardamos como número. 
+
+```{r}
+Poblacion$Total <- sapply(sapply(Poblacion$Total, strsplit, split = ','), function(x) x[1]) 
+
+Poblacion$Total <- Poblacion$Total %>% 
+  str_replace_all("\\.","") %>% 
+  as.integer()
+```
+
++ __Renombrado__
+
+```{r}
+Poblacion <- rename(.data = Poblacion, Provincia = Provincias, Año = Periodo, Total_d = Total)
+
+```
+
+#### 4.2. Estructura final de los datos
+
+```{r echo=FALSE}
+datatable(Poblacion)
+```
+
+### 5. Fusión de datos en un único dataframe
 
 Unión de datos de ingreso  y muerte
 
