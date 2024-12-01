@@ -51,6 +51,8 @@ El artículo de Moon (2021) analiza mediante un meta-análisis cómo las olas de
 
 A continuación se recogen todos los paquetes utilizados para el tratamiento de los detos de trabajo.
 
+Para obtener los datos meteorológicos necesarios, se utilizó el paquete `climaemet` [@climaemet] para extraer los datos relativos a hospitalizaciones la fuente fu el INE[@INE].
+
 ```{r,message=FALSE, warning=FALSE}
 
 library(pxR)
@@ -793,7 +795,8 @@ En este apartado encontraremos las dos partes que conforman la aplicación shiny
 
 #### Interfaz de Usuario
 
-En este apartado nos encontramos con la parte interactiva de la aplicación donde podremos elegir el gráfico que queremos mostrar. Hay un total de 4 opciones, 3 de ellas son gráficos de dispersión y un mapa de España.
+En este apartado nos encontramos con la parte interactiva de la aplicación donde podremos elegir el gráfico que queremos mostrar. Hay un total de 4 opciones, 3 de ellas son gráficos de dispersión y un mapa de España. Para generar esta apliacion nos hemos basado en los principios básicos aprendidos en el tutorial introductorio de Shiny [@shiny_basics]. Para desarrollar una aplicación más compleja y visualmente atractiva, se utilizó la estructura de `shinydashboard`, que facilita la creación de interfaces de usuario avanzadas [@shinydashboard]. Tambien se utilizo el libro "Mastering Shiny" de Wickham y Grolemund [@mastering_shiny] como referencia. La representación visual de los mapas de España fue facilitada por el paquete `mapSpain` [@mapspain].
+
 
 En cada caso podremos selecionar diferentes variables a mostrar mediante una caja de opciones o una casilla de selección.
 
