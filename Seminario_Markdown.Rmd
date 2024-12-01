@@ -2,7 +2,7 @@
 title: "Relación del las tempertatura con la diabetes"
 author: "Mario Benito, Guillermo de la Fuente, Pablo Fernández"
 date: "`r Sys.Date()`"
-bibliography: bibliografia.bib
+bibliography: Bibliografia.bib
 output:  
   html_document:
     toc: true
@@ -33,7 +33,19 @@ Explorar y analizar la relación entre las hospitalizaciones por diabetes y las 
 
 3. Determinar si existen diferencias significativas en el impacto de las condiciones climáticas sobre las hospitalizaciones por diabetes en distintas regiones geográficas.
 
-#Ejecuciones
+
+# Artículos relacionados
+
+### Artículo 1
+
+El artículo de Preston et al. (2020) realiza una revisión sistemática sobre la relación entre factores climáticos (temperatura ambiente, estacionalidad y humedad) y la diabetes gestacional (GDM) [@preston2020climate]. Se identificaron 16 artículos que analizan estas asociaciones, mostrando evidencia consistente de un efecto estacional, con mayores tasas de GDM y niveles de glucosa más elevados durante el verano. También se encontró evidencia sugestiva de que temperaturas más altas podrían estar asociadas con niveles elevados de glucosa en embarazadas. A pesar de las inconsistencias metodológicas en los estudios, los resultados destacan la necesidad de investigaciones adicionales para comprender los mecanismos detrás de estas asociaciones.  
+
+### Artículo 2
+
+El artículo de Moon (2021) analiza mediante un meta-análisis cómo las olas de calor afectan la morbilidad y mortalidad en pacientes con diabetes [@moon2021heatwave]. A partir de 36 estudios, se encontró que las olas de calor incrementan ligeramente los riesgos de mortalidad (18 %) y morbilidad (10 %) en esta población. También se identificaron factores importantes como los días de desfase ("lag days") y la definición de ola de calor. Aunque el artículo no aborda directamente las hospitalizaciones, sus hallazgos son relevantes al explorar cómo los extremos climáticos pueden agravar las condiciones de salud en diabéticos, destacando la importancia de estrategias de salud pública para mitigar estos efectos.
+
+
+# Ejecuciones
 
 ### 1. Carga de paquetes 
 
@@ -110,13 +122,16 @@ Tras la carga de datos, el dataframe queda así:
 datatable(df_i)
 ```
 
-##### 2.1.1. Código para limpiar y estandarizar valores de atributos.`
+
+##### 2.1.1. Código para limpiar y estandarizar valores de atributos.
 
 Primero eliminamos el atributo 'Diagnóstico'
+
 ```{r}
 df_i <- select(df_i,-Diagnóstico)
 ```
 
+\n
 
 + __Provincias__
 
@@ -197,11 +212,10 @@ Se modifica de tal manera de que solo se registren como "Hombres"
 
 ```{r}
 df_i$Sexo <- str_replace_all(df_i$Sexo,"Varones", 'Hombres')
-```
-
-```{r}
 levels(factor(df_i$Sexo))
 ```
+
+\n
 
 ##### 2.1.2. Código para añadir como atributo la comunidad autónoma.
 
@@ -235,11 +249,14 @@ df_i<- df_i %>%
 
 ```
 
+\n
 + __Renombrado de atributos__ 
 
 ```{r}
 df_i <- rename(.data = df_i, Provincia = Provincia.de.hospitalización, Diagnosticos = value)
 ```
+
+\n
 
 ##### 2.1.3. Estructura final de los datos
 
@@ -247,30 +264,28 @@ df_i <- rename(.data = df_i, Provincia = Provincia.de.hospitalización, Diagnost
 datatable(df_i)
 ```
 
+\n
+
 #### 2.2. Muertes
 
 ```{r,message=FALSE, warning=FALSE}
 datos_muertes <- read.px('INPUT/DATA/Diabetes/Muertes/muertes1997-2022.px')
-```
-
-Convertimos los datos de muertes a un dataframe para facilitar el análisis
-
-```{r}
 df_m <- as.data.frame(datos_muertes)
 ```
 
-Mostramos las primeras filas del dataframe para verificar la carga de datos
+
+Mostramos las primeras filas del dataframe para verificar la carga de datos.
 
 ```{r, echo=FALSE}
 datatable(df_m)
 ```
 
-
+\n
 ##### 2.2.1. Código para limpiar y estandarizar valores de atributos.`
 
-Realizamos los mismos cambios que con los datos de muertes por diabetes.
+Realizamos los mismos cambios que con los datos de muertes por diabetes.  \n
 
-+ __eliminamos el atributo 'Causa.de.muerte'__
++ __Eliminamos el atributo 'Causa.de.muerte'__
 
 ```{r}
 df_m <- select(df_m,-Causa.de.muerte)
@@ -341,6 +356,8 @@ df_m$Sexo <-  str_replace_all(df_m$Sexo,"Total","Ambos sexos")
 levels(factor(df_m$Sexo))
 ```
 
+\n
+
 ##### 2.2.2. Código para añadir como atributo la comunidad autónoma.
 
 De igual manera que con los datos de ingresos, se añade la información referente a la comunidad autónoma como un nuevo atributo y se eliminan los registros que aglutinan los datos de las comunidades no uniprovinciales y el total nacional.
@@ -378,12 +395,15 @@ df_m <- df_m %>%
 df_m<-rename(.data = df_m, Provincia = Provincias, Muertes = value, Año = Periodo)
 ```
 
+\n 
+
 ##### 2.2.3. Estructura final de los datos
 
 ```{r, echo=FALSE}
 datatable(df_m)
 ```
 
+\n
 
 ### 3. Obtención de datos de la AEMET
 
@@ -393,7 +413,8 @@ Se recogen todas las estaciones de la aemet.
 estaciones <- aemet_stations()
 ```
 
- A continuación, se muestra la estructura de los datos:
+A continuación, se muestra la estructura de los datos:
+ 
 ```{r, echo=FALSE}
 datatable(estaciones)
 ```
@@ -525,11 +546,15 @@ datos_met$Provincia <- str_replace_all(datos_met$Provincia,"TARRAGONA","Tarragon
   str_replace_all("LAS PALMAS", "Las Palmas")
 ```
 
+\n 
+
 #### 3.1.Estructura final de los datos
 
 ```{r, echo=FALSE}
 datatable(datos_met)
 ```
+
+\n 
 
 ### 4. Obtención de datos de población
 
@@ -599,6 +624,7 @@ Poblacion <- rename(.data = Poblacion, Provincia = Provincias, Año = Periodo, T
 
 ```
 
+\n
 #### 4.2. Estructura final de los datos
 
 ```{r echo=FALSE}
@@ -622,16 +648,17 @@ df_combined <- left_join(x = df_combined, y = datos_met, by = c("Provincia", "A�
 Resultado final.
 
 ```{r}
-head(df_combined)
+datatable(df_combined)
 ```
 
 
-### Algunos graficos de Ejemplo
+### Gráficos y resultados
 
-En la aplicacion shiny ademas de encontrar estos dos primeros graficos de ejemplo encontraremos muchos mas ejemplos
+En la aplicación shiny además de estos dos primeros gráficos, encontraremos muchos más ejemplos.
 
-#### Grafico de Diagnosticos (100.000 hab) de cada provincia por año (desde 2010)
-```{r}
+#### Grafico de Diagnosticos (100.000 hab) por provincia y año (desde 2010)
+
+```{r message=FALSE, warning=FALSE}
 datos_filtrados <- df_combined %>% 
   filter(Año >= 2010 & Sexo == "Ambos sexos")
 p <- ggplot(datos_filtrados, aes_string(x = "Año", y = "Diagnosticos", color = "Comunidad.Autonoma",
@@ -648,7 +675,8 @@ print(p)
 ```
 
 ##### Grafico de Diagnosticos (100.000 hab) de cada provincia por año (desde 2010)
-```{r}
+
+```{r message=FALSE, warning=FALSE}
 datos_filtrados_temp <- df_combined %>%
   filter(Sexo == "Ambos sexos" & !is.na(tm_mes) & Año >= 2010)
 
@@ -674,26 +702,27 @@ ggplotly(p2)
 print(p2)
 
 ```
+
 ### Aplicacion Shiny 
 
 En este apartado encontraremos las dos partes que conforman la aplicación shiny.
 
 #### Interfaz de Usuario
 
-En este apartado nos encontramos con la parte interactiva de la aplicación donde podremos elegir el grafico que queremos mostrar, hay un total de 4 opciones 3 de ellas son graficos de dispersion y un mapa de España.
+En este apartado nos encontramos con la parte interactiva de la aplicación donde podremos elegir el gráfico que queremos mostrar. Hay un total de 4 opciones, 3 de ellas son gráficos de dispersión y un mapa de España.
 
-En cada selecion podremos selecionar diferentes valores a mostrar en los diferentes graficos, La seleccion de las diferentes opciones se realizara mediante una caja de las diferentes opciones, y otras mediante la seleccion de una casilla.
+En cada caso podremos selecionar diferentes variables a mostrar mediante una caja de opciones o una casilla de selección.
 
-Primer grafico:
-Podremos mostrar el sexo que queramos, diagnosticos o muertes, si se deasea mostrar los datos desde el año 2010 y si se quieren mostrar o no los limites de intervalo de confianza.
++ Primer gráfico:
+Podremos mostrar el sexo, diagnósticos de ingreso o muertes, si se deasea mostrar los datos desde el año 2010 y si se quieren mostrar o no los límites de intervalo de confianza.
 
-Segundo grafico:
-Podremos mostrar el sexo que queramos, diagnosticos o muertes, la variable que queramos mostrar asi como la temperatura maxima, minima o media, si se deasea mostrar los datos desde el año 2010 y si se quieren mostrar o no los limites de intervalo de confianza.
++ Segundo gráfico:
+Podremos mostrar el sexo que queramos, diagnosticos de ingreso o muertes, la temperatura maxima, minima o media, si se deasea mostrar los datos desde el año 2010 y si se quieren mostrar o no los limites de intervalo de confianza.
 
-Tercer grafico:
++ Tercer gráfico:
 Podremos mostar la provincia en concreto que deseemos, la variable que queremos a lo largo de los años o temperaturas, diagnosticos o muertes, si se deasea mostrar los datos desde el año 2010 y si se quieren mostrar o no los limites de intervalo de confianza.
 
-Cuarto Mapa de España:
++ Mapa de España:
 En este mapa podremos seleccionar entre el sexo que queremos mostrar y el año que se desea mostrar, ademas de ser interactivo, donde se mostrara la temperatura media de la provincia y los casos.
 
 ```{r}
@@ -787,17 +816,18 @@ ui <- fluidPage(
 )
 
 ```
+
 #### Servidor
 
-En esta otra seccion nos encontramos con la parte que se ejecuta para poder mostrar los graficos finales.
+En esta otra sección nos encontramos con la parte que se ejecuta para poder mostrar los gráficos finales.
 
-En este apartado, se rellenan las selecciones de la interfaz grafica, como el sexo, las provincias, años.
+En este apartado, se rellenan las selecciones de la interfaz gráfica, como el sexo, las provincias, años.
 
-Igualmente dependiendo de lo que seleccionemos para mostrar en la interfaz se ejecutara una grafica u otra.
+Igualmente, dependiendo de lo que seleccionemos para mostrar en la interfaz, se ejecutará una gráfica u otra.
 
 En todos los graficos primeramente filtraremos los datos a los seleccionados por el usuario, para poder mostrarlo.
-Posteriormente pasaremos a mostrar los diferentes graficos segun la seleccion tomada.
-Y por ultimo se convertiran en graficos interactivos. Para una mejor visualizacion donde poder consultar los valores que toman y poder seleecionar y deseleccionar diversas opciones.
+Posteriormente, pasaremos a mostrar los diferentes gráficos según la selección tomada.
+Y por último, se convertirán en gráficos interactivo, para una mejor visualización donde poder consultar los valores que toman y poder seleecionar y deseleccionar diversas opciones.
 
 
 
@@ -925,18 +955,12 @@ server <- function(input, output, session) {
 
 
 ```
+
 Como se observara en algunos de los graficos se empleara aes_string, esto se debe a como estan formulado la seleccion de opciones en la interfaz, de hay la razon por la que exista algunos graficos con aes y otros con aes_string. En lugar de emplear aes_string se podria emplear (!!sym) que es otra forma de implementar las variables mucho mas moderna, pero parecio una forma de complicar las cosas. Se tendria que tomar esto en cuenta ya que en algunas de las ejecuciones se mostraba como que aes_string es una forma poco moderna. 
 
 
-# Articulos relacionados
 
-### Artíulo 1
-
-El artículo de Preston et al. (2020) realiza una revisión sistemática sobre la relación entre factores climáticos (temperatura ambiente, estacionalidad y humedad) y la diabetes gestacional (GDM) [@preston2020climate]. Se identificaron 16 artículos que analizan estas asociaciones, mostrando evidencia consistente de un efecto estacional, con mayores tasas de GDM y niveles de glucosa más elevados durante el verano. También se encontró evidencia sugestiva de que temperaturas más altas podrían estar asociadas con niveles elevados de glucosa en embarazadas. A pesar de las inconsistencias metodológicas en los estudios, los resultados destacan la necesidad de investigaciones adicionales para comprender los mecanismos detrás de estas asociaciones.  
-
-### Artíulo 2
-
-El artículo de Moon (2021) analiza mediante un meta-análisis cómo las olas de calor afectan la morbilidad y mortalidad en pacientes con diabetes [@moon2021heatwave]. A partir de 36 estudios, se encontró que las olas de calor incrementan ligeramente los riesgos de mortalidad (18 %) y morbilidad (10 %) en esta población. También se identificaron factores importantes como los días de desfase ("lag days") y la definición de ola de calor. Aunque el artículo no aborda directamente las hospitalizaciones, sus hallazgos son relevantes al explorar cómo los extremos climáticos pueden agravar las condiciones de salud en diabéticos, destacando la importancia de estrategias de salud pública para mitigar estos efectos.
 
 # Conclusiones
 
+El análisis de los datos ha presentado una dificultad añadida debido 
