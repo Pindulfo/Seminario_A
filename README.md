@@ -2,6 +2,8 @@
 <br style="clear:both;">
 
 # Seminario_A
+## Autores
+Guillermo de la Fuente, Mario Benito, Pablo Fernández
 ## Objetivo General
 
 El propósito de este seminario es explorar y analizar la posible relación entre las hospitalizaciones por diabetes y las variaciones en los datos climáticos. A través de un enfoque interdisciplinario, buscamos identificar patrones y correlaciones que puedan existir entre las condiciones climáticas (como temperatura, humedad, precipitaciones, entre otras) y la incidencia de hospitalizaciones relacionadas con la diabetes.
