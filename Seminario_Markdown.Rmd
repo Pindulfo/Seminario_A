@@ -9,6 +9,11 @@ output:
     toc_float: true
 ---
 
+<style>
+body {
+text-align: justify}
+</style>
+
 # Enlace al repositorio
 
 [GitHub](https://github.com/Pindulfo/Seminario_A.git) 
@@ -51,7 +56,7 @@ El artículo de Moon (2021) analiza mediante un meta-análisis cómo las olas de
 
 A continuación se recogen todos los paquetes utilizados para el tratamiento de los detos de trabajo.
 
-Para obtener los datos meteorológicos necesarios, se utilizó el paquete `climaemet` [@climaemet] para extraer los datos relativos a hospitalizaciones la fuente fu el INE[@INE].
+Para obtener los datos meteorológicos necesarios, se utilizó el paquete `climaemet` [@climaemet]. Para extraer los datos relativos a hospitalizaciones la fuente de el INE[@INE].
 
 ```{r,message=FALSE, warning=FALSE}
 
@@ -487,7 +492,7 @@ datos_met <- merge(datos_met,cod_estaciones, by = 'codigo')
 ```
 
 
-Estandarizamos los nombres de los atributos y de las provincias. Eliminamos el atributo 'codigo'
+Estandarizamos los nombres de los atributos y de las provincias. Eliminamos el atributo 'codigo'.
 
 ```{r}
 datos_met<-rename(.data = datos_met, Provincia = provincia, Año = año)
@@ -795,7 +800,7 @@ En este apartado encontraremos las dos partes que conforman la aplicación shiny
 
 #### Interfaz de Usuario
 
-En este apartado nos encontramos con la parte interactiva de la aplicación donde podremos elegir el gráfico que queremos mostrar. Hay un total de 4 opciones, 3 de ellas son gráficos de dispersión y un mapa de España. Para generar esta apliacion nos hemos basado en los principios básicos aprendidos en el tutorial introductorio de Shiny [@shiny_basics]. Para desarrollar una aplicación más compleja y visualmente atractiva, se utilizó la estructura de `shinydashboard`, que facilita la creación de interfaces de usuario avanzadas [@shinydashboard]. Tambien se utilizo el libro "Mastering Shiny" de Wickham y Grolemund [@mastering_shiny] como referencia. La representación visual de los mapas de España fue facilitada por el paquete `mapSpain` [@mapspain].
+En este apartado nos encontramos con la parte interactiva de la aplicación donde podremos elegir el gráfico que queremos mostrar. Hay un total de 4 opciones, 3 de ellas son gráficos de dispersión y un mapa de España.  Para generar esta aplicación nos hemos basado en los principios básicos aprendidos en el tutorial introductorio de Shiny [@shiny_basics]. Para desarrollar una aplicación más compleja y visualmente atractiva, se utilizó la estructura de `shinydashboard`, que facilita la creación de interfaces de usuario avanzadas [@shinydashboard]. También, se utilizó el libro "Mastering Shiny" de Wickham y Grolemund [@mastering_shiny] como referencia. La representación visual de los mapas de España fue facilitada por el paquete `mapSpain` [@mapspain].
 
 
 En cada caso podremos selecionar diferentes variables a mostrar mediante una caja de opciones o una casilla de selección.
@@ -912,9 +917,9 @@ En este apartado, se rellenan las selecciones de la interfaz gráfica, como el s
 
 Igualmente, dependiendo de lo que seleccionemos para mostrar en la interfaz, se ejecutará una gráfica u otra.
 
-En todos los graficos primeramente filtraremos los datos a los seleccionados por el usuario, para poder mostrarlo.
+En todos los graficos primeramente filtraremos los datos a los seleccionados por el usuario para poder mostrarlo.
 Posteriormente, pasaremos a mostrar los diferentes gráficos según la selección tomada.
-Y por último, se convertirán en gráficos interactivo, para una mejor visualización donde poder consultar los valores que toman y poder seleecionar y deseleccionar diversas opciones.
+Y por último, se convertirán en gráficos interactivos, para una mejor visualización donde poder consultar los valores que toman y poder seleecionar y deseleccionar diversas opciones.
 
 
 
