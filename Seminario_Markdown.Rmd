@@ -601,8 +601,7 @@ Poblacion$Provincias <- str_replace_all(Poblacion$Provincias,"[0123456789]","") 
 + __Periodo__
 
 ```{r}
-Poblacion$Periodo <- substr(Poblacion$Periodo,nchar(Poblacion$Periodo)-4,nchar(Poblacion$Periodo)) %>% 
-  as.integer()
+Poblacion$Periodo <- substr(Poblacion$Periodo,nchar(Poblacion$Periodo)-4,nchar(Poblacion$Periodo)) %>%as.integer()
 ```
 
 + __Valores__
@@ -621,6 +620,7 @@ Poblacion$Total <- Poblacion$Total %>%
 
 ```{r}
 Poblacion <- rename(.data = Poblacion, Provincia = Provincias, Año = Periodo, Total_d = Total)
+Poblacion$Año <- as.character(Poblacion$Año)
 
 ```
 
@@ -631,7 +631,66 @@ Poblacion <- rename(.data = Poblacion, Provincia = Provincias, Año = Periodo, T
 datatable(Poblacion)
 ```
 
-### 5. Fusión de datos en un único dataframe
+### 5. Obtención de Valores para el mapa de España y poder emplearlo en el shiny
+
+```{r}
+provincias_sf <- esp_get_prov()  # Geometría de las provincias
+can <- esp_get_can_box()  # Ajuste para Canarias
+
+provincias_sf$ine.prov.name <- str_replace_all(provincias_sf$ine.prov.name,"[0123456789]","") %>% 
+  str_replace_all("^ ","") %>% 
+  str_replace_all("Araba/Á","A") %>% 
+  str_replace_all("/Alacant", '') %>% 
+  str_replace_all("ANDALUCÍA", 'Andalucía') %>% 
+  str_replace_all('ARAGÓN', 'Aragón') %>% 
+  str_replace_all('ASTURIAS','Asturias') %>% 
+  str_replace_all('Asturias \\(Principado de\\)', 'Asturias') %>%
+  str_replace_all('Asturias, Principado de', 'Asturias') %>%  
+  str_replace_all('Asturias, PRINCIPADO DE', 'Asturias') %>%
+  str_replace_all('Ávila', 'Avila') %>% 
+  str_replace_all('BALEARS, ILLES', 'Baleares') %>% 
+  str_replace_all('Balears, Illes', 'Baleares') %>% 
+  str_replace_all('Balears \\(Illes\\)', 'Baleares') %>% 
+  str_replace_all("CANARIAS", 'Canarias') %>% 
+  str_replace_all("CANTABRIA", 'Cantabria') %>% 
+  str_replace_all("Castellón de la Plana", 'Castellón') %>% 
+  str_replace_all("/Castelló", '') %>% 
+  str_replace_all("CASTILLA - LA MANCHA", 'Castilla - La Mancha') %>% 
+  str_replace_all("CASTILLA Y LEÓN", 'Castilla y León') %>% 
+  str_replace_all("CATALUÑA", 'Cataluña') %>% 
+  str_replace_all("Comunitat Valenciana", 'Comunidad Valenciana') %>% 
+  str_replace_all("COMUNITAT VALENCIANA", 'Comunidad Valenciana') %>% 
+  str_replace_all("Coruña \\(A\\)", 'A Coruña') %>% #revisar el Coruña (A) no se ha modificado con esto
+  str_replace_all("Coruña, A", 'A Coruña') %>% 
+  str_replace_all("EXTREMADURA", 'Extremadura') %>% 
+  str_replace_all("GALICIA", 'Galicia') %>% 
+  str_replace_all("Guipúzcoa", 'Gipuzkoa') %>% 
+  str_replace_all('MADRID, COMUNIDAD DE','Madrid') %>% #revisar al igual que asturias para que solo salga Madrid
+  str_replace_all('Madrid, Comunidad de', 'Madrid') %>%
+  str_replace_all('Madrid \\(Comunidad de\\)', 'Madrid') %>% 
+  str_replace_all('MURCIA, REGIÓN DE','Murcia') %>% #revisar para que solo salga Murcia
+  str_replace_all('Murcia \\(Región de\\)','Murcia') %>%
+  str_replace_all('Murcia, Región de','Murcia') %>%
+  str_replace_all('Murcia*', 'Murcia') %>% 
+  str_replace_all('NAVARRA, COMUNIDAD FORAL DE','Navarra') %>% #revisar para que salga solo Navarra
+  str_replace_all('Navarra \\(Comun. Foral de\\)', 'Navarra') %>%
+  str_replace_all('Navarra, Comunidad Foral de', 'Navarra') %>% 
+  str_replace_all('PAÍS VASCO', 'País Vasco') %>% 
+  str_replace_all("Palmas \\(Las\\)", 'Las Palmas') %>% #revisar el Palmas (Las) no se ha modificado con esto
+  str_replace_all("Palmas, Las", 'Las Palmas') %>%
+  str_replace_all("Rioja \\(La\\)", 'La Rioja') %>% #revisar Rioja (La) no se ha modificado con esto
+  str_replace_all("Rioja, La", 'La Rioja') %>%
+  str_replace_all("RIOJA, LA", 'La Rioja') %>% 
+  str_replace_all("TOTAL NACIONAL", 'Total') %>% 
+  str_replace_all("Total Nacional", 'Total') %>% 
+  str_replace_all("/València", '') %>% 
+  str_replace_all("Bizkaia", 'Vizcaya')
+
+provincias_sf <- rename(.data = provincias_sf, Provincia = ine.prov.name)
+
+```
+
+### 6. Fusión de datos en un único dataframe
 
 Unión de datos de ingreso  y muerte
 
@@ -645,6 +704,31 @@ Unión de todos los datos de diabetes (en df_combined) y  datos meteorológicos.
 df_combined <- left_join(x = df_combined, y = datos_met, by = c("Provincia", "Año"))
 ```
 
+Unión de los datos de población
+
+```{r}
+df_combined <- left_join(x= df_combined, y = Poblacion, by = c("Provincia", "Año", "Sexo"))
+df_combined$Año <- as.integer(df_combined$Año)
+```
+
+Conversión de ingresos y muertes a valores por cada 100.000 habitantes
+
+```{r}
+df_combined <- df_combined %>% 
+  mutate(Diagnosticos = (Diagnosticos / Total_d)*100000 )
+
+df_combined<- df_combined %>% 
+  mutate(Muertes = (Muertes / Total_d)*100000)
+```
+
+```{r}
+provincias_sf <- provincias_sf %>%
+  left_join(x= provincias_sf, y = df_combined, by = c("Provincia"))  # Asegúrate de que los nombres coincidan
+
+provincias_sf <- provincias_sf %>% 
+  filter(Año >= 2010)
+```
+
 Resultado final.
 
 ```{r}
@@ -652,11 +736,11 @@ datatable(df_combined)
 ```
 
 
-### Gráficos y resultados
+# Gráficos y resultados
 
 En la aplicación shiny además de estos dos primeros gráficos, encontraremos muchos más ejemplos.
 
-#### Grafico de Diagnosticos (100.000 hab) por provincia y año (desde 2010)
+### Grafico de Diagnosticos (100.000 hab) por provincia y año (desde 2010)
 
 ```{r message=FALSE, warning=FALSE}
 datos_filtrados <- df_combined %>% 
@@ -674,7 +758,7 @@ ggplotly(p)
 print(p)
 ```
 
-##### Grafico de Diagnosticos (100.000 hab) de cada provincia por año (desde 2010)
+### Grafico de Diagnosticos (100.000 hab) de cada provincia por año (desde 2010)
 
 ```{r message=FALSE, warning=FALSE}
 datos_filtrados_temp <- df_combined %>%
@@ -963,4 +1047,7 @@ Como se observara en algunos de los graficos se empleara aes_string, esto se deb
 
 # Conclusiones
 
-El análisis de los datos ha presentado una dificultad añadida debido 
+
+
+
+# Bibliografía
