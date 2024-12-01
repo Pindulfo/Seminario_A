@@ -1048,7 +1048,9 @@ server <- function(input, output, session) {
 
 ```
 
-Como se observara en algunos de los graficos se empleara aes_string, esto se debe a como estan formulado la seleccion de opciones en la interfaz, de hay la razon por la que exista algunos graficos con aes y otros con aes_string. En lugar de emplear aes_string se podria emplear (!!sym) que es otra forma de implementar las variables mucho mas moderna, pero parecio una forma de complicar las cosas. Se tendria que tomar esto en cuenta ya que en algunas de las ejecuciones se mostraba como que aes_string es una forma poco moderna. 
+Como se observará, en algunos de los gráficos emplea aes_string.Esto se debe a cómo está formulada la selección de opciones en la interfaz, de ahí la razon por la que exista algunos graficos con aes y otros con aes_string.
+
+En lugar de emplear aes_string se podría emplear (!!sym), otra forma de implementar las variables mucho más moderna, pero pareció una forma de complicar las cosas. Se tendría que tomar esto en cuenta, ya que en algunas de las ejecuciones se mostraba que aes_string es una forma poco moderna. 
 
 
 
