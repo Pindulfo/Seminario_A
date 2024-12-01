@@ -1047,7 +1047,16 @@ Como se observara en algunos de los graficos se empleara aes_string, esto se deb
 
 # Conclusiones
 
+Los resultados de este estudio no han permitido identificar una relación clara y directa entre las variables climáticas analizadas (temperatura máxima, mínima y media) y las tasas de hospitalizaciones y muertes por diabetes. Aunque se observaron ciertas tendencias, estas no fueron consistentes ni suficientemente robustas para establecer correlaciones significativas. Este hallazgo destaca la complejidad de los factores que influyen en las hospitalizaciones por diabetes y la necesidad de estudios adicionales con datos más homogéneos y detallados.
 
+Además, cabe señalar que a partir del año 2010, el Instituto Nacional de Estadística [@INE]implementó un cambio en los criterios de obtención de datos sobre hospitalizaciones, lo que complicó el análisis longitudinal y la comparación de datos previos y posteriores a este cambio. Esta limitación metodológica subraya la importancia de contar con datos consistentes y estandarizados para futuras investigaciones.
+
+En cuanto a los objetivos específicos:
+- Respecto al análisis de la relación entre las variables climáticas y las tasas de hospitalización y mortalidad, no se encontraron patrones significativos que respalden una asociación directa.
+- Las correlaciones exploradas entre las variaciones climáticas y las tasas de hospitalización tampoco mostraron una fuerza o dirección clara.
+- Finalmente, no se identificaron diferencias significativas en el impacto de las condiciones climáticas sobre las hospitalizaciones por diabetes entre distintas regiones geográficas.
+
+Estos resultados subrayan la necesidad de continuar explorando esta problemática desde una perspectiva interdisciplinaria, incorporando bases de datos más amplias y métodos de análisis que permitan capturar con mayor precisión las dinámicas entre el clima y la salud.
 
 
 # Bibliografía
